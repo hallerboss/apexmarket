@@ -1,0 +1,59 @@
+{
+  "name": "Review",
+  "type": "object",
+  "properties": {
+    "product_id": {
+      "type": "string",
+      "title": "Product ID"
+    },
+    "product_name": {
+      "type": "string",
+      "title": "Product Name"
+    },
+    "author": {
+      "type": "string",
+      "title": "Author"
+    },
+    "email": {
+      "type": "string",
+      "title": "Email"
+    },
+    "rating": {
+      "type": "number",
+      "title": "Rating",
+      "minimum": 1,
+      "maximum": 5,
+      "default": 5
+    },
+    "title": {
+      "type": "string",
+      "title": "Review Title"
+    },
+    "comment": {
+      "type": "string",
+      "title": "Comment"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "pending",
+        "approved",
+        "rejected"
+      ],
+      "title": "Status",
+      "default": "pending"
+    }
+  },
+  "required": [
+    "product_id",
+    "author",
+    "rating",
+    "comment"
+  ],
+  "rls": {
+    "create": true,
+    "read": true,
+    "update": true,
+    "delete": true
+  }
+}

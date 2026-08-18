@@ -1,0 +1,61 @@
+{
+  "name": "Banner",
+  "type": "object",
+  "properties": {
+    "title": {
+      "type": "string",
+      "title": "Title"
+    },
+    "subtitle": {
+      "type": "string",
+      "title": "Subtitle"
+    },
+    "description": {
+      "type": "string",
+      "title": "Description"
+    },
+    "image": {
+      "type": "string",
+      "title": "Image"
+    },
+    "link": {
+      "type": "string",
+      "title": "Link"
+    },
+    "cta_text": {
+      "type": "string",
+      "title": "CTA Text",
+      "default": "Shop Now"
+    },
+    "position": {
+      "type": "string",
+      "enum": [
+        "hero",
+        "promo",
+        "midpage",
+        "sidebar"
+      ],
+      "title": "Position",
+      "default": "promo"
+    },
+    "order": {
+      "type": "number",
+      "title": "Display Order",
+      "default": 0
+    },
+    "active": {
+      "type": "boolean",
+      "title": "Active",
+      "default": true
+    }
+  },
+  "required": [
+    "title"
+  ],
+  "rls": {
+    "create": true,
+    "read": true,
+    "update": true,
+    "delete": true
+  }
+}

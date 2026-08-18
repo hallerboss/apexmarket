@@ -7,6 +7,22 @@ import { AuthProvider, useAuth } from '@/lib/AuthContext';
 import UserNotRegisteredError from '@/components/UserNotRegisteredError';
 import ScrollToTop from './components/ScrollToTop';
 // Add page imports here
+import StoreLayout from "@/components/store/StoreLayout";
+import AdminLayout from "@/components/admin/AdminLayout";
+import { CartProvider } from "@/lib/cartContext";
+import Home from "@/pages/Home";
+import Shop from "@/pages/Shop";
+import ProductDetail from "@/pages/ProductDetail";
+import Cart from "@/pages/Cart";
+import PageView from "@/pages/PageView";
+import AdminDashboard from "@/pages/admin/AdminDashboard";
+import AdminProducts from "@/pages/admin/AdminProducts";
+import AdminCategories from "@/pages/admin/AdminCategories";
+import AdminReviews from "@/pages/admin/AdminReviews";
+import AdminPages from "@/pages/admin/AdminPages";
+import AdminOrders from "@/pages/admin/AdminOrders";
+import AdminBanners from "@/pages/admin/AdminBanners";
+import AdminSettings from "@/pages/admin/AdminSettings";
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -34,7 +50,25 @@ const AuthenticatedApp = () => {
   // Render the main app
   return (
     <Routes>
-      {/* Add your page Route elements here */}
+      {/* Storefront */}
+      <Route element={<CartProvider><StoreLayout /></CartProvider>}>
+        <Route path="/" element={<Home />} />
+        <Route path="/shop" element={<Shop />} />
+        <Route path="/product/:id" element={<ProductDetail />} />
+        <Route path="/cart" element={<Cart />} />
+        <Route path="/page/:slug" element={<PageView />} />
+      </Route>
+      {/* Admin */}
+      <Route path="/admin" element={<AdminLayout />}>
+        <Route index element={<AdminDashboard />} />
+        <Route path="products" element={<AdminProducts />} />
+        <Route path="categories" element={<AdminCategories />} />
+        <Route path="reviews" element={<AdminReviews />} />
+        <Route path="pages" element={<AdminPages />} />
+        <Route path="orders" element={<AdminOrders />} />
+        <Route path="banners" element={<AdminBanners />} />
+        <Route path="settings" element={<AdminSettings />} />
+      </Route>
       <Route path="*" element={<PageNotFound />} />
     </Routes>
   );

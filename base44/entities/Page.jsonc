@@ -1,0 +1,49 @@
+{
+  "name": "Page",
+  "type": "object",
+  "properties": {
+    "title": {
+      "type": "string",
+      "title": "Title"
+    },
+    "slug": {
+      "type": "string",
+      "title": "Slug"
+    },
+    "content": {
+      "type": "string",
+      "title": "Content"
+    },
+    "excerpt": {
+      "type": "string",
+      "title": "Excerpt"
+    },
+    "featured_image": {
+      "type": "string",
+      "title": "Featured Image"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "published",
+        "draft"
+      ],
+      "title": "Status",
+      "default": "published"
+    },
+    "show_in_menu": {
+      "type": "boolean",
+      "title": "Show in Menu",
+      "default": false
+    }
+  },
+  "required": [
+    "title"
+  ],
+  "rls": {
+    "create": true,
+    "read": true,
+    "update": true,
+    "delete": true
+  }
+}

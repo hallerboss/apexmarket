@@ -1,0 +1,134 @@
+{
+  "name": "Product",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "title": "Name"
+    },
+    "slug": {
+      "type": "string",
+      "title": "Slug"
+    },
+    "description": {
+      "type": "string",
+      "title": "Description"
+    },
+    "short_description": {
+      "type": "string",
+      "title": "Short Description"
+    },
+    "price": {
+      "type": "number",
+      "title": "Price",
+      "minimum": 0
+    },
+    "sale_price": {
+      "type": "number",
+      "title": "Sale Price",
+      "minimum": 0
+    },
+    "sku": {
+      "type": "string",
+      "title": "SKU"
+    },
+    "category": {
+      "type": "string",
+      "title": "Category"
+    },
+    "brand": {
+      "type": "string",
+      "title": "Brand"
+    },
+    "images": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "title": "Images"
+    },
+    "stock": {
+      "type": "number",
+      "title": "Stock",
+      "minimum": 0,
+      "default": 0
+    },
+    "rating": {
+      "type": "number",
+      "title": "Rating",
+      "minimum": 0,
+      "maximum": 5,
+      "default": 0
+    },
+    "reviews_count": {
+      "type": "number",
+      "title": "Reviews Count",
+      "default": 0
+    },
+    "featured": {
+      "type": "boolean",
+      "title": "Featured",
+      "default": false
+    },
+    "is_new": {
+      "type": "boolean",
+      "title": "New Arrival",
+      "default": false
+    },
+    "best_seller": {
+      "type": "boolean",
+      "title": "Best Seller",
+      "default": false
+    },
+    "top_rated": {
+      "type": "boolean",
+      "title": "Top Rated",
+      "default": false
+    },
+    "tags": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "title": "Tags"
+    },
+    "variants": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "options": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "title": "Variant"
+      },
+      "title": "Variants"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "published",
+        "draft"
+      ],
+      "title": "Status",
+      "default": "published"
+    }
+  },
+  "required": [
+    "name",
+    "price"
+  ],
+  "rls": {
+    "create": true,
+    "read": true,
+    "update": true,
+    "delete": true
+  }
+}

@@ -1,0 +1,94 @@
+{
+  "name": "Order",
+  "type": "object",
+  "properties": {
+    "order_number": {
+      "type": "string",
+      "title": "Order Number"
+    },
+    "customer_name": {
+      "type": "string",
+      "title": "Customer Name"
+    },
+    "customer_email": {
+      "type": "string",
+      "title": "Customer Email"
+    },
+    "customer_phone": {
+      "type": "string",
+      "title": "Customer Phone"
+    },
+    "shipping_address": {
+      "type": "string",
+      "title": "Shipping Address"
+    },
+    "items": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "product_id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "price": {
+            "type": "number"
+          },
+          "quantity": {
+            "type": "number"
+          },
+          "image": {
+            "type": "string"
+          }
+        },
+        "title": "Order Item"
+      },
+      "title": "Items"
+    },
+    "subtotal": {
+      "type": "number",
+      "title": "Subtotal",
+      "minimum": 0
+    },
+    "shipping": {
+      "type": "number",
+      "title": "Shipping",
+      "minimum": 0,
+      "default": 0
+    },
+    "total": {
+      "type": "number",
+      "title": "Total",
+      "minimum": 0
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "pending",
+        "processing",
+        "shipped",
+        "delivered",
+        "cancelled"
+      ],
+      "title": "Status",
+      "default": "pending"
+    },
+    "payment_method": {
+      "type": "string",
+      "title": "Payment Method"
+    }
+  },
+  "required": [
+    "customer_name",
+    "items",
+    "total"
+  ],
+  "rls": {
+    "create": true,
+    "read": true,
+    "update": true,
+    "delete": true
+  }
+}
