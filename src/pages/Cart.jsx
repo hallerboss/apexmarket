@@ -14,23 +14,54 @@ export default function Cart() {
   const shipping = subtotal > 50 ? 0 : 9.99;
   const total = subtotal + shipping;
 
-  const checkout = (e) => {
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const status = params.get("status");
+    const orderId = params.get("order");
+    if (status === "success" && orderId) {
+      base44.entities.Order.get(orderId).then((order) => {
+        setPlaced(order);
+        clear();
+      });
+    } else if (status === "cancel") {
+      window.history.replaceState({}, "", "/cart");
+    }
+  }, []);
+
+  const checkout = async (e) => {
     e.preventDefault();
+    if (window.self !== window.top) {
+      alert("Checkout works only from a published app. Please open the app in a new tab to complete your purchase.");
+      return;
+    }
     setPlacing(true);
-    const orderNumber = `WM-${Date.now().toString().slice(-6)}`;
-    base44.entities.Order.create({
-      ...form,
-      order_number: orderNumber,
-      items: items.map((i) => ({ product_id: i.product_id, name: i.name, price: i.price, quantity: i.quantity, image: i.image })),
-      subtotal,
-      shipping,
-      total,
-      status: "pending",
-    }).then((order) => {
-      setPlaced(order);
-      clear();
+    try {
+      const orderNumber = `WM-${Date.now().toString().slice(-6)}`;
+      const order = await base44.entities.Order.create({
+        ...form,
+        order_number: orderNumber,
+        items: items.map((i) => ({ product_id: i.product_id, name: i.name, price: i.price, quantity: i.quantity, image: i.image })),
+        subtotal,
+        shipping,
+        total,
+        status: "pending",
+      });
+      const origin = window.location.origin;
+      const res = await base44.functions.invoke("createCheckoutSession", {
+        order_id: order.id,
+        items: items.map((i) => ({ name: i.name, price: i.price, quantity: i.quantity })),
+        customer_email: form.customer_email,
+        shipping,
+        success_url: `${origin}/cart?status=success&order=${order.id}`,
+        cancel_url: `${origin}/cart?status=cancel`,
+      });
+      const url = res.data?.url;
+      if (!url) throw new Error("No checkout URL returned");
+      window.location.href = url;
+    } catch (err) {
       setPlacing(false);
-    });
+      alert(err.message || "Checkout failed");
+    }
   };
 
   if (placed) {
