@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
 import { Image } from "@/components/ui/image";
-import ProductCard from "@/components/store/ProductCard";
+import ProductRow from "@/components/store/ProductRow";
 import SectionHeader from "@/components/store/SectionHeader";
 
 const HERO_IMG = "https://media.base44.com/images/public/6a8447d4dfbc61d89c33872d/b4d672465_generated_e014edfb.png";
@@ -103,11 +103,7 @@ export default function Home() {
           {/* POPULAR DEPARTMENTS */}
           <section className="container-bleed px-5 lg:px-10 py-16 lg:py-24">
             <SectionHeader eyebrow="Curated" title="Popular Departments" link="/shop" />
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-8">
-              {products.slice(0, 4).map((p, i) => (
-                <ProductCard key={p.id} product={p} index={i} />
-              ))}
-            </div>
+            <ProductRow products={products.slice(0, 4)} />
           </section>
 
           {/* PROMO BANNER — asymmetric */}
@@ -137,9 +133,7 @@ export default function Home() {
           {newArrivals.length > 0 && (
             <section className="container-bleed px-5 lg:px-10 py-16 lg:py-24">
               <SectionHeader eyebrow="Fresh" title="New Arrivals" link="/shop" />
-              <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-8">
-                {newArrivals.slice(0, 4).map((p, i) => <ProductCard key={p.id} product={p} index={i} />)}
-              </div>
+              <ProductRow products={newArrivals.slice(0, 4)} />
             </section>
           )}
 
@@ -147,9 +141,7 @@ export default function Home() {
           {topRated.length > 0 && (
             <section className="container-bleed px-5 lg:px-10 py-16 lg:py-24">
               <SectionHeader eyebrow="Acclaimed" title="Top Ranking" link="/shop" />
-              <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-8">
-                {topRated.slice(0, 4).map((p, i) => <ProductCard key={p.id} product={p} index={i} />)}
-              </div>
+              <ProductRow products={topRated.slice(0, 4)} />
             </section>
           )}
 
@@ -157,9 +149,7 @@ export default function Home() {
           {bestSellers.length > 0 && (
             <section className="container-bleed px-5 lg:px-10 py-16 lg:py-24">
               <SectionHeader eyebrow="Most Wanted" title="Best Sellers" link="/shop" />
-              <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-8">
-                {bestSellers.slice(0, 4).map((p, i) => <ProductCard key={p.id} product={p} index={i} />)}
-              </div>
+              <ProductRow products={bestSellers.slice(0, 4)} />
             </section>
           )}
 
@@ -167,18 +157,14 @@ export default function Home() {
           {featured.length > 0 && (
             <section className="container-bleed px-5 lg:px-10 py-16 lg:py-24">
               <SectionHeader eyebrow="Selected" title="Our Featured" link="/shop" />
-              <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-8">
-                {featured.slice(0, 4).map((p, i) => <ProductCard key={p.id} product={p} index={i} />)}
-              </div>
+              <ProductRow products={featured.slice(0, 4)} />
             </section>
           )}
 
           {/* JUST FOR YOU — full grid */}
           <section className="container-bleed px-5 lg:px-10 py-16 lg:py-24 border-t hairline">
             <SectionHeader eyebrow="Personal" title="Just For You" />
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-8">
-              {products.slice(0, 8).map((p, i) => <ProductCard key={p.id} product={p} index={i} />)}
-            </div>
+            <ProductRow products={products.slice(0, 8)} />
             <div className="text-center mt-12">
               <Link to="/shop" className="btn-mono-outline">Load More</Link>
             </div>
