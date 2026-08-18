@@ -4,6 +4,7 @@ import { base44 } from "@/api/base44Client";
 import { Image } from "@/components/ui/image";
 import { Star, Minus, Plus, ShoppingBag, Truck, RotateCcw, Shield } from "lucide-react";
 import { useCart } from "@/lib/cartContext";
+import { trackProductView } from "@/lib/analytics";
 import ProductCard from "@/components/store/ProductCard";
 
 export default function ProductDetail() {
@@ -29,6 +30,7 @@ export default function ProductDetail() {
       setProduct(p);
       setReviews(revs);
       setLoading(false);
+      trackProductView(p);
       base44.entities.Product.filter({ category: p.category }, "-rating", 5).then((rel) =>
         setRelated(rel.filter((r) => r.id !== p.id).slice(0, 4))
       );

@@ -3,6 +3,8 @@ import { useSearchParams } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
 import { SlidersHorizontal, X } from "lucide-react";
 import ProductCard from "@/components/store/ProductCard";
+import { CompareProvider } from "@/lib/compareContext";
+import CompareBar from "@/components/store/CompareBar";
 
 const categories = ["Electronics", "Fashion", "Furniture", "Watches", "Accessories"];
 const sortOptions = [
@@ -54,6 +56,7 @@ export default function Shop() {
   };
 
   return (
+    <CompareProvider>
     <div>
       {/* Page header */}
       <div className="border-b hairline">
@@ -121,7 +124,7 @@ export default function Shop() {
             </div>
           ) : (
             <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 lg:gap-8">
-              {filtered.map((p, i) => <ProductCard key={p.id} product={p} index={i} />)}
+              {filtered.map((p, i) => <ProductCard key={p.id} product={p} index={i} compareMode />)}
             </div>
           )}
         </div>
@@ -146,5 +149,7 @@ export default function Shop() {
         </div>
       )}
     </div>
+    <CompareBar />
+    </CompareProvider>
   );
 }

@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Link, Outlet, useLocation } from "react-router-dom";
 import { Search, ShoppingBag, Menu, X, User } from "lucide-react";
 import { useCart } from "@/lib/cartContext";
+import { trackPageView } from "@/lib/analytics";
 import StoreFooter from "@/components/store/StoreFooter";
 
 const navLinks = [
@@ -31,6 +32,10 @@ export default function StoreLayout() {
     setSearchOpen(false);
   }, [location.pathname]);
 
+  useEffect(() => {
+    trackPageView(location.pathname + location.search);
+  }, [location.pathname, location.search]);
+
   return (
     <div className="min-h-screen bg-background flex">
       {/* Monolith sidebar — desktop */}
@@ -39,9 +44,6 @@ export default function StoreLayout() {
         <div className="[writing-mode:vertical-rl] rotate-180 text-[10px] uppercase tracking-[0.3em] text-muted-foreground">
           Wolmart · Est. 2024
         </div>
-        <button onClick={() => setMenuOpen(true)} className="p-2 hover:text-accent transition-colors" aria-label="Open menu">
-          <Menu className="w-5 h-5" />
-        </button>
       </aside>
 
       {/* Top bar */}
@@ -78,7 +80,7 @@ export default function StoreLayout() {
                   </span>
                 )}
               </Link>
-              <button onClick={() => setMenuOpen(true)} className="p-2.5 lg:hidden" aria-label="Menu">
+              <button onClick={() => setMenuOpen(true)} className="p-2.5" aria-label="Menu">
                 <Menu className="w-5 h-5" />
               </button>
             </div>

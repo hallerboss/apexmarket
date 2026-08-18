@@ -2,8 +2,9 @@ import { Link } from "react-router-dom";
 import { Star } from "lucide-react";
 import { Image } from "@/components/ui/image";
 import { useCart } from "@/lib/cartContext";
+import CompareToggle from "@/components/store/CompareToggle";
 
-export default function ProductCard({ product, index = 0 }) {
+export default function ProductCard({ product, index = 0, compareMode = false }) {
   const { addItem } = useCart();
   const hasSale = product.sale_price && product.sale_price < product.price;
   const discount = hasSale ? Math.round(((product.price - product.sale_price) / product.price) * 100) : 0;
@@ -26,6 +27,7 @@ export default function ProductCard({ product, index = 0 }) {
             <span className="bg-white text-foreground text-[10px] font-bold uppercase tracking-widest px-2 py-1 border hairline">Top</span>
           )}
         </div>
+        {compareMode && <CompareToggle productId={product.id} />}
         {/* Quick add */}
         <button
           onClick={(e) => {
