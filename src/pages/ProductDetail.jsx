@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
 import { Image } from "@/components/ui/image";
-import { Star, Minus, Plus, ShoppingBag, Truck, RotateCcw, Shield } from "lucide-react";
+import { Star, Minus, Plus, ShoppingBag, Truck, RotateCcw, Shield, ImagePlus } from "lucide-react";
 import { useCart } from "@/lib/cartContext";
 import { trackProductView } from "@/lib/analytics";
 import ProductCard from "@/components/store/ProductCard";
@@ -19,6 +19,21 @@ export default function ProductDetail() {
   const [showBuyBar, setShowBuyBar] = useState(false);
   const [reviewForm, setReviewForm] = useState({ author: "", email: "", rating: 5, title: "", comment: "" });
   const [reviewSubmitted, setReviewSubmitted] = useState(false);
+  const [reviewMedia, setReviewMedia] = useState([]);
+  const [uploading, setUploading] = useState(false);
+
+  const handleMediaUpload = async (e) => {
+    const files = Array.from(e.target.files || []);
+    if (!files.length) return;
+    setUploading(true);
+    try {
+      const uploaded = await Promise.all(files.map((f) => base44.integrations.Core.UploadFile({ file: f })));
+      setReviewMedia((cur) => [...cur, ...uploaded.map((u) => u.file_url)]);
+    } finally {
+      setUploading(false);
+      e.target.value = "";
+    }
+  };
   const { addItem } = useCart();
 
   useEffect(() => {
@@ -64,10 +79,12 @@ export default function ProductDetail() {
       ...reviewForm,
       product_id: product.id,
       product_name: product.name,
+      media: reviewMedia,
       status: "pending",
     }).then(() => {
       setReviewSubmitted(true);
       setReviewForm({ author: "", email: "", rating: 5, title: "", comment: "" });
+      setReviewMedia([]);
     });
   };
 
@@ -201,6 +218,19 @@ export default function ProductDetail() {
                     </div>
                     {r.title && <p className="font-medium text-sm mb-1">{r.title}</p>}
                     <p className="serif-text text-muted-foreground text-sm">{r.comment}</p>
+                    {r.media?.length > 0 && (
+                      <div className="flex flex-wrap gap-2 mt-3">
+                        {r.media.map((url, mi) => (
+                          <a key={mi} href={url} target="_blank" rel="noreferrer" className="block w-16 h-16 overflow-hidden bg-secondary">
+                            {url.match(/\.(mp4|mov|webm)$/i) ? (
+                              <video src={url} className="w-full h-full object-cover" />
+                            ) : (
+                              <Image src={url} alt="" className="w-full h-full object-cover" fittingType="fill" />
+                            )}
+                          </a>
+                        ))}
+                      </div>
+                    )}
                   </div>
                 ))}
               </div>
@@ -228,6 +258,22 @@ export default function ProductDetail() {
                 </div>
                 <input placeholder="Review title" value={reviewForm.title} onChange={(e) => setReviewForm({ ...reviewForm, title: e.target.value })} className="w-full border hairline px-4 py-2.5 text-sm bg-transparent focus:border-accent outline-none" />
                 <textarea required placeholder="Your review…" rows={4} value={reviewForm.comment} onChange={(e) => setReviewForm({ ...reviewForm, comment: e.target.value })} className="w-full border hairline px-4 py-2.5 text-sm bg-transparent focus:border-accent outline-none resize-none" />
+                <div>
+                  <p className="text-[11px] uppercase tracking-[0.2em] font-semibold mb-2">Add Photo / Video</p>
+                  <div className="flex items-center gap-3 flex-wrap">
+                    <label className="text-sm border hairline px-4 py-2.5 cursor-pointer hover:border-accent inline-flex items-center gap-2">
+                      <ImagePlus className="w-4 h-4" /> Upload
+                      <input type="file" accept="image/*,video/*" multiple onChange={handleMediaUpload} className="hidden" disabled={uploading} />
+                    </label>
+                    {uploading && <span className="text-sm text-muted-foreground">Uploading…</span>}
+                    {reviewMedia.map((url, mi) => (
+                      <div key={mi} className="relative w-14 h-14 overflow-hidden bg-secondary">
+                        {url.match(/\.(mp4|mov|webm)$/i) ? <video src={url} className="w-full h-full object-cover" /> : <Image src={url} alt="" className="w-full h-full object-cover" fittingType="fill" />}
+                        <button type="button" onClick={() => setReviewMedia((c) => c.filter((_, i) => i !== mi))} className="absolute top-0 right-0 bg-foreground text-background w-5 h-5 flex items-center justify-center text-[10px]">×</button>
+                      </div>
+                    ))}
+                  </div>
+                </div>
                 <button type="submit" className="btn-mono-solid">Submit Review</button>
               </form>
             )}
