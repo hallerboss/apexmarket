@@ -38,11 +38,11 @@ export default function Home() {
   return (
     <div>
       {/* HERO — split screen */}
-      <section className="container-bleed px-5 lg:px-10 min-h-[90vh] flex flex-col lg:flex-row gap-8 lg:gap-16 pt-8 lg:pt-12 pb-16 lg:pb-24">
+      <section className="container-bleed px-5 lg:px-10 min-h-[70vh] lg:min-h-[80vh] flex flex-col lg:flex-row gap-8 lg:gap-16 pt-8 lg:pt-12 pb-12 lg:pb-20">
         <div className="lg:w-1/2 flex flex-col justify-between order-2 lg:order-1">
           <div>
             <p className="text-[11px] uppercase tracking-[0.25em] text-accent font-semibold mb-6">New Collection · 2024</p>
-            <h1 className="display-text text-[14vw] lg:text-[8vw] leading-[0.85]">
+            <h1 className="display-text text-[10vw] lg:text-[6vw] leading-[0.85]">
               Electronic<br />Sale
             </h1>
             <p className="serif-text text-lg lg:text-xl text-muted-foreground mt-8 max-w-md leading-relaxed">
@@ -109,7 +109,7 @@ export default function Home() {
           {/* PROMO BANNER — asymmetric */}
           <section className="container-bleed px-5 lg:px-10 py-8 lg:py-12">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-8">
-              <div className="relative aspect-[4/3] lg:aspect-[16/10] overflow-hidden bg-secondary group">
+              <div className="relative aspect-[16/10] lg:aspect-[16/9] overflow-hidden bg-secondary group">
                 <Image src={FASHION_BANNER} alt="New collection" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
                 <div className="absolute inset-0 flex flex-col justify-end p-8 lg:p-12">
                   <p className="text-[11px] uppercase tracking-[0.25em] text-white/80 mb-3">Best Sellers</p>
@@ -118,7 +118,7 @@ export default function Home() {
                   <Link to="/shop" className="btn-mono-solid mt-6 self-start">Shop Now</Link>
                 </div>
               </div>
-              <div className="relative aspect-[4/3] lg:aspect-[16/10] overflow-hidden bg-foreground group">
+              <div className="relative aspect-[16/10] lg:aspect-[16/9] overflow-hidden bg-foreground group">
                 <div className="absolute inset-0 flex flex-col justify-center p-8 lg:p-12">
                   <p className="text-[11px] uppercase tracking-[0.25em] text-accent mb-4">The Seller of Month</p>
                   <h3 className="display-text text-3xl lg:text-5xl text-background">Cina Bluetooth Speaker</h3>

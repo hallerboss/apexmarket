@@ -47,7 +47,7 @@ export default function StoreLayout() {
       </aside>
 
       {/* Top bar */}
-      <div className="flex-1 lg:ml-16">
+      <div className="flex-1 lg:ml-16 overflow-x-hidden">
         <header className={`sticky top-0 z-30 transition-all duration-500 ${scrolled ? "bg-background/95 backdrop-blur-md border-b hairline" : "bg-transparent"}`}>
           <div className="container-bleed px-5 lg:px-10 flex items-center justify-between h-16">
             <div className="flex items-center gap-8">

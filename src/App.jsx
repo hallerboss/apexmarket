@@ -10,6 +10,7 @@ import ScrollToTop from './components/ScrollToTop';
 import StoreLayout from "@/components/store/StoreLayout";
 import AdminLayout from "@/components/admin/AdminLayout";
 import { CartProvider } from "@/lib/cartContext";
+import { QuickViewProvider } from "@/lib/quickViewContext";
 import Home from "@/pages/Home";
 import Shop from "@/pages/Shop";
 import ProductDetail from "@/pages/ProductDetail";
@@ -51,7 +52,7 @@ const AuthenticatedApp = () => {
   return (
     <Routes>
       {/* Storefront */}
-      <Route element={<CartProvider><StoreLayout /></CartProvider>}>
+      <Route element={<CartProvider><QuickViewProvider><StoreLayout /></QuickViewProvider></CartProvider>}>
         <Route path="/" element={<Home />} />
         <Route path="/shop" element={<Shop />} />
         <Route path="/product/:id" element={<ProductDetail />} />

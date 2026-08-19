@@ -2,10 +2,12 @@ import { Link } from "react-router-dom";
 import { Star } from "lucide-react";
 import { Image } from "@/components/ui/image";
 import { useCart } from "@/lib/cartContext";
+import { useQuickView } from "@/lib/quickViewContext";
 import CompareToggle from "@/components/store/CompareToggle";
 
 export default function ProductCard({ product, index = 0, compareMode = false }) {
   const { addItem } = useCart();
+  const { open: openQuickView } = useQuickView();
   const hasSale = product.sale_price && product.sale_price < product.price;
   const discount = hasSale ? Math.round(((product.price - product.sale_price) / product.price) * 100) : 0;
 
@@ -28,16 +30,21 @@ export default function ProductCard({ product, index = 0, compareMode = false })
           )}
         </div>
         {compareMode && <CompareToggle productId={product.id} />}
-        {/* Quick add */}
-        <button
-          onClick={(e) => {
-            e.preventDefault();
-            addItem(product);
-          }}
-          className="absolute bottom-0 left-0 right-0 bg-foreground text-background text-[11px] font-semibold uppercase tracking-[0.2em] py-3.5 translate-y-full group-hover:translate-y-0 transition-transform duration-500 z-10"
-        >
-          Add to Cart
-        </button>
+        {/* Quick view + add */}
+        <div className="absolute bottom-0 left-0 right-0 flex translate-y-full group-hover:translate-y-0 transition-transform duration-500 z-10">
+          <button
+            onClick={(e) => { e.preventDefault(); openQuickView(product); }}
+            className="flex-1 bg-background text-foreground text-[11px] font-semibold uppercase tracking-[0.15em] py-3.5 border-t border-l hairline"
+          >
+            Quick View
+          </button>
+          <button
+            onClick={(e) => { e.preventDefault(); addItem(product); }}
+            className="flex-1 bg-foreground text-background text-[11px] font-semibold uppercase tracking-[0.2em] py-3.5"
+          >
+            Add to Cart
+          </button>
+        </div>
       </Link>
       <div className="pt-4 pb-2">
         {product.brand && <p className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground mb-1.5">{product.brand}</p>}
