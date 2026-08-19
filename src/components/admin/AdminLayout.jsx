@@ -23,11 +23,11 @@ export default function AdminLayout() {
   return (
     <div className="min-h-screen bg-[#050505] text-white flex flex-col">
       {/* Top nav bar (replaces left sidebar) */}
-      <header className="sticky top-0 z-40 bg-[#0a0a0a] border-b border-white/5">
+      <header className="sticky top-0 z-40 bg-white border-b border-black/10">
         <div className="px-4 lg:px-8 h-16 flex items-center gap-4">
           <div className="flex items-center gap-3 shrink-0">
-            <Link to="/admin" className="display-text text-xl text-white">WOLMART</Link>
-            <span className="text-[10px] uppercase tracking-[0.2em] text-white/30 hidden xl:block">Command Center</span>
+            <Link to="/admin" className="display-text text-xl text-black">WOLMART</Link>
+            <span className="text-[10px] uppercase tracking-[0.2em] text-black/40 hidden xl:block">Command Center</span>
           </div>
 
           <nav className="flex items-center gap-0.5 overflow-x-auto flex-1 min-w-0 justify-center">
@@ -38,7 +38,7 @@ export default function AdminLayout() {
                   key={item.path}
                   to={item.path}
                   className={`flex items-center gap-2 px-3 py-2 text-[13px] font-medium whitespace-nowrap transition-colors relative ${
-                    active ? "text-white" : "text-white/50 hover:text-white"
+                    active ? "text-black" : "text-black/50 hover:text-black"
                   }`}
                 >
                   {active && <span className="absolute left-2 right-2 bottom-0 h-0.5 bg-accent" />}
@@ -50,10 +50,10 @@ export default function AdminLayout() {
           </nav>
 
           <div className="flex items-center gap-3 shrink-0">
-            <Link to="/" className="flex items-center gap-2 text-sm text-white/50 hover:text-white transition-colors">
+            <Link to="/" className="flex items-center gap-2 text-sm text-black/50 hover:text-black transition-colors">
               <ArrowLeft className="w-4 h-4" /><span className="hidden sm:inline">Store</span>
             </Link>
-            <div className="w-8 h-8 rounded-full bg-accent/20 border border-accent/30 flex items-center justify-center text-xs font-bold text-accent">A</div>
+            <div className="w-8 h-8 rounded-full bg-black/5 border border-black/10 flex items-center justify-center text-xs font-bold text-black">A</div>
           </div>
         </div>
       </header>

@@ -33,6 +33,13 @@
       "type": "string",
       "title": "Comment"
     },
+    "media": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "title": "Review Media"
+    },
     "status": {
       "type": "string",
       "enum": [

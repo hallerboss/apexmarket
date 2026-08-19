@@ -86,11 +86,11 @@ export default function AdminBanners() {
           <Plus className="w-4 h-4" /> Add Banner
         </button>
       </div>
-      <div className="grid md:grid-cols-2 gap-4">
-        {loading ? <div className="col-span-2 p-12 text-center text-white/30 text-sm">Loading…</div> : banners.length === 0 ? (
-          <div className="col-span-2 p-12 text-center text-white/30 text-sm">No banners yet.</div>
+      <div className="flex gap-4 overflow-x-auto pb-2">
+        {loading ? <div className="w-full p-12 text-center text-white/30 text-sm">Loading…</div> : banners.length === 0 ? (
+          <div className="w-full p-12 text-center text-white/30 text-sm">No banners yet.</div>
         ) : banners.map((b) => (
-          <div key={b.id} className="bg-[#0a0a0a] border border-white/5 overflow-hidden">
+          <div key={b.id} className="bg-[#0a0a0a] border border-white/5 overflow-hidden min-w-[280px] shrink-0 w-[280px]">
             <div className="relative aspect-[16/6] bg-white/5">
               {b.image && <img src={b.image} alt="" className="w-full h-full object-cover" />}
               <div className="absolute top-2 left-2 flex gap-1">

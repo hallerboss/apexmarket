@@ -8,13 +8,9 @@ import SectionHeader from "@/components/store/SectionHeader";
 const HERO_IMG = "https://media.base44.com/images/public/6a8447d4dfbc61d89c33872d/b4d672465_generated_e014edfb.png";
 const FASHION_BANNER = "https://media.base44.com/images/public/6a8447d4dfbc61d89c33872d/c1a582fac_generated_6bd4c4e4.png";
 
-const drops = ["8K Cinema Camera", "Wireless Headphones", "Minimalist Watch", "Oak Dining Chair", "Red Sneakers"];
-
 export default function Home() {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [activeDrop, setActiveDrop] = useState(0);
-  const [heroImg, setHeroImg] = useState(HERO_IMG);
 
   useEffect(() => {
     base44.entities.Product.list("-created_date", 50)
@@ -26,14 +22,6 @@ export default function Home() {
   const newArrivals = products.filter((p) => p.is_new);
   const bestSellers = products.filter((p) => p.best_seller);
   const topRated = products.filter((p) => p.top_rated);
-
-  const heroImages = [
-    "https://media.base44.com/images/public/6a8447d4dfbc61d89c33872d/1b457fe46_generated_fd5ba768.png",
-    "https://media.base44.com/images/public/6a8447d4dfbc61d89c33872d/6acb5954a_generated_411469a4.png",
-    "https://media.base44.com/images/public/6a8447d4dfbc61d89c33872d/148dc9c7d_generated_b5b068d8.png",
-    "https://media.base44.com/images/public/6a8447d4dfbc61d89c33872d/b9e37d828_generated_16f46577.png",
-    "https://media.base44.com/images/public/6a8447d4dfbc61d89c33872d/d88caaa8c_generated_0e311836.png",
-  ];
 
   return (
     <div>
@@ -53,32 +41,11 @@ export default function Home() {
               <Link to="/shop?deals=1" className="btn-mono-outline">Hot Deals</Link>
             </div>
           </div>
-          {/* Drops list */}
-          <div className="mt-12 lg:mt-0 border-t hairline pt-8">
-            <p className="text-[10px] uppercase tracking-[0.25em] text-muted-foreground mb-4">Current Drops</p>
-            <div className="flex flex-col">
-              {drops.map((d, i) => (
-                <button
-                  key={d}
-                  onMouseEnter={() => { setActiveDrop(i); setHeroImg(heroImages[i]); }}
-                  className={`text-left py-2.5 border-b hairline text-sm transition-all duration-300 flex items-center justify-between group ${
-                    activeDrop === i ? "text-accent pl-4" : "text-foreground"
-                  }`}
-                >
-                  <span>{d}</span>
-                  <span className="text-[10px] text-muted-foreground">0{i + 1}</span>
-                </button>
-              ))}
-            </div>
-          </div>
+
         </div>
         <div className="lg:w-1/2 order-1 lg:order-2 relative">
           <div className="relative aspect-[3/4] lg:aspect-auto lg:h-full overflow-hidden bg-secondary">
-            <Image src={heroImg} alt="Featured drop" className="w-full h-full" fittingType="fill" />
-            <div className="absolute bottom-6 left-6 bg-background/90 backdrop-blur px-5 py-3">
-              <p className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground">Now Featured</p>
-              <p className="text-sm font-semibold">{drops[activeDrop]}</p>
-            </div>
+            <Image src={HERO_IMG} alt="Featured drop" className="w-full h-full" fittingType="fill" />
           </div>
         </div>
       </section>

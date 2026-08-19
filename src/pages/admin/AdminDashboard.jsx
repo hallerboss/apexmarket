@@ -100,11 +100,12 @@ export default function AdminDashboard() {
       </div>
 
       {/* Quick actions */}
-      <div className="grid md:grid-cols-3 gap-4">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         {[
-          { label: "Add Product", link: "/admin/products?new=1", desc: "Upload a new object to the archive" },
-          { label: "Create Page", link: "/admin/pages?new=1", desc: "Publish a new CMS page" },
-          { label: "Moderate Reviews", link: "/admin/reviews", desc: `${stats.pendingReviews} pending approval` },
+          { label: "Add Product", link: "/admin/products?new=1", desc: "Upload a new object" },
+          { label: "Create Category", link: "/admin/categories", desc: "Add a product category" },
+          { label: "Create Page", link: "/admin/pages?new=1", desc: "Publish a CMS page" },
+          { label: "Approve Reviews", link: "/admin/reviews", desc: `${stats.pendingReviews} pending` },
         ].map((a) => (
           <Link key={a.label} to={a.link} className="bg-[#0a0a0a] border border-white/5 p-6 hover:border-accent/40 transition-colors group">
             <h4 className="text-base font-semibold text-white group-hover:text-accent transition-colors">{a.label}</h4>

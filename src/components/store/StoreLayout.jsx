@@ -57,7 +57,7 @@ export default function StoreLayout() {
                   <Link
                     key={l.label}
                     to={l.path}
-                    className="text-[12px] uppercase tracking-[0.15em] font-medium hover:text-accent transition-colors relative group"
+                    className="text-sm font-normal normal-case tracking-normal hover:text-accent transition-colors relative group"
                   >
                     {l.label}
                     <span className="absolute -bottom-1 left-0 w-0 h-px bg-accent group-hover:w-full transition-all duration-300" />
