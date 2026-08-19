@@ -113,9 +113,9 @@ export default function StoreLayout() {
 
       {/* Full-screen menu overlay */}
       {menuOpen && (
-        <div className="fixed inset-0 z-50 bg-background/98 backdrop-blur-xl flex flex-col">
+        <div className="fixed inset-0 z-50 bg-white flex flex-col">
           <div className="container-bleed px-5 lg:px-10 flex items-center justify-between h-16 border-b hairline">
-            <span className="display-text text-xl">WOLMART</span>
+            <span className="text-xl font-normal tracking-tight">WOLMART</span>
             <button onClick={() => setMenuOpen(false)} className="p-2"><X className="w-6 h-6" /></button>
           </div>
           <div className="flex-1 flex flex-col lg:flex-row">
@@ -124,7 +124,7 @@ export default function StoreLayout() {
                 <Link
                   key={l.label}
                   to={l.path}
-                  className="display-text text-4xl lg:text-7xl hover:text-accent transition-colors duration-300"
+                  className="text-4xl lg:text-7xl font-normal hover:text-accent transition-colors duration-300"
                   style={{ animation: `fadeInUp 0.5s ease ${i * 0.05}s both` }}
                 >
                   {l.label}
