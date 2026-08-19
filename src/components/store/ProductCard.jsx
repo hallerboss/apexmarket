@@ -1,77 +1,124 @@
 import { Link } from "react-router-dom";
-import { Star } from "lucide-react";
+import { Star, Check } from "lucide-react";
 import { Image } from "@/components/ui/image";
 import { useCart } from "@/lib/cartContext";
-import { useQuickView } from "@/lib/quickViewContext";
 import CompareToggle from "@/components/store/CompareToggle";
+
+const colorMap = {
+  black: "#000000", white: "#ffffff", navy: "#1e2a4a", blue: "#2563eb",
+  red: "#dc2626", yellow: "#f59e0b", green: "#16a34a", gray: "#9ca3af",
+  grey: "#9ca3af", brown: "#7c5e3c", beige: "#e8d8c0", pink: "#ec4899",
+  silver: "#c0c0c0", gold: "#d4af37", purple: "#7c3aed", orange: "#f97316",
+};
+const colorFor = (n) => colorMap[String(n).toLowerCase()] || "#9ca3af";
+const fmt = (n) => `$${Number(n).toFixed(2)}`;
 
 export default function ProductCard({ product, index = 0, compareMode = false }) {
   const { addItem } = useCart();
-  const { open: openQuickView } = useQuickView();
   const hasSale = product.sale_price && product.sale_price < product.price;
   const discount = hasSale ? Math.round(((product.price - product.sale_price) / product.price) * 100) : 0;
+  const variants = product.variants || [];
+  const colorVariant = variants.find((v) => /color/i.test(v.name || ""));
+  const sizeVariant = variants.find((v) => /size/i.test(v.name || ""));
+  const hasOptions = variants.length > 0;
+  const inStock = (product.stock ?? 0) > 0;
 
   return (
-    <div className="product-card group">
-      <Link to={`/product/${product.id}`} className="block img-wrap">
-        {product.images?.[0] && (
-          <Image src={product.images[0]} alt={product.name} className="w-full h-full" fittingType="fill" />
+    <div className="group relative bg-white border border-[#eeeeee] rounded-md overflow-hidden flex flex-col transition-shadow hover:shadow-md">
+      <Link to={`/product/${product.id}`} className="relative block bg-white aspect-square overflow-hidden">
+        {product.images?.[0] ? (
+          <Image src={product.images[0]} alt={product.name} className="w-full h-full" fittingType="fit" />
+        ) : (
+          <div className="w-full h-full bg-secondary" />
         )}
-        {/* Badges */}
-        <div className="absolute top-3 left-3 flex flex-col gap-1.5 z-10">
-          {product.is_new && (
-            <span className="bg-foreground text-background text-[10px] font-bold uppercase tracking-widest px-2 py-1">New</span>
-          )}
-          {hasSale && (
-            <span className="bg-accent text-white text-[10px] font-bold uppercase tracking-widest px-2 py-1">-{discount}%</span>
-          )}
-          {product.top_rated && (
-            <span className="bg-white text-foreground text-[10px] font-bold uppercase tracking-widest px-2 py-1 border hairline">Top</span>
-          )}
-        </div>
+        {hasSale && (
+          <span className="absolute top-2 left-2 bg-[#ff9f43] text-white text-[11px] font-bold px-2 py-1 rounded-sm">
+            {discount}% OFF
+          </span>
+        )}
+        {product.is_new && !hasSale && (
+          <span className="absolute top-2 left-2 bg-foreground text-white text-[11px] font-bold px-2 py-1 rounded-sm">NEW</span>
+        )}
         {compareMode && <CompareToggle productId={product.id} />}
-        {/* Quick view + add */}
-        <div className="absolute bottom-0 left-0 right-0 flex translate-y-full group-hover:translate-y-0 transition-transform duration-500 z-10">
-          <button
-            onClick={(e) => { e.preventDefault(); openQuickView(product); }}
-            className="flex-1 bg-background text-foreground text-[11px] font-semibold uppercase tracking-[0.15em] py-3.5 border-t border-l hairline"
-          >
-            Quick View
-          </button>
-          <button
-            onClick={(e) => { e.preventDefault(); addItem(product); }}
-            className="flex-1 bg-foreground text-background text-[11px] font-semibold uppercase tracking-[0.2em] py-3.5"
-          >
-            Add to Cart
-          </button>
-        </div>
       </Link>
-      <div className="pt-4 pb-2">
-        {product.brand && <p className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground mb-1.5">{product.brand}</p>}
+
+      <div className="p-3 flex flex-col gap-2 flex-1">
+        {product.brand && <p className="text-[11px] uppercase tracking-wide text-muted-foreground">{product.brand}</p>}
         <Link to={`/product/${product.id}`}>
-          <h3 className="text-sm font-medium leading-snug hover:text-accent transition-colors line-clamp-2 min-h-[2.5rem]">{product.name}</h3>
+          <h3 className="text-sm text-foreground font-normal leading-snug line-clamp-2 hover:text-accent transition-colors min-h-[2.5rem]">
+            {product.name}
+          </h3>
         </Link>
+
         {product.rating > 0 && (
-          <div className="flex items-center gap-1 mt-2">
+          <div className="flex items-center gap-1.5">
             <div className="flex">
               {[1, 2, 3, 4, 5].map((n) => (
                 <Star
                   key={n}
-                  className={`w-3 h-3 ${n <= Math.round(product.rating) ? "fill-foreground text-foreground" : "text-muted-foreground/40"}`}
+                  className={`w-3.5 h-3.5 ${n <= Math.round(product.rating) ? "fill-[#ff9f43] text-[#ff9f43]" : "text-[#e5e5e5]"}`}
                 />
               ))}
             </div>
-            <span className="text-[11px] text-muted-foreground">({product.reviews_count || 0})</span>
+            <span className="text-xs text-foreground font-semibold">{product.rating.toFixed(1)}</span>
+            <span className="text-xs text-muted-foreground">({product.reviews_count || 0})</span>
           </div>
         )}
-        <div className="flex items-baseline gap-2 mt-2.5">
+
+        <div className="flex items-center gap-1.5 text-xs">
+          <Check className={`w-3.5 h-3.5 ${inStock ? "text-accent" : "text-muted-foreground"}`} />
+          <span className={inStock ? "text-foreground" : "text-muted-foreground"}>{inStock ? "In stock" : "Out of stock"}</span>
+        </div>
+
+        <div className="flex items-baseline gap-2">
           {hasSale ? (
             <>
-              <span className="text-base font-bold text-accent">${product.sale_price.toFixed(2)}</span>
-              <span className="text-xs text-muted-foreground line-through">${product.price.toFixed(2)}</span>
+              <span className="font-bold text-foreground">{fmt(product.sale_price)}</span>
+              <span className="text-sm text-muted-foreground line-through">{fmt(product.price)}</span>
             </>
           ) : (
-            <span className="text-base font-bold">${product.price.toFixed(2)}</span>
+            <span className="font-bold text-foreground">{fmt(product.price)}</span>
+          )}
+        </div>
+
+        {colorVariant && (
+          <div className="flex items-center gap-1.5 flex-wrap">
+            {colorVariant.options.slice(0, 6).map((o) => (
+              <span
+                key={o}
+                title={o}
+                className="w-4 h-4 rounded-full border border-[#e5e5e5]"
+                style={{ backgroundColor: colorFor(o) }}
+              />
+            ))}
+          </div>
+        )}
+
+        {sizeVariant && (
+          <div className="flex items-center gap-1.5 flex-wrap">
+            {sizeVariant.options.slice(0, 5).map((o) => (
+              <span key={o} className="min-w-[28px] text-center text-xs border border-[#d8d8d8] px-2 py-1 rounded-sm text-foreground">
+                {o}
+              </span>
+            ))}
+          </div>
+        )}
+
+        <div className="mt-auto pt-1">
+          {hasOptions ? (
+            <Link
+              to={`/product/${product.id}`}
+              className="block w-full text-center text-sm font-semibold text-accent border border-accent bg-white py-2.5 rounded-md hover:bg-accent hover:text-white transition-colors"
+            >
+              Select options
+            </Link>
+          ) : (
+            <button
+              onClick={() => addItem(product)}
+              className="w-full text-sm font-semibold text-accent border border-accent bg-white py-2.5 rounded-md hover:bg-accent hover:text-white transition-colors"
+            >
+              Add to cart
+            </button>
           )}
         </div>
       </div>

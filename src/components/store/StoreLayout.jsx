@@ -1,9 +1,12 @@
 import { useState, useEffect } from "react";
 import { Link, Outlet, useLocation } from "react-router-dom";
-import { Search, ShoppingBag, Menu, X, User } from "lucide-react";
+import { Search, ShoppingBag, Menu, X, Phone, Scale } from "lucide-react";
 import { useCart } from "@/lib/cartContext";
 import { trackPageView } from "@/lib/analytics";
 import StoreFooter from "@/components/store/StoreFooter";
+import SearchBar from "@/components/store/SearchBar";
+import CategoryNav from "@/components/store/CategoryNav";
+import FloatingSidebar from "@/components/store/FloatingSidebar";
 
 const navLinks = [
   { label: "Home", path: "/" },
@@ -15,17 +18,10 @@ const navLinks = [
 ];
 
 export default function StoreLayout() {
-  const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const { count } = useCart();
   const location = useLocation();
-
-  useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 20);
-    window.addEventListener("scroll", onScroll);
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
 
   useEffect(() => {
     setMenuOpen(false);
@@ -37,106 +33,90 @@ export default function StoreLayout() {
   }, [location.pathname, location.search]);
 
   return (
-    <div className="min-h-screen bg-background flex">
-      {/* Monolith sidebar — desktop */}
-      <aside className="hidden lg:flex fixed left-0 top-0 bottom-0 w-16 flex-col items-center justify-between py-8 z-40 border-r hairline bg-background">
-        <Link to="/" className="display-text text-xl">W</Link>
-        <div className="[writing-mode:vertical-rl] rotate-180 text-[10px] uppercase tracking-[0.3em] text-muted-foreground">
-          Wolmart · Est. 2024
-        </div>
-      </aside>
+    <div className="min-h-screen bg-background">
+      <header className="sticky top-0 z-30 bg-white border-b border-[#eeeeee]">
+        {/* top row */}
+        <div className="container-bleed px-5 lg:px-10 flex items-center justify-between gap-4 h-16 lg:h-20">
+          <Link to="/" className="flex items-center gap-2 shrink-0">
+            <span className="w-7 h-7 rounded-md bg-accent text-white flex items-center justify-center font-bold">w</span>
+            <span className="text-2xl font-semibold tracking-tight">wolmart</span>
+          </Link>
 
-      {/* Top bar */}
-      <div className="flex-1 lg:ml-16 overflow-x-hidden">
-        <header className={`sticky top-0 z-30 transition-all duration-500 ${scrolled ? "bg-background/95 backdrop-blur-md border-b hairline" : "bg-transparent"}`}>
-          <div className="container-bleed px-5 lg:px-10 flex items-center justify-between h-16">
-            <div className="flex items-center gap-8">
-              <Link to="/" className="display-text text-2xl lg:hidden">WOLMART</Link>
-              <nav className="hidden lg:flex items-center gap-7">
-                {navLinks.map((l) => (
-                  <Link
-                    key={l.label}
-                    to={l.path}
-                    className="text-sm font-normal normal-case tracking-normal hover:text-accent transition-colors relative group"
-                  >
-                    {l.label}
-                    <span className="absolute -bottom-1 left-0 w-0 h-px bg-accent group-hover:w-full transition-all duration-300" />
-                  </Link>
-                ))}
-              </nav>
-            </div>
-            <div className="flex items-center gap-1">
-              <button onClick={() => setSearchOpen(!searchOpen)} className="p-2.5 hover:text-accent transition-colors" aria-label="Search">
-                <Search className="w-[18px] h-[18px]" />
-              </button>
-              <Link to="/admin" className="p-2.5 hover:text-accent transition-colors hidden sm:block" aria-label="Admin">
-                <User className="w-[18px] h-[18px]" />
-              </Link>
-              <Link to="/cart" className="p-2.5 hover:text-accent transition-colors relative" aria-label="Cart">
-                <ShoppingBag className="w-[18px] h-[18px]" />
-                {count > 0 && (
-                  <span className="absolute top-1 right-1 bg-accent text-white text-[9px] font-bold w-4 h-4 rounded-full flex items-center justify-center">
-                    {count}
-                  </span>
-                )}
-              </Link>
-              <button onClick={() => setMenuOpen(true)} className="p-2.5" aria-label="Menu">
-                <Menu className="w-5 h-5" />
-              </button>
-            </div>
+          <div className="hidden md:flex flex-1 justify-center px-4">
+            <SearchBar />
           </div>
-          {/* Search overlay */}
-          {searchOpen && (
-            <div className="border-t hairline bg-background">
-              <div className="container-bleed px-5 lg:px-10 py-6">
-                <div className="flex items-center gap-3 border-b hairline pb-3">
-                  <Search className="w-5 h-5 text-muted-foreground" />
-                  <input
-                    autoFocus
-                    placeholder="Search the archive…"
-                    className="flex-1 bg-transparent text-lg outline-none placeholder:text-muted-foreground/50"
-                    onKeyDown={(e) => { if (e.key === "Enter") window.location.href = `/shop?q=${e.target.value}`; }}
-                  />
-                  <button onClick={() => setSearchOpen(false)}><X className="w-5 h-5" /></button>
-                </div>
+
+          <div className="flex items-center gap-3 lg:gap-5 shrink-0">
+            <div className="hidden lg:flex items-center gap-2">
+              <Phone className="w-4 h-4 text-accent" />
+              <div className="leading-tight">
+                <p className="text-[11px] text-muted-foreground">Call Us Now:</p>
+                <p className="text-sm font-bold text-foreground">0(800)123-456</p>
               </div>
             </div>
-          )}
-        </header>
+            <Link to="/shop" className="hidden md:block hover:text-accent transition-colors" aria-label="Compare">
+              <Scale className="w-5 h-5" />
+            </Link>
+            <Link to="/cart" className="relative hover:text-accent transition-colors" aria-label="Cart">
+              <ShoppingBag className="w-5 h-5" />
+              {count > 0 && (
+                <span className="absolute -top-1.5 -right-1.5 bg-accent text-white text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center">
+                  {count}
+                </span>
+              )}
+            </Link>
+            <button onClick={() => setSearchOpen((v) => !v)} className="md:hidden p-1" aria-label="Search">
+              <Search className="w-5 h-5" />
+            </button>
+            <button onClick={() => setMenuOpen(true)} className="md:hidden p-1" aria-label="Menu">
+              <Menu className="w-5 h-5" />
+            </button>
+          </div>
+        </div>
 
-        <main>
-          <Outlet />
-        </main>
+        <CategoryNav />
 
-        <StoreFooter />
-      </div>
+        {searchOpen && (
+          <div className="md:hidden border-t border-[#eeeeee] bg-white">
+            <div className="container-bleed px-5 py-4">
+              <SearchBar />
+            </div>
+          </div>
+        )}
+      </header>
 
-      {/* Full-screen menu overlay */}
+      <main>
+        <Outlet />
+      </main>
+
+      <StoreFooter />
+      <FloatingSidebar />
+
+      {/* Full-screen menu overlay (mobile) */}
       {menuOpen && (
         <div className="fixed inset-0 z-50 bg-white flex flex-col">
           <div className="container-bleed px-5 lg:px-10 flex items-center justify-between h-16 border-b hairline">
             <span className="text-xl font-normal tracking-tight">WOLMART</span>
             <button onClick={() => setMenuOpen(false)} className="p-2"><X className="w-6 h-6" /></button>
           </div>
-          <div className="flex-1 flex flex-col lg:flex-row">
-            <nav className="flex-1 flex flex-col justify-center px-5 lg:px-20 gap-2 lg:gap-4">
-              {navLinks.map((l, i) => (
-                <Link
-                  key={l.label}
-                  to={l.path}
-                  className="text-4xl lg:text-7xl font-normal hover:text-accent transition-colors duration-300"
-                  style={{ animation: `fadeInUp 0.5s ease ${i * 0.05}s both` }}
-                >
-                  {l.label}
-                </Link>
-              ))}
-            </nav>
-            <div className="lg:w-96 border-l hairline p-5 lg:p-10 flex flex-col justify-end gap-4 text-sm text-muted-foreground">
-              <p className="serif-text text-base text-foreground">A high-fidelity retail ecosystem for curated discovery.</p>
-              <p>hello@wolmart.studio</p>
-              <p>+1 (555) 028-2024</p>
-              <Link to="/admin" className="text-[11px] uppercase tracking-[0.2em] text-foreground hover:text-accent mt-4">Admin Panel →</Link>
-            </div>
+          <nav className="flex-1 flex flex-col justify-center px-5 lg:px-20 gap-3 lg:gap-4">
+            {navLinks.map((l) => (
+              <Link
+                key={l.label}
+                to={l.path}
+                className="text-3xl lg:text-6xl font-normal hover:text-accent transition-colors"
+              >
+                {l.label}
+              </Link>
+            ))}
+          </nav>
+          <div className="p-5 lg:p-10 border-t hairline text-sm text-muted-foreground space-y-1">
+            <p className="text-foreground">A high-fidelity retail ecosystem for curated discovery.</p>
+            <p>hello@wolmart.studio</p>
+            <p>+1 (555) 028-2024</p>
+            <Link to="/admin" className="inline-block text-[11px] uppercase tracking-[0.2em] text-foreground hover:text-accent mt-3">
+              Admin Panel →
+            </Link>
           </div>
         </div>
       )}

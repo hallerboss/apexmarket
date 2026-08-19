@@ -4,8 +4,8 @@ import { base44 } from "@/api/base44Client";
 import { Image } from "@/components/ui/image";
 import ProductRow from "@/components/store/ProductRow";
 import SectionHeader from "@/components/store/SectionHeader";
+import HeroCarousel from "@/components/store/HeroCarousel";
 
-const HERO_IMG = "https://media.base44.com/images/public/6a8447d4dfbc61d89c33872d/b4d672465_generated_e014edfb.png";
 const FASHION_BANNER = "https://media.base44.com/images/public/6a8447d4dfbc61d89c33872d/c1a582fac_generated_6bd4c4e4.png";
 
 export default function Home() {
@@ -25,30 +25,7 @@ export default function Home() {
 
   return (
     <div>
-      {/* HERO — split screen */}
-      <section className="container-bleed px-5 lg:px-10 min-h-[70vh] lg:min-h-[80vh] flex flex-col lg:flex-row gap-8 lg:gap-16 pt-8 lg:pt-12 pb-12 lg:pb-20">
-        <div className="lg:w-1/2 flex flex-col justify-between order-2 lg:order-1">
-          <div>
-            <p className="text-[11px] uppercase tracking-[0.25em] text-accent font-semibold mb-6">New Collection · 2024</p>
-            <h1 className="display-text text-[10vw] lg:text-[6vw] leading-[0.85]">
-              Electronic<br />Sale
-            </h1>
-            <p className="serif-text text-lg lg:text-xl text-muted-foreground mt-8 max-w-md leading-relaxed">
-              Starting at $299.99. A curated archive of objects worth owning — engineered for the modern ritual of commerce.
-            </p>
-            <div className="flex gap-4 mt-10">
-              <Link to="/shop" className="btn-mono-solid">Shop Now</Link>
-              <Link to="/shop?deals=1" className="btn-mono-outline">Hot Deals</Link>
-            </div>
-          </div>
-
-        </div>
-        <div className="lg:w-1/2 order-1 lg:order-2 relative">
-          <div className="relative aspect-[3/4] lg:aspect-auto lg:h-full overflow-hidden bg-secondary">
-            <Image src={HERO_IMG} alt="Featured drop" className="w-full h-full" fittingType="fill" />
-          </div>
-        </div>
-      </section>
+      <HeroCarousel />
 
       {/* HOT DEALS BAR */}
       <section className="bg-foreground text-background py-6 overflow-hidden">
