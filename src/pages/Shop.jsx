@@ -3,10 +3,10 @@ import { useSearchParams } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
 import { SlidersHorizontal, X } from "lucide-react";
 import ProductCard from "@/components/store/ProductCard";
+import CategoryDropdown from "@/components/store/CategoryDropdown";
 import { CompareProvider } from "@/lib/compareContext";
 import CompareBar from "@/components/store/CompareBar";
 
-const categories = ["Electronics", "Fashion", "Furniture", "Watches", "Accessories"];
 const sortOptions = [
   { value: "newest", label: "Newest" },
   { value: "price-asc", label: "Price: Low to High" },
@@ -79,13 +79,8 @@ export default function Shop() {
             <h3 className="text-[11px] uppercase tracking-[0.2em] font-semibold">Filters</h3>
           </div>
           <div className="mb-10">
-            <p className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground mb-4">Category</p>
-            <div className="flex flex-col gap-2.5">
-              <button onClick={() => setParam("category", "")} className={`text-sm text-left hover:text-accent transition-colors ${!activeCategory ? "text-accent font-semibold" : "text-foreground"}`}>All</button>
-              {categories.map((c) => (
-                <button key={c} onClick={() => setParam("category", c)} className={`text-sm text-left hover:text-accent transition-colors ${activeCategory === c ? "text-accent font-semibold" : "text-foreground"}`}>{c}</button>
-              ))}
-            </div>
+            <p className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground mb-3">Category</p>
+            <CategoryDropdown value={activeCategory} onSelect={(c) => setParam("category", c)} />
           </div>
           <div className="mb-10">
             <p className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground mb-4">Special</p>
@@ -138,13 +133,8 @@ export default function Shop() {
             <button onClick={() => setShowFilters(false)}><X className="w-5 h-5" /></button>
           </div>
           <div className="p-5">
-            <p className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground mb-4">Category</p>
-            <div className="flex flex-col gap-2.5 mb-8">
-              <button onClick={() => { setParam("category", ""); setShowFilters(false); }} className={`text-sm text-left ${!activeCategory ? "text-accent font-semibold" : ""}`}>All</button>
-              {categories.map((c) => (
-                <button key={c} onClick={() => { setParam("category", c); setShowFilters(false); }} className={`text-sm text-left ${activeCategory === c ? "text-accent font-semibold" : ""}`}>{c}</button>
-              ))}
-            </div>
+            <p className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground mb-3">Category</p>
+            <CategoryDropdown value={activeCategory} onSelect={(c) => { setParam("category", c); setShowFilters(false); }} />
           </div>
         </div>
       )}

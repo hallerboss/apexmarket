@@ -32,7 +32,7 @@ export default function StoreFooter() {
             <h4 className="text-[11px] uppercase tracking-[0.2em] font-semibold mb-5">Company</h4>
             <ul className="space-y-3 text-sm text-muted-foreground">
               <li><Link to="/page/about" className="hover:text-foreground">About</Link></li>
-              <li><Link to="/page/contact" className="hover:text-foreground">Contact</Link></li>
+              <li><Link to="/contact" className="hover:text-foreground">Contact</Link></li>
               <li><Link to="/page/shipping" className="hover:text-foreground">Shipping</Link></li>
               <li><Link to="/page/returns" className="hover:text-foreground">Returns</Link></li>
             </ul>

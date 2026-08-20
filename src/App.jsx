@@ -16,6 +16,7 @@ import Shop from "@/pages/Shop";
 import ProductDetail from "@/pages/ProductDetail";
 import Cart from "@/pages/Cart";
 import PageView from "@/pages/PageView";
+import Contact from "@/pages/Contact";
 import AdminDashboard from "@/pages/admin/AdminDashboard";
 import AdminProducts from "@/pages/admin/AdminProducts";
 import AdminCategories from "@/pages/admin/AdminCategories";
@@ -57,6 +58,7 @@ const AuthenticatedApp = () => {
         <Route path="/shop" element={<Shop />} />
         <Route path="/product/:id" element={<ProductDetail />} />
         <Route path="/cart" element={<Cart />} />
+        <Route path="/contact" element={<Contact />} />
         <Route path="/page/:slug" element={<PageView />} />
       </Route>
       {/* Admin */}

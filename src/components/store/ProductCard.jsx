@@ -17,8 +17,7 @@ export default function ProductCard({ product, index = 0, compareMode = false })
   const { addItem } = useCart();
   const hasSale = product.sale_price && product.sale_price < product.price;
   const discount = hasSale ? Math.round(((product.price - product.sale_price) / product.price) * 100) : 0;
-  const variants = product.variants || [];
-  const colorVariant = variants.find((v) => /color/i.test(v.name || ""));
+  const colorVariant = (product.variants || []).find((v) => /color/i.test(v.name || ""));
   const inStock = (product.stock ?? 0) > 0;
 
   return (
@@ -40,7 +39,7 @@ export default function ProductCard({ product, index = 0, compareMode = false })
         {compareMode && <CompareToggle productId={product.id} />}
       </Link>
 
-      <div className="p-3 flex flex-col gap-2 flex-1">
+      <div className="p-4 flex flex-col gap-3 flex-1">
         {product.brand && <p className="text-[11px] uppercase tracking-wide text-muted-foreground">{product.brand}</p>}
         <Link to={`/product/${product.id}`}>
           <h3 className="text-sm text-foreground font-normal leading-snug line-clamp-2 hover:text-accent transition-colors min-h-[2.5rem]">
@@ -58,7 +57,7 @@ export default function ProductCard({ product, index = 0, compareMode = false })
                 />
               ))}
             </div>
-            <span className="text-xs text-foreground font-semibold">{product.rating.toFixed(1)}</span>
+            <span className="text-xs text-foreground">{product.rating.toFixed(1)}</span>
             <span className="text-xs text-muted-foreground">({product.reviews_count || 0})</span>
           </div>
         )}
@@ -71,11 +70,11 @@ export default function ProductCard({ product, index = 0, compareMode = false })
         <div className="flex items-baseline gap-2">
           {hasSale ? (
             <>
-              <span className="font-bold text-foreground">{fmt(product.sale_price)}</span>
+              <span className="text-lg font-medium text-foreground">{fmt(product.sale_price)}</span>
               <span className="text-sm text-muted-foreground line-through">{fmt(product.price)}</span>
             </>
           ) : (
-            <span className="font-bold text-foreground">{fmt(product.price)}</span>
+            <span className="text-lg font-medium text-foreground">{fmt(product.price)}</span>
           )}
         </div>
 
@@ -95,7 +94,7 @@ export default function ProductCard({ product, index = 0, compareMode = false })
         <div className="mt-auto pt-1">
           <button
             onClick={() => addItem(product)}
-            className="w-full text-sm font-semibold bg-[#FFD814] text-[#0F1111] py-2.5 rounded-full hover:bg-[#f5c800] transition-colors"
+            className="w-full text-sm font-medium bg-[#FFD814] text-[#0F1111] py-2.5 rounded-full hover:bg-[#f5c800] transition-colors"
           >
             Add to cart
           </button>
