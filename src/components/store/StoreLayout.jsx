@@ -6,7 +6,6 @@ import { trackPageView } from "@/lib/analytics";
 import StoreFooter from "@/components/store/StoreFooter";
 import SearchBar from "@/components/store/SearchBar";
 import CategoryNav from "@/components/store/CategoryNav";
-import FloatingSidebar from "@/components/store/FloatingSidebar";
 
 const navLinks = [
   { label: "Home", path: "/" },
@@ -90,7 +89,6 @@ export default function StoreLayout() {
       </main>
 
       <StoreFooter />
-      <FloatingSidebar />
 
       {/* Full-screen menu overlay (mobile) */}
       {menuOpen && (

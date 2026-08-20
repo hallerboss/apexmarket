@@ -19,8 +19,6 @@ export default function ProductCard({ product, index = 0, compareMode = false })
   const discount = hasSale ? Math.round(((product.price - product.sale_price) / product.price) * 100) : 0;
   const variants = product.variants || [];
   const colorVariant = variants.find((v) => /color/i.test(v.name || ""));
-  const sizeVariant = variants.find((v) => /size/i.test(v.name || ""));
-  const hasOptions = variants.length > 0;
   const inStock = (product.stock ?? 0) > 0;
 
   return (
@@ -94,32 +92,13 @@ export default function ProductCard({ product, index = 0, compareMode = false })
           </div>
         )}
 
-        {sizeVariant && (
-          <div className="flex items-center gap-1.5 flex-wrap">
-            {sizeVariant.options.slice(0, 5).map((o) => (
-              <span key={o} className="min-w-[28px] text-center text-xs border border-[#d8d8d8] px-2 py-1 rounded-sm text-foreground">
-                {o}
-              </span>
-            ))}
-          </div>
-        )}
-
         <div className="mt-auto pt-1">
-          {hasOptions ? (
-            <Link
-              to={`/product/${product.id}`}
-              className="block w-full text-center text-sm font-semibold text-accent border border-accent bg-white py-2.5 rounded-md hover:bg-accent hover:text-white transition-colors"
-            >
-              Select options
-            </Link>
-          ) : (
-            <button
-              onClick={() => addItem(product)}
-              className="w-full text-sm font-semibold text-accent border border-accent bg-white py-2.5 rounded-md hover:bg-accent hover:text-white transition-colors"
-            >
-              Add to cart
-            </button>
-          )}
+          <button
+            onClick={() => addItem(product)}
+            className="w-full text-sm font-semibold bg-[#FFD814] text-[#0F1111] py-2.5 rounded-full hover:bg-[#f5c800] transition-colors"
+          >
+            Add to cart
+          </button>
         </div>
       </div>
     </div>
