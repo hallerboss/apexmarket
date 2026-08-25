@@ -9,7 +9,7 @@ export default function Cart() {
   const { items, removeItem, updateQty, subtotal, clear } = useCart();
   const [placing, setPlacing] = useState(false);
   const [placed, setPlaced] = useState(null);
-  const [form, setForm] = useState({ customer_name: "", customer_email: "", customer_phone: "", shipping_address: "", payment_method: "Card" });
+  const [form, setForm] = useState({ customer_name: "", customer_email: "" });
 
   const shipping = subtotal > 50 ? 0 : 9.99;
   const total = subtotal + shipping;
@@ -137,14 +137,10 @@ export default function Cart() {
             <form onSubmit={checkout} className="space-y-3">
               <input required placeholder="Full name" value={form.customer_name} onChange={(e) => setForm({ ...form, customer_name: e.target.value })} className="w-full border hairline px-4 py-2.5 text-sm bg-transparent focus:border-accent outline-none" />
               <input required type="email" placeholder="Email" value={form.customer_email} onChange={(e) => setForm({ ...form, customer_email: e.target.value })} className="w-full border hairline px-4 py-2.5 text-sm bg-transparent focus:border-accent outline-none" />
-              <input placeholder="Phone" value={form.customer_phone} onChange={(e) => setForm({ ...form, customer_phone: e.target.value })} className="w-full border hairline px-4 py-2.5 text-sm bg-transparent focus:border-accent outline-none" />
-              <textarea required placeholder="Shipping address" rows={2} value={form.shipping_address} onChange={(e) => setForm({ ...form, shipping_address: e.target.value })} className="w-full border hairline px-4 py-2.5 text-sm bg-transparent focus:border-accent outline-none resize-none" />
-              <select value={form.payment_method} onChange={(e) => setForm({ ...form, payment_method: e.target.value })} className="w-full border hairline px-4 py-2.5 text-sm bg-transparent focus:border-accent outline-none">
-                <option>Card</option><option>PayPal</option><option>Cash on Delivery</option>
-              </select>
               <button type="submit" disabled={placing} className="btn-mono-solid w-full disabled:opacity-50">
                 {placing ? "Placing…" : "Place Order"}
               </button>
+              <p className="text-[11px] text-muted-foreground text-center">Shipping & payment details collected at checkout.</p>
             </form>
           </div>
         </div>

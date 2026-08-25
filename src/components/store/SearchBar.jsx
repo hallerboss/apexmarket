@@ -3,7 +3,7 @@ import { useNavigate, Link } from "react-router-dom";
 import { Search, Camera, LayoutDashboard, Loader2 } from "lucide-react";
 import { base44 } from "@/api/base44Client";
 
-export default function SearchBar() {
+export default function SearchBar({ autoFocus = false }) {
   const [q, setQ] = useState("");
   const [busy, setBusy] = useState(false);
   const navigate = useNavigate();
@@ -40,6 +40,7 @@ export default function SearchBar() {
             value={q}
             onChange={(e) => setQ(e.target.value)}
             placeholder="Search in..."
+            autoFocus={autoFocus}
             className="flex-1 bg-transparent text-sm outline-none h-full min-w-0"
           />
           <input ref={fileRef} type="file" accept="image/*" className="hidden" onChange={onFile} />
@@ -56,7 +57,7 @@ export default function SearchBar() {
       </div>
       <button
         type="submit"
-        className="hidden sm:inline-flex h-10 px-4 lg:px-5 bg-accent text-white text-sm font-semibold rounded-md hover:opacity-90 transition-opacity items-center"
+        className="inline-flex h-9 sm:h-10 px-4 lg:px-5 bg-accent text-white text-sm font-semibold rounded-md hover:opacity-90 transition-opacity items-center"
       >
         Search
       </button>

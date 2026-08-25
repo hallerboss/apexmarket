@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link, Outlet, useLocation } from "react-router-dom";
-import { ShoppingBag, Menu, X, Phone, Scale } from "lucide-react";
+import { Search, ShoppingBag, Menu, X, Phone, Scale } from "lucide-react";
 import { useCart } from "@/lib/cartContext";
 import { trackPageView } from "@/lib/analytics";
 import StoreFooter from "@/components/store/StoreFooter";
@@ -18,11 +18,13 @@ const navLinks = [
 
 export default function StoreLayout() {
   const [menuOpen, setMenuOpen] = useState(false);
+  const [searchOpen, setSearchOpen] = useState(false);
   const { count } = useCart();
   const location = useLocation();
 
   useEffect(() => {
     setMenuOpen(false);
+    setSearchOpen(false);
   }, [location.pathname]);
 
   useEffect(() => {
@@ -39,7 +41,7 @@ export default function StoreLayout() {
             <span className="text-xl sm:text-2xl font-semibold tracking-tight">wolmart</span>
           </Link>
 
-          <div className="flex flex-1 justify-center px-2 sm:px-4">
+          <div className="hidden sm:flex flex-1 justify-center px-4">
             <SearchBar />
           </div>
 
@@ -54,6 +56,9 @@ export default function StoreLayout() {
             <Link to="/shop" className="hidden md:block hover:text-accent transition-colors" aria-label="Compare">
               <Scale className="w-5 h-5" />
             </Link>
+            <button onClick={() => setSearchOpen(true)} className="sm:hidden p-1 hover:text-accent transition-colors" aria-label="Search">
+              <Search className="w-5 h-5" />
+            </button>
             <Link to="/cart" className="relative hover:text-accent transition-colors" aria-label="Cart">
               <ShoppingBag className="w-5 h-5" />
               {count > 0 && (
@@ -103,6 +108,19 @@ export default function StoreLayout() {
             <Link to="/admin" className="inline-block text-[11px] uppercase tracking-[0.2em] text-foreground hover:text-accent mt-3">
               Admin Panel →
             </Link>
+          </div>
+        </div>
+      )}
+
+      {/* Search popup (mobile) */}
+      {searchOpen && (
+        <div className="fixed inset-0 z-50 bg-white flex flex-col sm:hidden">
+          <div className="container-bleed px-5 flex items-center justify-between h-16 border-b hairline">
+            <span className="text-lg font-semibold tracking-tight">Search</span>
+            <button onClick={() => setSearchOpen(false)} className="p-2"><X className="w-6 h-6" /></button>
+          </div>
+          <div className="container-bleed px-5 py-6">
+            <SearchBar autoFocus />
           </div>
         </div>
       )}
