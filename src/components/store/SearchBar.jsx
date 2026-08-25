@@ -32,9 +32,9 @@ export default function SearchBar() {
   };
 
   return (
-    <form onSubmit={submit} className="flex items-center gap-2 w-full max-w-xl">
-      <div className="flex-1 flex items-stretch h-10 rounded-md border border-[#d8d8d8] bg-white overflow-hidden">
-        <div className="flex-1 flex items-center gap-2 px-3">
+    <form onSubmit={submit} className="flex items-center gap-1.5 sm:gap-2 w-full max-w-xl">
+      <div className="flex-1 flex items-stretch h-9 sm:h-10 rounded-md border border-[#d8d8d8] bg-white overflow-hidden">
+        <div className="flex-1 flex items-center gap-1.5 sm:gap-2 px-2 sm:px-3">
           <Search className="w-4 h-4 text-muted-foreground shrink-0" />
           <input
             value={q}
@@ -56,13 +56,13 @@ export default function SearchBar() {
       </div>
       <button
         type="submit"
-        className="hidden sm:inline-flex h-10 px-5 bg-accent text-white text-sm font-semibold rounded-md hover:opacity-90 transition-opacity items-center"
+        className="hidden sm:inline-flex h-10 px-4 lg:px-5 bg-accent text-white text-sm font-semibold rounded-md hover:opacity-90 transition-opacity items-center"
       >
         Search
       </button>
       <Link
         to="/admin"
-        className="h-10 px-3 sm:px-4 flex items-center gap-1.5 text-sm font-semibold text-accent border border-accent rounded-md hover:bg-accent hover:text-white transition-colors whitespace-nowrap"
+        className="h-9 sm:h-10 px-2.5 sm:px-4 flex items-center gap-1.5 text-sm font-semibold text-accent border border-accent rounded-md hover:bg-accent hover:text-white transition-colors whitespace-nowrap"
       >
         <LayoutDashboard className="w-4 h-4" /> <span className="hidden sm:inline">Admin</span>
       </Link>

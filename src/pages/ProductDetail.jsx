@@ -53,6 +53,15 @@ export default function ProductDetail() {
   }, [id]);
 
   useEffect(() => {
+    const unsubscribe = base44.entities.Product.subscribe((event) => {
+      if (event.id === id && event.type === "update") {
+        setProduct((cur) => (cur ? { ...cur, ...event.data } : cur));
+      }
+    });
+    return unsubscribe;
+  }, [id]);
+
+  useEffect(() => {
     const onScroll = () => setShowBuyBar(window.scrollY > 600);
     window.addEventListener("scroll", onScroll);
     return () => window.removeEventListener("scroll", onScroll);
@@ -143,6 +152,20 @@ export default function ProductDetail() {
               <span className="text-3xl font-bold">${product.price.toFixed(2)}</span>
             )}
           </div>
+
+          {/* Stock indicator — auto-updates from admin quantity */}
+          <div className="flex items-center gap-2 mb-6">
+            <span className="relative flex h-2.5 w-2.5">
+              {product.stock > 0 && <span className="absolute inline-flex h-full w-full rounded-full bg-green-500 opacity-75 animate-ping" />}
+              <span className={`relative inline-flex rounded-full h-2.5 w-2.5 ${product.stock > 0 ? "bg-green-500" : "bg-destructive"}`} />
+            </span>
+            {product.stock > 0 ? (
+              <span className="text-sm font-medium text-green-600">In stock — {product.stock} available</span>
+            ) : (
+              <span className="text-sm font-medium text-destructive">Out of stock</span>
+            )}
+          </div>
+
           {product.short_description && <p className="serif-text text-lg text-muted-foreground leading-relaxed mb-8 max-w-prose">{product.short_description}</p>}
 
           {/* Variants */}
@@ -168,17 +191,12 @@ export default function ProductDetail() {
             <div className="flex items-center border hairline">
               <button onClick={() => setQty((q) => Math.max(1, q - 1))} className="p-3 hover:text-accent"><Minus className="w-4 h-4" /></button>
               <span className="w-12 text-center text-sm font-semibold">{qty}</span>
-              <button onClick={() => setQty((q) => q + 1)} className="p-3 hover:text-accent"><Plus className="w-4 h-4" /></button>
+              <button onClick={() => setQty((q) => (product.stock > 0 ? Math.min(product.stock, q + 1) : q))} className="p-3 hover:text-accent"><Plus className="w-4 h-4" /></button>
             </div>
-            <button onClick={handleAdd} className="btn-mono-solid flex-1">
+            <button onClick={handleAdd} disabled={product.stock <= 0} className="btn-mono-solid flex-1 disabled:opacity-50 disabled:cursor-not-allowed">
               <ShoppingBag className="w-4 h-4" /> Add to Cart
             </button>
           </div>
-
-          {/* Stock */}
-          <p className="text-sm mb-8">
-            {product.stock > 0 ? <span className="text-green-600 font-medium">In stock — {product.stock} available</span> : <span className="text-destructive font-medium">Out of stock</span>}
-          </p>
 
           {/* Trust badges */}
           <div className="grid grid-cols-3 gap-4 border-t hairline pt-8 mb-10">
@@ -302,7 +320,7 @@ export default function ProductDetail() {
                 <p className="text-xs text-background/60">${(product.sale_price || product.price).toFixed(2)}</p>
               </div>
             </div>
-            <button onClick={handleAdd} className="btn-mono bg-accent text-white hover:bg-white hover:text-foreground shrink-0">
+            <button onClick={handleAdd} disabled={product.stock <= 0} className="btn-mono bg-accent text-white hover:bg-white hover:text-foreground shrink-0 disabled:opacity-50 disabled:cursor-not-allowed">
               <ShoppingBag className="w-4 h-4" /> Add to Cart
             </button>
           </div>

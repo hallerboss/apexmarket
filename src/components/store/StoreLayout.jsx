@@ -34,16 +34,16 @@ export default function StoreLayout() {
       <header className="sticky top-0 z-30 bg-white border-b border-[#eeeeee]">
         {/* top row */}
         <div className="container-bleed px-5 lg:px-10 flex items-center justify-between gap-4 h-16 lg:h-20">
-          <Link to="/" className="flex items-center gap-2 shrink-0">
-            <span className="w-7 h-7 rounded-md bg-accent text-white flex items-center justify-center font-bold">w</span>
-            <span className="text-2xl font-semibold tracking-tight">wolmart</span>
+          <Link to="/" className="flex items-center gap-1.5 sm:gap-2 shrink-0">
+            <span className="w-6 h-6 sm:w-7 sm:h-7 rounded-md bg-accent text-white flex items-center justify-center font-bold text-sm">w</span>
+            <span className="text-xl sm:text-2xl font-semibold tracking-tight">wolmart</span>
           </Link>
 
           <div className="flex flex-1 justify-center px-2 sm:px-4">
             <SearchBar />
           </div>
 
-          <div className="flex items-center gap-3 lg:gap-5 shrink-0">
+          <div className="flex items-center gap-2 sm:gap-3 lg:gap-5 shrink-0">
             <div className="hidden lg:flex items-center gap-2">
               <Phone className="w-4 h-4 text-accent" />
               <div className="leading-tight">
