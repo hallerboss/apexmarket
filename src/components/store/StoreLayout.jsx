@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link, Outlet, useLocation } from "react-router-dom";
-import { Search, ShoppingBag, Menu, X, Phone, Scale } from "lucide-react";
+import { ShoppingBag, Menu, X, Phone, Scale } from "lucide-react";
 import { useCart } from "@/lib/cartContext";
 import { trackPageView } from "@/lib/analytics";
 import StoreFooter from "@/components/store/StoreFooter";
@@ -18,13 +18,11 @@ const navLinks = [
 
 export default function StoreLayout() {
   const [menuOpen, setMenuOpen] = useState(false);
-  const [searchOpen, setSearchOpen] = useState(false);
   const { count } = useCart();
   const location = useLocation();
 
   useEffect(() => {
     setMenuOpen(false);
-    setSearchOpen(false);
   }, [location.pathname]);
 
   useEffect(() => {
@@ -41,7 +39,7 @@ export default function StoreLayout() {
             <span className="text-2xl font-semibold tracking-tight">wolmart</span>
           </Link>
 
-          <div className="hidden md:flex flex-1 justify-center px-4">
+          <div className="flex flex-1 justify-center px-2 sm:px-4">
             <SearchBar />
           </div>
 
@@ -64,9 +62,6 @@ export default function StoreLayout() {
                 </span>
               )}
             </Link>
-            <button onClick={() => setSearchOpen((v) => !v)} className="md:hidden p-1" aria-label="Search">
-              <Search className="w-5 h-5" />
-            </button>
             <button onClick={() => setMenuOpen(true)} className="md:hidden p-1" aria-label="Menu">
               <Menu className="w-5 h-5" />
             </button>
@@ -75,13 +70,6 @@ export default function StoreLayout() {
 
         <CategoryNav />
 
-        {searchOpen && (
-          <div className="md:hidden border-t border-[#eeeeee] bg-white">
-            <div className="container-bleed px-5 py-4">
-              <SearchBar />
-            </div>
-          </div>
-        )}
       </header>
 
       <main>
