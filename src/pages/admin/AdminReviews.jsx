@@ -14,7 +14,10 @@ export default function AdminReviews() {
   useEffect(() => { load(); }, []);
 
   const setStatus = (id, status) => {
-    base44.entities.Review.update(id, { status }).then(load);
+    base44.entities.Review.update(id, { status }).then((r) => {
+      base44.functions.invoke("recomputeProductRating", { product_id: r.product_id }).catch(() => {});
+      load();
+    });
   };
 
   const filtered = reviews.filter((r) => filter === "all" || r.status === filter);

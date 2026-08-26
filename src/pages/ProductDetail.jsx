@@ -82,19 +82,26 @@ export default function ProductDetail() {
     addItem(product, qty, variantStr);
   };
 
-  const submitReview = (e) => {
+  const submitReview = async (e) => {
     e.preventDefault();
-    base44.entities.Review.create({
-      ...reviewForm,
-      product_id: product.id,
-      product_name: product.name,
-      media: reviewMedia,
-      status: "pending",
-    }).then(() => {
+    try {
+      await base44.functions.invoke("submitReview", {
+        product_id: product.id,
+        product_name: product.name,
+        author: reviewForm.author,
+        email: reviewForm.email,
+        rating: reviewForm.rating,
+        title: reviewForm.title,
+        comment: reviewForm.comment,
+        media: reviewMedia,
+      });
+      base44.entities.Review.filter({ product_id: id, status: "approved" }).then(setReviews);
       setReviewSubmitted(true);
       setReviewForm({ author: "", email: "", rating: 5, title: "", comment: "" });
       setReviewMedia([]);
-    });
+    } catch (err) {
+      alert(err?.response?.data?.error || err?.message || "Failed to submit review");
+    }
   };
 
   return (
@@ -257,7 +264,7 @@ export default function ProductDetail() {
             {/* Review form */}
             {reviewSubmitted ? (
               <div className="bg-secondary p-6 text-center">
-                <p className="serif-text text-lg">Thank you. Your review is pending approval.</p>
+                <p className="serif-text text-lg">Thank you. Your review is now live.</p>
               </div>
             ) : (
               <form onSubmit={submitReview} className="space-y-4">
