@@ -40,6 +40,10 @@
       },
       "title": "Review Media"
     },
+    "avatar": {
+      "type": "string",
+      "title": "AI Avatar Image URL"
+    },
     "status": {
       "type": "string",
       "enum": [

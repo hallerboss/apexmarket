@@ -72,7 +72,7 @@ export default function AdminOrders() {
           <div className="flex flex-wrap gap-3">
             <input value={viewing.tracking_number || ""} onChange={(e) => setViewing({ ...viewing, tracking_number: e.target.value })} placeholder="Carrier tracking number" className="admin-input flex-1 min-w-[200px]" />
             <input value={viewing.carrier || ""} onChange={(e) => setViewing({ ...viewing, carrier: e.target.value })} placeholder="Carrier (optional)" className="admin-input w-48" />
-            <button onClick={() => base44.entities.Order.update(viewing.id, { tracking_number: viewing.tracking_number || "", carrier: viewing.carrier || "" }).then(() => alert("Tracking saved"))} className="bg-accent text-white px-5 py-2.5 text-xs font-semibold uppercase tracking-[0.2em]">Save</button>
+            <button onClick={() => base44.functions.invoke("updateOrderTracking", { order_id: viewing.id, tracking_number: viewing.tracking_number || "", carrier: viewing.carrier || "" }).then(() => alert("Tracking saved & logged to Google Sheets")).catch((e) => alert(e?.response?.data?.error || "Failed to save"))} className="bg-accent text-white px-5 py-2.5 text-xs font-semibold uppercase tracking-[0.2em]">Save</button>
           </div>
         </div>
       </div>

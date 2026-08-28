@@ -1,8 +1,14 @@
 import { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
-import { Plus, Pencil, Trash2, X, Upload } from "lucide-react";
+import { Plus, Pencil, Trash2, X, Upload, ImageUp } from "lucide-react";
 
 const empty = { title: "", subtitle: "", description: "", image: "", link: "/shop", cta_text: "Shop Now", position: "promo", order: 0, active: true };
+const POSITIONS = [
+  { key: "hero", label: "Hero Banners" },
+  { key: "promo", label: "Promo Banners" },
+  { key: "midpage", label: "Mid-page Banners" },
+  { key: "sidebar", label: "Sidebar Banners" },
+];
 
 export default function AdminBanners() {
   const [banners, setBanners] = useState([]);
@@ -11,7 +17,7 @@ export default function AdminBanners() {
 
   const load = () => {
     setLoading(true);
-    base44.entities.Banner.list("order", 50).then((d) => { setBanners(d); setLoading(false); });
+    base44.entities.Banner.list("order", 100).then((d) => { setBanners(d); setLoading(false); });
   };
   useEffect(() => { load(); }, []);
 
@@ -23,7 +29,12 @@ export default function AdminBanners() {
 
   const uploadImg = async (file) => {
     const { file_url } = await base44.integrations.Core.UploadFile({ file });
-    setEditing((e) => ({ ...e, image: file_url }));
+    return file_url;
+  };
+  const replaceImage = async (b, file) => {
+    const url = await uploadImg(file);
+    await base44.entities.Banner.update(b.id, { image: url });
+    load();
   };
 
   if (editing) {
@@ -54,12 +65,18 @@ export default function AdminBanners() {
             {editing.image ? (
               <div className="relative aspect-[16/6] bg-white/5">
                 <img src={editing.image} alt="" className="w-full h-full object-cover" />
-                <button type="button" onClick={() => setEditing({ ...editing, image: "" })} className="absolute top-2 right-2 bg-black/70 p-1.5"><X className="w-4 h-4 text-white" /></button>
+                <div className="absolute top-2 right-2 flex gap-1">
+                  <label className="bg-black/70 px-2 py-1.5 cursor-pointer flex items-center gap-1 text-white text-xs">
+                    <ImageUp className="w-3.5 h-3.5" /> Replace
+                    <input type="file" accept="image/*" className="hidden" onChange={(e) => e.target.files[0] && uploadImg(e.target.files[0]).then((u) => setEditing({ ...editing, image: u }))} />
+                  </label>
+                  <button type="button" onClick={() => setEditing({ ...editing, image: "" })} className="bg-black/70 p-1.5"><X className="w-4 h-4 text-white" /></button>
+                </div>
               </div>
             ) : (
               <label className="aspect-[16/6] border border-dashed border-white/20 flex items-center justify-center cursor-pointer hover:border-accent text-white/40">
                 <Upload className="w-5 h-5" />
-                <input type="file" accept="image/*" className="hidden" onChange={(e) => e.target.files[0] && uploadImg(e.target.files[0])} />
+                <input type="file" accept="image/*" className="hidden" onChange={(e) => e.target.files[0] && uploadImg(e.target.files[0]).then((u) => setEditing({ ...editing, image: u }))} />
               </label>
             )}
           </div>
@@ -75,40 +92,84 @@ export default function AdminBanners() {
     );
   }
 
+  const ungrouped = banners.filter((b) => !POSITIONS.some((p) => p.key === b.position));
+
   return (
     <div>
       <div className="flex items-center justify-between mb-8">
         <div>
           <h2 className="display-text text-2xl text-white">Banners</h2>
-          <p className="text-sm text-white/40 mt-1">{banners.length} promotional banners</p>
+          <p className="text-sm text-white/40 mt-1">{banners.length} promotional banners across all pages</p>
         </div>
         <button onClick={() => setEditing({ ...empty })} className="bg-accent text-white px-5 py-2.5 text-xs font-semibold uppercase tracking-[0.2em] hover:bg-accent/90 flex items-center gap-2">
           <Plus className="w-4 h-4" /> Add Banner
         </button>
       </div>
-      <div className="flex gap-4 overflow-x-auto pb-2">
-        {loading ? <div className="w-full p-12 text-center text-white/30 text-sm">Loading…</div> : banners.length === 0 ? (
-          <div className="w-full p-12 text-center text-white/30 text-sm">No banners yet.</div>
-        ) : banners.map((b) => (
-          <div key={b.id} className="bg-[#0a0a0a] border border-white/5 overflow-hidden min-w-[280px] shrink-0 w-[280px]">
-            <div className="relative aspect-[16/6] bg-white/5">
-              {b.image && <img src={b.image} alt="" className="w-full h-full object-cover" />}
-              <div className="absolute top-2 left-2 flex gap-1">
-                <span className="text-[9px] uppercase tracking-wide bg-black/70 text-white px-2 py-1">{b.position}</span>
-                {!b.active && <span className="text-[9px] uppercase tracking-wide bg-red-500/80 text-white px-2 py-1">Inactive</span>}
+
+      {loading ? (
+        <div className="p-12 text-center text-white/30 text-sm">Loading…</div>
+      ) : banners.length === 0 ? (
+        <div className="p-12 text-center text-white/30 text-sm">No banners yet.</div>
+      ) : (
+        <>
+          {POSITIONS.map((p) => {
+            const items = banners.filter((b) => b.position === p.key);
+            if (!items.length) return null;
+            return (
+              <div key={p.key} className="mb-10">
+                <h3 className="text-[11px] uppercase tracking-[0.2em] text-white/40 mb-3">{p.label} · {items.length}</h3>
+                <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4">
+                  {items.map((b) => (
+                    <div key={b.id} className="bg-[#0a0a0a] border border-white/5 overflow-hidden flex flex-col">
+                      <div className="relative aspect-[16/9] bg-white/5">
+                        {b.image ? (
+                          <img src={b.image} alt="" className="w-full h-full object-cover" />
+                        ) : (
+                          <div className="w-full h-full flex items-center justify-center text-white/20 text-xs">No image</div>
+                        )}
+                        {!b.active && <span className="absolute top-2 left-2 text-[9px] uppercase bg-red-500/80 text-white px-2 py-1">Inactive</span>}
+                      </div>
+                      <div className="p-3 flex-1 flex flex-col">
+                        <p className="text-sm font-semibold text-white truncate">{b.title}</p>
+                        {b.subtitle && <p className="text-xs text-white/40 truncate">{b.subtitle}</p>}
+                        <div className="flex gap-1 mt-3">
+                          <button onClick={() => setEditing({ ...b })} className="p-2 text-white/50 hover:text-accent" title="Edit"><Pencil className="w-4 h-4" /></button>
+                          <label className="p-2 text-white/50 hover:text-accent cursor-pointer" title="Replace image">
+                            <ImageUp className="w-4 h-4" />
+                            <input type="file" accept="image/*" className="hidden" onChange={(e) => e.target.files[0] && replaceImage(b, e.target.files[0])} />
+                          </label>
+                          <button onClick={() => { if (confirm("Delete this banner?")) base44.entities.Banner.delete(b.id).then(load); }} className="p-2 text-white/50 hover:text-red-400" title="Delete"><Trash2 className="w-4 h-4" /></button>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            );
+          })}
+          {ungrouped.length > 0 && (
+            <div className="mb-10">
+              <h3 className="text-[11px] uppercase tracking-[0.2em] text-white/40 mb-3">Other · {ungrouped.length}</h3>
+              <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4">
+                {ungrouped.map((b) => (
+                  <div key={b.id} className="bg-[#0a0a0a] border border-white/5 overflow-hidden flex flex-col">
+                    <div className="relative aspect-[16/9] bg-white/5">
+                      {b.image && <img src={b.image} alt="" className="w-full h-full object-cover" />}
+                    </div>
+                    <div className="p-3 flex-1 flex flex-col">
+                      <p className="text-sm font-semibold text-white truncate">{b.title}</p>
+                      <div className="flex gap-1 mt-3">
+                        <button onClick={() => setEditing({ ...b })} className="p-2 text-white/50 hover:text-accent"><Pencil className="w-4 h-4" /></button>
+                        <button onClick={() => { if (confirm("Delete this banner?")) base44.entities.Banner.delete(b.id).then(load); }} className="p-2 text-white/50 hover:text-red-400"><Trash2 className="w-4 h-4" /></button>
+                      </div>
+                    </div>
+                  </div>
+                ))}
               </div>
             </div>
-            <div className="p-4">
-              <p className="text-sm font-semibold text-white">{b.title}</p>
-              {b.subtitle && <p className="text-xs text-white/40">{b.subtitle}</p>}
-              <div className="flex gap-1 mt-3">
-                <button onClick={() => setEditing({ ...b })} className="p-2 text-white/50 hover:text-accent"><Pencil className="w-4 h-4" /></button>
-                <button onClick={() => { if (confirm("Delete?")) base44.entities.Banner.delete(b.id).then(load); }} className="p-2 text-white/50 hover:text-red-400"><Trash2 className="w-4 h-4" /></button>
-              </div>
-            </div>
-          </div>
-        ))}
-      </div>
+          )}
+        </>
+      )}
     </div>
   );
 }

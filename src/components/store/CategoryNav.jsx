@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { ChevronDown, MapPin, History } from "lucide-react";
+import { ChevronDown, MapPin, History, Package } from "lucide-react";
 import AllCategoriesMenu from "@/components/store/AllCategoriesMenu";
 
 const links = [
@@ -27,6 +27,12 @@ export default function CategoryNav() {
           </nav>
         </div>
         <div className="hidden lg:flex items-center gap-5 text-sm text-foreground">
+          <Link to="/orders" className="flex items-center gap-2 hover:text-accent transition-colors">
+            <span className="w-6 h-6 rounded-full bg-white flex items-center justify-center">
+              <Package className="w-3.5 h-3.5 text-accent" />
+            </span>
+            My Orders
+          </Link>
           <Link to="/track" className="flex items-center gap-2 hover:text-accent transition-colors">
             <span className="w-6 h-6 rounded-full bg-white flex items-center justify-center">
               <MapPin className="w-3.5 h-3.5 text-accent" />
