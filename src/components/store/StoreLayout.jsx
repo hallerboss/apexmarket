@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link, Outlet, useLocation } from "react-router-dom";
-import { Search, ShoppingBag, Menu, X, Phone, Scale } from "lucide-react";
+import { Search, ShoppingBag, Menu, X, Phone, Scale, MapPin } from "lucide-react";
 import { useCart } from "@/lib/cartContext";
 import { trackPageView } from "@/lib/analytics";
 import StoreFooter from "@/components/store/StoreFooter";
@@ -102,6 +102,12 @@ export default function StoreLayout() {
             ))}
           </nav>
           <div className="p-5 lg:p-10 border-t hairline text-sm text-muted-foreground space-y-1">
+            <Link to="/track" className="inline-flex items-center gap-2 text-foreground font-medium mb-3">
+              <span className="w-7 h-7 rounded-full bg-accent/10 flex items-center justify-center">
+                <MapPin className="w-4 h-4 text-accent" />
+              </span>
+              Track Order
+            </Link>
             <p className="text-foreground">A high-fidelity retail ecosystem for curated discovery.</p>
             <p>hello@wolmart.studio</p>
             <p>+1 (555) 028-2024</p>
