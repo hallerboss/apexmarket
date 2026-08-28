@@ -92,9 +92,10 @@ export default function Cart() {
           <p className="serif-text text-muted-foreground mb-2">Order number</p>
           <p className="text-xl font-bold mb-8">{placed.order_number}</p>
           <p className="serif-text text-muted-foreground mb-10">Thank you, {placed.customer_name}. Your objects are being prepared.</p>
-          <Link to="/shop" className="btn-mono-solid">
-            Continue Shopping
-          </Link>
+          <div className="flex gap-3 justify-center flex-wrap">
+            <Link to={`/track?order=${placed.order_number}`} className="btn-mono-outline">Track Order</Link>
+            <Link to="/shop" className="btn-mono-solid">Continue Shopping</Link>
+          </div>
         </div>
       </div>
     );

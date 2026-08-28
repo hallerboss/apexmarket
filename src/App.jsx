@@ -22,6 +22,7 @@ import ProductDetail from "@/pages/ProductDetail";
 import Cart from "@/pages/Cart";
 import PageView from "@/pages/PageView";
 import Contact from "@/pages/Contact";
+import TrackOrder from "@/pages/TrackOrder";
 import AdminDashboard from "@/pages/admin/AdminDashboard";
 import AdminProducts from "@/pages/admin/AdminProducts";
 import AdminCategories from "@/pages/admin/AdminCategories";
@@ -64,6 +65,7 @@ const AuthenticatedApp = () => {
         <Route path="/product/:id" element={<ProductDetail />} />
         <Route path="/cart" element={<Cart />} />
         <Route path="/contact" element={<Contact />} />
+        <Route path="/track" element={<TrackOrder />} />
         <Route path="/page/:slug" element={<PageView />} />
       </Route>
       {/* Auth */}

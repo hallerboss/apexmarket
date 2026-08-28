@@ -27,7 +27,7 @@ export default function CategoryNav() {
           </nav>
         </div>
         <div className="hidden lg:flex items-center gap-5 text-sm text-foreground">
-          <Link to="/page/track-order" className="flex items-center gap-2 hover:text-accent transition-colors">
+          <Link to="/track" className="flex items-center gap-2 hover:text-accent transition-colors">
             <span className="w-6 h-6 rounded-full bg-white flex items-center justify-center">
               <MapPin className="w-3.5 h-3.5 text-accent" />
             </span>

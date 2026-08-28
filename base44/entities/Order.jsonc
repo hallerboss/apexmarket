@@ -78,6 +78,14 @@
     "payment_method": {
       "type": "string",
       "title": "Payment Method"
+    },
+    "tracking_number": {
+      "type": "string",
+      "title": "Tracking Number"
+    },
+    "carrier": {
+      "type": "string",
+      "title": "Carrier"
     }
   },
   "required": [
