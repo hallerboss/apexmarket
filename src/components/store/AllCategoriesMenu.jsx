@@ -1,6 +1,7 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { List, ChevronDown, ChevronRight, ArrowRight } from "lucide-react";
+import { base44 } from "@/api/base44Client";
 
 const MEGA = [
   {
@@ -146,14 +147,16 @@ const MEGA = [
 function PromoBlock({ promo, onShop }) {
   return (
     <div className={`mt-6 relative overflow-hidden rounded-lg bg-gradient-to-br ${promo.gradient} p-5 text-white min-h-[160px] flex flex-col justify-between`}>
-      <img
-        src={promo.image}
-        alt=""
-        onError={(e) => {
-          e.currentTarget.style.display = "none";
-        }}
-        className="absolute right-0 top-0 h-full w-2/5 object-cover opacity-90"
-      />
+      {promo.image ? (
+        <img
+          src={promo.image}
+          alt=""
+          onError={(e) => {
+            e.currentTarget.style.display = "none";
+          }}
+          className="absolute right-0 top-0 h-full w-2/5 object-cover opacity-90"
+        />
+      ) : null}
       <div className="relative z-10">
         <p className="text-xs font-semibold text-white/90">{promo.badge}</p>
         <p className="text-2xl font-bold mt-1">{promo.title}</p>
@@ -168,14 +171,30 @@ function PromoBlock({ promo, onShop }) {
 export default function AllCategoriesMenu() {
   const [open, setOpen] = useState(false);
   const [active, setActive] = useState(0);
+  const [cats, setCats] = useState([]);
+  const [banners, setBanners] = useState([]);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    base44.entities.Category.list("order", 100).then(setCats).catch(() => {});
+    base44.entities.Banner.filter({ active: true }).then(setBanners).catch(() => {});
+  }, []);
+
+  const CURATED = Object.fromEntries(MEGA.map((m) => [m.name, m]));
+  const list = cats.length ? cats.map((c) => c.name) : MEGA.map((m) => m.name);
+  const activeName = list[active] || list[0] || "";
+  const curated = CURATED[activeName];
+  const shopUrl = `/shop?category=${encodeURIComponent(activeName)}`;
+  const banner = banners.find((b) => b.link === shopUrl);
+  const promo = banner
+    ? { badge: banner.subtitle, title: banner.title, cta: banner.cta_text || "Shop Now", image: banner.image, gradient: curated?.promo?.gradient || "from-blue-500 to-indigo-500" }
+    : curated?.promo || { badge: "Shop the Collection", title: "Up to 20% OFF", cta: "Shop Now", image: "", gradient: "from-blue-500 to-indigo-500" };
+  const columns = curated?.columns || [];
 
   const go = (cat) => {
     setOpen(false);
     navigate(`/shop?category=${encodeURIComponent(cat)}`);
   };
-
-  const cat = MEGA[active];
 
   return (
     <div className="relative">
@@ -191,16 +210,16 @@ export default function AllCategoriesMenu() {
           <div className="absolute left-0 top-12 z-40 flex bg-white border border-[#eee] shadow-xl rounded-md overflow-hidden">
             {/* Sidebar */}
             <div className="w-56 shrink-0 py-2 bg-white max-h-[460px] overflow-y-auto">
-              {MEGA.map((m, i) => (
+              {list.map((name, i) => (
                 <button
-                  key={m.name}
+                  key={name}
                   onMouseEnter={() => setActive(i)}
-                  onClick={() => go(m.name)}
+                  onClick={() => go(name)}
                   className={`w-full flex items-center justify-between px-4 py-2.5 text-sm text-left transition-colors ${
                     i === active ? "text-[#0066ff] font-medium bg-[#f5f9ff]" : "text-[#333] hover:text-[#0066ff] hover:bg-[#f5f9ff]"
                   }`}
                 >
-                  <span>{m.name}</span>
+                  <span>{name}</span>
                   <ChevronRight className="w-3.5 h-3.5 opacity-50" />
                 </button>
               ))}
@@ -219,23 +238,32 @@ export default function AllCategoriesMenu() {
 
             {/* Flyout (desktop) */}
             <div className="hidden lg:block w-[660px] p-6 bg-white border-l border-[#eee]">
-              <div className={`grid gap-8 ${cat.columns.length > 2 ? "grid-cols-4" : "grid-cols-2"}`}>
-                {cat.columns.map((col) => (
-                  <div key={col.title}>
-                    <h4 className="text-xs font-bold uppercase tracking-wide text-[#333] pb-2 mb-2 border-b border-[#e1e1e1]">{col.title}</h4>
-                    <ul className="space-y-1.5">
-                      {col.items.map((it) => (
-                        <li key={it}>
-                          <button onClick={() => go(cat.name)} className="text-sm text-[#555] hover:text-[#0066ff] text-left">
-                            {it}
-                          </button>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                ))}
-              </div>
-              <PromoBlock promo={cat.promo} onShop={() => go(cat.name)} />
+              {columns.length > 0 ? (
+                <div className={`grid gap-8 ${columns.length > 2 ? "grid-cols-4" : "grid-cols-2"}`}>
+                  {columns.map((col) => (
+                    <div key={col.title}>
+                      <h4 className="text-xs font-bold uppercase tracking-wide text-[#333] pb-2 mb-2 border-b border-[#e1e1e1]">{col.title}</h4>
+                      <ul className="space-y-1.5">
+                        {col.items.map((it) => (
+                          <li key={it}>
+                            <button onClick={() => go(activeName)} className="text-sm text-[#555] hover:text-[#0066ff] text-left">
+                              {it}
+                            </button>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="mb-4">
+                  <h4 className="text-xs font-bold uppercase tracking-wide text-[#333] pb-2 mb-3 border-b border-[#e1e1e1]">{activeName}</h4>
+                  <button onClick={() => go(activeName)} className="text-sm text-[#0066ff] font-semibold">
+                    View all in {activeName} →
+                  </button>
+                </div>
+              )}
+              <PromoBlock promo={promo} onShop={() => go(activeName)} />
             </div>
           </div>
         </>

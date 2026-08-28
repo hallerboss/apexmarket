@@ -10,14 +10,19 @@ const FASHION_BANNER = "https://media.base44.com/images/public/6a8447d4dfbc61d89
 
 export default function Home() {
   const [products, setProducts] = useState([]);
+  const [banners, setBanners] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    base44.entities.Product.list("-created_date", 50)
-      .then((data) => setProducts(data))
+    Promise.all([
+      base44.entities.Product.list("-created_date", 50),
+      base44.entities.Banner.filter({ active: true }),
+    ])
+      .then(([data, b]) => { setProducts(data); setBanners(b); })
       .finally(() => setLoading(false));
   }, []);
 
+  const promoBanner = banners.find((b) => b.position === "promo" && b.active);
   const featured = products.filter((p) => p.featured);
   const newArrivals = products.filter((p) => p.is_new);
   const bestSellers = products.filter((p) => p.best_seller);
@@ -54,12 +59,12 @@ export default function Home() {
           <section className="container-bleed px-5 lg:px-10 py-8 lg:py-12">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-8">
               <div className="relative aspect-[16/10] lg:aspect-[16/9] overflow-hidden bg-secondary group">
-                <Image src={FASHION_BANNER} alt="New collection" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
+                <Image src={promoBanner?.image || FASHION_BANNER} alt={promoBanner?.title || "New collection"} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
                 <div className="absolute inset-0 flex flex-col justify-end p-8 lg:p-12">
-                  <p className="text-[11px] uppercase tracking-[0.25em] text-white/80 mb-3">Best Sellers</p>
-                  <h3 className="display-text text-3xl lg:text-5xl text-white">New Collection</h3>
-                  <p className="serif-text text-white/80 mt-3">Sale up to 30% OFF</p>
-                  <Link to="/shop" className="btn-mono-solid mt-6 self-start">Shop Now</Link>
+                  <p className="text-[11px] uppercase tracking-[0.25em] text-white/80 mb-3">{promoBanner?.subtitle || "Best Sellers"}</p>
+                  <h3 className="display-text text-3xl lg:text-5xl text-white">{promoBanner?.title || "New Collection"}</h3>
+                  <p className="serif-text text-white/80 mt-3">{promoBanner?.description || "Sale up to 30% OFF"}</p>
+                  <Link to={promoBanner?.link || "/shop"} className="btn-mono-solid mt-6 self-start">{promoBanner?.cta_text || "Shop Now"}</Link>
                 </div>
               </div>
               <div className="relative aspect-[16/10] lg:aspect-[16/9] overflow-hidden bg-foreground group">
