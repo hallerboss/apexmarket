@@ -1,7 +1,6 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.44';
-import { appendOrderRow } from "../../shared/sheetsLog.ts";
 
-const API_URL = "https://api.parcelapp.net/v3/shipments/tracking";
+const API_URL = "https://api.parcelsapp.com/v4/shipments/tracking";
 
 function statusProgress(status) {
   const s = String(status || "").toLowerCase();
@@ -41,16 +40,16 @@ async function callParcelsApp(trackingNumber, carrier) {
   if (carrier) shipment.carrier = carrier.toLowerCase();
   const r = await fetch(API_URL, {
     method: "POST",
-    headers: { "X-API-Key": key, "Content-Type": "application/json" },
+    headers: { "api-key": key, "Content-Type": "application/json" },
     body: JSON.stringify({ shipments: [shipment] }),
   });
   if (!r.ok) return null;
   const data = await r.json();
   let s = (data.shipments || [])[0];
   if (s && ["pending", "unknown", "processing"].includes(s.status) && data.request_id) {
-    for (let i = 0; i < 5; i++) {
+    for (let i = 0; i < 3; i++) {
       await new Promise((res) => setTimeout(res, 3000));
-      const pr = await fetch(`${API_URL}?request_id=${data.request_id}`, { headers: { "X-API-Key": key } });
+      const pr = await fetch(`${API_URL}?request_id=${data.request_id}`, { headers: { "api-key": key } });
       if (!pr.ok) break;
       const pd = await pr.json();
       s = (pd.shipments || [])[0] || s;
@@ -116,20 +115,6 @@ export default async function (req) {
       } catch (e) { console.error("fallback error:", e?.message || e); }
     }
     if (!result) return Response.json({ error: "Unable to fetch tracking" }, { status: 502 });
-
-    // Log delivery status update to Google Sheets (best-effort)
-    try {
-      await appendOrderRow(base44, [
-        new Date().toISOString(),
-        "",
-        "",
-        trackingNumber,
-        result.carrier || carrier || "",
-        result.current_status_label || "",
-        result.estimated_delivery || "",
-        `Delivery status update: ${result.status || ""}`,
-      ]);
-    } catch (e) { console.error("sheets log error:", e?.message || e); }
 
     return Response.json({ tracking_number: trackingNumber, source, ...result });
   } catch (error) {
