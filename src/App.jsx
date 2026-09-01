@@ -24,6 +24,7 @@ import PageView from "@/pages/PageView";
 import Contact from "@/pages/Contact";
 import TrackOrder from "@/pages/TrackOrder";
 import MyOrders from "@/pages/MyOrders";
+import Profile from "@/pages/Profile";
 import AdminDashboard from "@/pages/admin/AdminDashboard";
 import AdminProducts from "@/pages/admin/AdminProducts";
 import AdminCategories from "@/pages/admin/AdminCategories";
@@ -68,6 +69,7 @@ const AuthenticatedApp = () => {
         <Route path="/contact" element={<Contact />} />
         <Route path="/track" element={<TrackOrder />} />
         <Route path="/orders" element={<MyOrders />} />
+        <Route path="/profile" element={<Profile />} />
         <Route path="/page/:slug" element={<PageView />} />
       </Route>
       {/* Auth */}

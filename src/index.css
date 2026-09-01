@@ -124,6 +124,7 @@
   .product-card .img-wrap img {
     @apply w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105;
   }
+  .admin-main, .admin-main * { color: #ffffff !important; }
   .admin-input {
     @apply w-full bg-transparent border border-white/10 px-4 py-2.5 text-sm text-white placeholder:text-white/30 focus:border-accent focus:outline-none transition-colors;
   }

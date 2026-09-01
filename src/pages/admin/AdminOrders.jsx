@@ -19,6 +19,22 @@ export default function AdminOrders() {
     base44.entities.Order.update(id, { status }).then(load);
   };
 
+  const sendNotify = async (template) => {
+    const email = prompt("Enter the customer's email to send this notification to:", viewing?.customer_email || "");
+    if (!email) return;
+    try {
+      await base44.functions.invoke("sendOrderNotification", {
+        template, email,
+        order_number: viewing.order_number,
+        customer_name: viewing.customer_name,
+        tracking_number: viewing.tracking_number,
+      });
+      alert("Notification sent to " + email);
+    } catch (e) {
+      alert(e?.response?.data?.error || e?.message || "Failed to send");
+    }
+  };
+
   if (viewing) {
     return (
       <div className="max-w-3xl">
@@ -73,6 +89,16 @@ export default function AdminOrders() {
             <input value={viewing.tracking_number || ""} onChange={(e) => setViewing({ ...viewing, tracking_number: e.target.value })} placeholder="Carrier tracking number" className="admin-input flex-1 min-w-[200px]" />
             <input value={viewing.carrier || ""} onChange={(e) => setViewing({ ...viewing, carrier: e.target.value })} placeholder="Carrier (optional)" className="admin-input w-48" />
             <button onClick={() => base44.functions.invoke("updateOrderTracking", { order_id: viewing.id, tracking_number: viewing.tracking_number || "", carrier: viewing.carrier || "" }).then(() => alert("Tracking saved")).catch((e) => alert(e?.response?.data?.error || "Failed to save"))} className="bg-accent text-white px-5 py-2.5 text-xs font-semibold uppercase tracking-[0.2em]">Save</button>
+          </div>
+        </div>
+
+        <div className="mt-6 border-t border-white/10 pt-6">
+          <label className="admin-label">Notify Customer</label>
+          <p className="text-sm text-white mb-3">Send a status email to the customer who placed this order.</p>
+          <div className="flex flex-wrap gap-3">
+            <button onClick={() => sendNotify("placed")} className="bg-white/10 hover:bg-white/20 text-white px-4 py-2.5 text-xs font-semibold uppercase tracking-[0.15em]">Order Placed</button>
+            <button onClick={() => sendNotify("shipped")} className="bg-white/10 hover:bg-white/20 text-white px-4 py-2.5 text-xs font-semibold uppercase tracking-[0.15em]">Order Shipped</button>
+            <button onClick={() => sendNotify("delivered")} className="bg-white/10 hover:bg-white/20 text-white px-4 py-2.5 text-xs font-semibold uppercase tracking-[0.15em]">Order Delivered</button>
           </div>
         </div>
       </div>

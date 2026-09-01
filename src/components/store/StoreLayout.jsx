@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link, Outlet, useLocation, useNavigate } from "react-router-dom";
-import { Search, ShoppingBag, Menu, X, Phone, Scale, MapPin, Package, ShieldCheck } from "lucide-react";
+import { Search, ShoppingBag, Menu, X, Phone, Scale, MapPin, Package, ShieldCheck, User } from "lucide-react";
 import { useCart } from "@/lib/cartContext";
 import { trackPageView } from "@/lib/analytics";
 import StoreFooter from "@/components/store/StoreFooter";
@@ -68,6 +68,9 @@ export default function StoreLayout() {
             <button onClick={() => setSearchOpen(true)} className="sm:hidden p-1 hover:text-accent transition-colors" aria-label="Search">
               <Search className="w-5 h-5" />
             </button>
+            <Link to="/profile" className="hidden sm:block hover:text-accent transition-colors" aria-label="Profile">
+              <User className="w-5 h-5" />
+            </Link>
             <Link to="/cart" className="relative hover:text-accent transition-colors" aria-label="Cart">
               <ShoppingBag className="w-5 h-5" />
               {count > 0 && (
@@ -119,6 +122,9 @@ export default function StoreLayout() {
                       {l.label}
                     </Link>
                   ))}
+                  <Link to="/profile" onClick={() => setMenuOpen(false)} className="flex items-center gap-3 px-5 py-4 text-base text-white border-b border-white/10 hover:bg-white/5">
+                    <User className="w-4 h-4 text-[#3b82f6]" /> My Profile
+                  </Link>
                   <Link to="/track" onClick={() => setMenuOpen(false)} className="flex items-center gap-3 px-5 py-4 text-base text-white border-b border-white/10 hover:bg-white/5">
                     <MapPin className="w-4 h-4 text-[#3b82f6]" /> Track Order
                   </Link>

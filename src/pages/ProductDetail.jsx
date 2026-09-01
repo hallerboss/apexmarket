@@ -75,7 +75,11 @@ export default function ProductDetail() {
   }
 
   const hasSale = product.sale_price && product.sale_price < product.price;
-  const images = product.images?.length ? product.images : [];
+  const baseImages = product.images?.length ? product.images : [];
+  const variantImgs = (product.variant_images || []).map((v) => v.image).filter(Boolean);
+  const images = [...baseImages, ...variantImgs];
+  const variantImageFor = (variant, option) =>
+    (product.variant_images || []).find((v) => v.variant === variant && v.option === option)?.image;
 
   const handleAdd = () => {
     const variantStr = Object.values(selectedVariants).join(", ") || null;
@@ -143,7 +147,7 @@ export default function ProductDetail() {
             <div className="flex items-center gap-2 mb-6">
               <div className="flex">
                 {[1, 2, 3, 4, 5].map((n) => (
-                  <Star key={n} className={`w-4 h-4 ${n <= Math.round(product.rating) ? "fill-foreground text-foreground" : "text-muted-foreground/40"}`} />
+                  <Star key={n} className={`w-4 h-4 ${n <= Math.round(product.rating) ? "fill-[#ff9f43] text-[#ff9f43]" : "text-muted-foreground/40"}`} />
                 ))}
               </div>
               <span className="text-sm text-muted-foreground">{product.rating} ({product.reviews_count || reviews.length} reviews)</span>
@@ -176,22 +180,38 @@ export default function ProductDetail() {
           {product.short_description && <p className="serif-text text-lg text-muted-foreground leading-relaxed mb-8 max-w-prose">{product.short_description}</p>}
 
           {/* Variants */}
-          {product.variants?.map((v) => (
-            <div key={v.name} className="mb-6">
-              <p className="text-[11px] uppercase tracking-[0.2em] font-semibold mb-3">{v.name}</p>
-              <div className="flex flex-wrap gap-2">
-                {v.options.map((opt) => (
-                  <button
-                    key={opt}
-                    onClick={() => setSelectedVariants((s) => ({ ...s, [v.name]: opt }))}
-                    className={`px-4 py-2.5 text-sm border transition-colors ${selectedVariants[v.name] === opt ? "border-foreground bg-foreground text-background" : "border-border hover:border-foreground"}`}
-                  >
-                    {opt}
-                  </button>
-                ))}
+          {product.variants?.map((v) => {
+            const isColor = /color/i.test(v.name || "");
+            return (
+              <div key={v.name} className="mb-6">
+                <p className="text-[11px] uppercase tracking-[0.2em] font-semibold mb-3">{v.name}</p>
+                <div className="flex flex-wrap gap-2">
+                  {v.options.map((opt) => {
+                    const vImg = variantImageFor(v.name, opt);
+                    const selected = selectedVariants[v.name] === opt;
+                    return (
+                      <button
+                        key={opt}
+                        onClick={() => {
+                          setSelectedVariants((s) => ({ ...s, [v.name]: opt }));
+                          if (vImg) {
+                            const idx = images.indexOf(vImg);
+                            if (idx >= 0) setActiveImg(idx);
+                          }
+                        }}
+                        className={`flex items-center gap-2 pl-1 pr-3 py-1 text-sm border transition-colors ${selected ? "border-foreground bg-foreground text-background" : "border-border hover:border-foreground"}`}
+                      >
+                        {isColor && vImg && (
+                          <img src={vImg} alt={opt} className="w-7 h-7 object-cover rounded" />
+                        )}
+                        {opt}
+                      </button>
+                    );
+                  })}
+                </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
 
           {/* Qty + Add */}
           <div className="flex items-center gap-4 mb-8">
@@ -220,6 +240,20 @@ export default function ProductDetail() {
             ))}
           </div>
 
+          {/* Shipping Options */}
+          {product.shipping_options?.length > 0 && (
+            <div className="border-t hairline pt-6 mb-10">
+              <h3 className="text-[11px] uppercase tracking-[0.2em] font-semibold mb-3">Shipping Options</h3>
+              <div className="flex flex-wrap gap-2">
+                {product.shipping_options.map((s, i) => (
+                  <span key={i} className="inline-flex items-center gap-1.5 border hairline px-3 py-1.5 text-xs text-muted-foreground">
+                    <Truck className="w-3.5 h-3.5 text-accent" /> {s.country} · {s.courier}
+                  </span>
+                ))}
+              </div>
+            </div>
+          )}
+
           {/* Description */}
           {product.description && (
             <div className="border-t hairline pt-8">
@@ -245,7 +279,7 @@ export default function ProductDetail() {
                       )}
                       <div>
                         <span className="text-sm font-semibold block">{r.author}</span>
-                        <div className="flex">{[1, 2, 3, 4, 5].map((n) => <Star key={n} className={`w-3 h-3 ${n <= r.rating ? "fill-foreground text-foreground" : "text-muted-foreground/40"}`} />)}</div>
+                        <div className="flex">{[1, 2, 3, 4, 5].map((n) => <Star key={n} className={`w-3 h-3 ${n <= r.rating ? "fill-[#ff9f43] text-[#ff9f43]" : "text-muted-foreground/40"}`} />)}</div>
                       </div>
                     </div>
                     {r.title && <p className="font-medium text-sm mb-1">{r.title}</p>}
@@ -284,7 +318,7 @@ export default function ProductDetail() {
                   <span className="text-sm">Rating:</span>
                   {[1, 2, 3, 4, 5].map((n) => (
                     <button key={n} type="button" onClick={() => setReviewForm({ ...reviewForm, rating: n })}>
-                      <Star className={`w-5 h-5 ${n <= reviewForm.rating ? "fill-foreground text-foreground" : "text-muted-foreground/40"}`} />
+                      <Star className={`w-5 h-5 ${n <= reviewForm.rating ? "fill-[#ff9f43] text-[#ff9f43]" : "text-muted-foreground/40"}`} />
                     </button>
                   ))}
                 </div>

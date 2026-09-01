@@ -4,7 +4,7 @@
   "properties": {
     "name": {
       "type": "string",
-      "title": "Name"
+      "title": "Title Product"
     },
     "slug": {
       "type": "string",
@@ -110,6 +110,61 @@
         "title": "Variant"
       },
       "title": "Variants"
+    },
+    "variant_images": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "variant": {
+            "type": "string"
+          },
+          "option": {
+            "type": "string"
+          },
+          "image": {
+            "type": "string"
+          }
+        },
+        "title": "Variant Image"
+      },
+      "title": "Variant Images"
+    },
+    "seo_title": {
+      "type": "string",
+      "title": "SEO Title"
+    },
+    "meta_description": {
+      "type": "string",
+      "title": "Meta Description"
+    },
+    "focus_keywords": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "title": "Focus Keywords"
+    },
+    "google_shopping": {
+      "type": "boolean",
+      "title": "List on Google Shopping",
+      "default": true
+    },
+    "shipping_options": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "country": {
+            "type": "string"
+          },
+          "courier": {
+            "type": "string"
+          }
+        },
+        "title": "Shipping Option"
+      },
+      "title": "Shipping Options"
     },
     "status": {
       "type": "string",
