@@ -2,9 +2,10 @@ import { useState, useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
 import { Image as ImageIcon, Upload, X, Plus, Pencil, Trash2, Search } from "lucide-react";
+import RichTextEditor from "@/components/admin/RichTextEditor";
 
 const COUNTRIES = ["United States", "United Kingdom", "Canada", "Australia", "Germany", "France", "Spain", "Italy", "Netherlands", "Pakistan", "India", "UAE", "Saudi Arabia", "China", "Japan", "Brazil", "Mexico", "South Africa"];
-const COURIERS = ["DHL", "FedEx", "UPS", "USPS", "Royal Mail", "Aramex", "TCS", "DPD", "Blue Dart", "Australia Post", "Local Courier"];
+const COURIERS = ["Cainiao", "DHL Express", "FedEx", "UPS", "USPS", "Royal Mail", "Aramex", "TCS", "DPD", "Local Courier"];
 
 const emptyProduct = {
   name: "", slug: "", description: "", short_description: "", price: 0, sale_price: 0,
@@ -177,11 +178,11 @@ export default function AdminProducts() {
             </div>
             <div>
               <label className="admin-label">Short Description</label>
-              <textarea rows={2} value={editing.short_description || ""} onChange={(e) => setEditing({ ...editing, short_description: e.target.value })} className="admin-input resize-none" />
+              <RichTextEditor value={editing.short_description || ""} onChange={(html) => setEditing({ ...editing, short_description: html })} minHeight={140} title="Product short description" placeholder="One-line summary shown under the product title…" />
             </div>
             <div>
               <label className="admin-label">Full Description</label>
-              <textarea rows={6} value={editing.description || ""} onChange={(e) => setEditing({ ...editing, description: e.target.value })} className="admin-input resize-none" />
+              <RichTextEditor value={editing.description || ""} onChange={(html) => setEditing({ ...editing, description: html })} minHeight={260} title="Product description" placeholder="Full product description — use the toolbar to format text, lists, links and images…" />
             </div>
 
             {/* SEO */}

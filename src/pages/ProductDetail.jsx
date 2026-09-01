@@ -177,7 +177,7 @@ export default function ProductDetail() {
             )}
           </div>
 
-          {product.short_description && <p className="serif-text text-lg text-muted-foreground leading-relaxed mb-8 max-w-prose">{product.short_description}</p>}
+          {product.short_description && <div className="serif-text text-lg text-muted-foreground leading-relaxed mb-8 max-w-prose whitespace-pre-line" dangerouslySetInnerHTML={{ __html: product.short_description }} />}
 
           {/* Variants */}
           {product.variants?.map((v) => {
@@ -258,7 +258,7 @@ export default function ProductDetail() {
           {product.description && (
             <div className="border-t hairline pt-8">
               <h3 className="text-[11px] uppercase tracking-[0.2em] font-semibold mb-4">Description</h3>
-              <div className="serif-text text-muted-foreground leading-relaxed max-w-prose whitespace-pre-line">{product.description}</div>
+              <div className="serif-text text-muted-foreground leading-relaxed max-w-prose whitespace-pre-line" dangerouslySetInnerHTML={{ __html: product.description }} />
             </div>
           )}
 
