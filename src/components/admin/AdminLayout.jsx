@@ -21,7 +21,7 @@ export default function AdminLayout() {
     path === "/admin" ? location.pathname === "/admin" : location.pathname.startsWith(path);
 
   return (
-    <div className="min-h-screen bg-[#050505] text-white flex flex-col">
+    <div className="min-h-screen bg-[#f7f7f8] text-foreground flex flex-col">
       {/* Top nav bar (replaces left sidebar) */}
       <header className="sticky top-0 z-40 bg-white border-b border-black/10">
         <div className="px-4 lg:px-8 h-16 flex items-center gap-4">

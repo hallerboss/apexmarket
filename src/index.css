@@ -124,14 +124,18 @@
   .product-card .img-wrap img {
     @apply w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105;
   }
-  .admin-main, .admin-main *:not(option) { color: #ffffff !important; }
+  .admin-main { background: #f7f7f8; }
+  .admin-main, .admin-main *:not(option) { color: #1a1a1a !important; }
   .admin-main option { color: #000000 !important; background: #ffffff !important; }
+  .admin-main [class*="bg-[#0a0a0a]"], .admin-main [class*="bg-[#050505]"], .admin-main [class*="bg-white/5"], .admin-main [class*="bg-white/10"], .admin-main [class*="bg-white/[0.02]"], .admin-main [class*="bg-black/5"], .admin-main [class*="bg-black/10"] { background-color: #ffffff !important; }
+  .admin-main [class*="border-white/5"], .admin-main [class*="border-white/10"], .admin-main [class*="border-white/20"] { border-color: #e5e7eb !important; }
+  .admin-main .divide-white\/5 > :not([hidden]) ~ *, .admin-main .divide-white\/10 > :not([hidden]) ~ * { border-color: #eef0f2 !important; }
   .admin-main .rte-light, .admin-main .rte-light * { color: #2d3748 !important; }
   .admin-input {
-    @apply w-full bg-transparent border border-white/10 px-4 py-2.5 text-sm text-white placeholder:text-white/30 focus:border-accent focus:outline-none transition-colors;
+    @apply w-full bg-white border border-[#e5e7eb] px-4 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:border-accent focus:outline-none transition-colors;
   }
   .admin-label {
-    @apply block text-[11px] font-semibold uppercase tracking-[0.15em] text-white/40 mb-2;
+    @apply block text-[11px] font-semibold uppercase tracking-[0.15em] text-muted-foreground mb-2;
   }
 }
 
