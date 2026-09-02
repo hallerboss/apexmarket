@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
-import { Check, X, Star } from "lucide-react";
+import { Check, X, Star, Trash2 } from "lucide-react";
 
 export default function AdminReviews() {
   const [reviews, setReviews] = useState([]);
@@ -18,6 +18,11 @@ export default function AdminReviews() {
       base44.functions.invoke("recomputeProductRating", { product_id: r.product_id }).catch(() => {});
       load();
     });
+  };
+
+  const remove = (id) => {
+    if (!confirm("Delete this review?")) return;
+    base44.entities.Review.delete(id).then(load);
   };
 
   const filtered = reviews.filter((r) => filter === "all" || r.status === filter);
@@ -70,8 +75,9 @@ export default function AdminReviews() {
                     <p className="text-xs text-white/40">{r.product_name} · {r.email}</p>
                   </div>
                   <div className="flex gap-1 shrink-0">
-                    <button onClick={() => setStatus(r.id, "approved")} className="p-2 text-white/50 hover:text-green-400" title="Approve"><Check className="w-4 h-4" /></button>
-                    <button onClick={() => setStatus(r.id, "rejected")} className="p-2 text-white/50 hover:text-red-400" title="Reject"><X className="w-4 h-4" /></button>
+                    <button onClick={() => setStatus(r.id, "approved")} className="p-2 text-black/50 hover:text-green-600" title="Approve"><Check className="w-4 h-4" /></button>
+                    <button onClick={() => setStatus(r.id, "rejected")} className="p-2 text-black/50 hover:text-red-500" title="Reject"><X className="w-4 h-4" /></button>
+                    <button onClick={() => remove(r.id)} className="p-2 text-black/50 hover:text-red-500" title="Delete"><Trash2 className="w-4 h-4" /></button>
                   </div>
                 </div>
                 {r.title && <p className="text-sm font-medium text-white mb-1">{r.title}</p>}

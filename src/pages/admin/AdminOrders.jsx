@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
-import { Eye, X } from "lucide-react";
+import { Eye, X, Trash2 } from "lucide-react";
 
 const statuses = ["pending", "processing", "shipped", "delivered", "cancelled"];
 
@@ -17,6 +17,11 @@ export default function AdminOrders() {
 
   const updateStatus = (id, status) => {
     base44.entities.Order.update(id, { status }).then(load);
+  };
+
+  const remove = (id) => {
+    if (!confirm("Delete this order?")) return;
+    base44.entities.Order.delete(id).then(load);
   };
 
   const sendNotify = async (template) => {
@@ -136,7 +141,12 @@ export default function AdminOrders() {
                       {statuses.map((s) => <option key={s} value={s} className="bg-[#0a0a0a]">{s}</option>)}
                     </select>
                   </td>
-                  <td className="px-5 py-4"><button onClick={() => setViewing(o)} className="p-1.5 text-white/50 hover:text-accent"><Eye className="w-4 h-4" /></button></td>
+                  <td className="px-5 py-4">
+                    <div className="flex items-center gap-1">
+                      <button onClick={() => setViewing(o)} className="p-1.5 text-black/50 hover:text-accent"><Eye className="w-4 h-4" /></button>
+                      <button onClick={() => remove(o.id)} className="p-1.5 text-black/50 hover:text-red-500" title="Delete"><Trash2 className="w-4 h-4" /></button>
+                    </div>
+                  </td>
                 </tr>
               ))}
             </tbody>

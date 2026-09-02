@@ -10,22 +10,24 @@ export default function AdminDashboard() {
 
   useEffect(() => {
     Promise.all([
-      base44.entities.Product.list("-created_date", 1),
-      base44.entities.Order.list("-created_date", 10),
-      base44.entities.Review.list("-created_date", 50),
-      base44.entities.Category.list("-created_date", 1),
+      base44.entities.Product.list("-created_date", 500),
+      base44.entities.Order.list("-created_date", 500),
+      base44.entities.Review.list("-created_date", 500),
+      base44.entities.Category.list("-created_date", 500),
     ]).then(([prods, orders, revs, cats]) => {
       const pendingReviews = revs.filter((r) => r.status === "pending").length;
       const pendingOrders = orders.filter((o) => o.status === "pending").length;
       const revenue = orders.reduce((s, o) => s + (o.total || 0), 0);
+      const totalStock = prods.reduce((s, p) => s + (p.stock || 0), 0);
       setStats({
-        products: prods.length ? prods.length : 0,
+        products: prods.length,
         orders: orders.length,
         reviews: revs.length,
         pendingReviews,
         categories: cats.length,
         revenue,
         pendingOrders,
+        totalStock,
       });
       setRecentOrders(orders.slice(0, 5));
       setLoading(false);
@@ -33,33 +35,33 @@ export default function AdminDashboard() {
   }, []);
 
   const statCards = [
-    { label: "Total Revenue", value: `$${stats.revenue.toFixed(2)}`, icon: DollarSign, accent: "text-green-400" },
-    { label: "Products", value: stats.products, icon: Package, link: "/admin/products", accent: "text-accent" },
-    { label: "Orders", value: stats.orders, icon: ShoppingCart, link: "/admin/orders", accent: "text-yellow-400" },
-    { label: "Pending Orders", value: stats.pendingOrders, icon: Clock, accent: "text-orange-400" },
-    { label: "Reviews", value: stats.reviews, icon: Star, link: "/admin/reviews", accent: "text-purple-400" },
-    { label: "Pending Reviews", value: stats.pendingReviews, icon: Star, link: "/admin/reviews", accent: "text-red-400" },
-    { label: "Categories", value: stats.categories, icon: FolderTree, link: "/admin/categories", accent: "text-blue-400" },
-    { label: "Conversion", value: "3.2%", icon: TrendingUp, accent: "text-teal-400" },
+    { label: "Total Revenue", value: `$${stats.revenue.toFixed(2)}`, icon: DollarSign },
+    { label: "Products", value: stats.products, icon: Package, link: "/admin/products" },
+    { label: "Orders", value: stats.orders, icon: ShoppingCart, link: "/admin/orders" },
+    { label: "Pending Orders", value: stats.pendingOrders, icon: Clock },
+    { label: "Reviews", value: stats.reviews, icon: Star, link: "/admin/reviews" },
+    { label: "Pending Reviews", value: stats.pendingReviews, icon: Star, link: "/admin/reviews" },
+    { label: "Categories", value: stats.categories, icon: FolderTree, link: "/admin/categories" },
+    { label: "Total Stock", value: stats.totalStock, icon: Package, link: "/admin/products" },
   ];
 
   return (
     <div className="space-y-8">
       <div>
-        <h2 className="display-text text-3xl text-white">Dashboard</h2>
-        <p className="text-sm text-white/40 mt-1">High-velocity overview of your retail ecosystem.</p>
+        <h2 className="display-text text-3xl">Dashboard</h2>
+        <p className="text-sm text-black/50 mt-1">High-velocity overview of your retail ecosystem.</p>
       </div>
 
-      {/* Stat grid */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+      {/* Stat grid — 2-column white cards */}
+      <div className="grid grid-cols-2 gap-4">
         {statCards.map((s) => {
           const Card = (
-            <div className="bg-[#0a0a0a] border border-white/5 p-5 hover:border-white/15 transition-colors">
+            <div className="bg-white border border-[#e5e7eb] p-5 hover:border-black/20 transition-colors">
               <div className="flex items-center justify-between mb-4">
-                <s.icon className={`w-5 h-5 ${s.accent}`} />
-                <span className="text-2xl font-bold text-white">{s.value}</span>
+                <s.icon className="w-5 h-5 text-black" />
+                <span className="text-2xl font-bold text-black">{s.value}</span>
               </div>
-              <p className="text-[11px] uppercase tracking-[0.15em] text-white/40">{s.label}</p>
+              <p className="text-[11px] uppercase tracking-[0.15em] text-black/50">{s.label}</p>
             </div>
           );
           return s.link ? <Link key={s.label} to={s.link}>{Card}</Link> : <div key={s.label}>{Card}</div>;

@@ -81,6 +81,32 @@ export default function AdminProducts() {
     base44.entities.Product.delete(id).then(load);
   };
 
+  // Bulk edit / bulk delete
+  const [selected, setSelected] = useState(new Set());
+  const [bulkEdit, setBulkEdit] = useState(null);
+
+  const toggle = (id) => setSelected((s) => { const n = new Set(s); n.has(id) ? n.delete(id) : n.add(id); return n; });
+  const allSelected = filtered.length > 0 && selected.size === filtered.length;
+  const toggleAll = () => setSelected(allSelected ? new Set() : new Set(filtered.map((p) => p.id)));
+  const clearSel = () => setSelected(new Set());
+
+  const bulkDelete = () => {
+    if (!selected.size) return;
+    if (!confirm(`Delete ${selected.size} selected product(s)?`)) return;
+    Promise.all([...selected].map((id) => base44.entities.Product.delete(id))).then(() => { load(); setSelected(new Set()); });
+  };
+
+  const applyBulk = () => {
+    const changes = {};
+    if (bulkEdit.applyPrice) changes.price = parseFloat(bulkEdit.price) || 0;
+    if (bulkEdit.applyCategory) changes.category = bulkEdit.category;
+    if (bulkEdit.applyStock) changes.stock = parseInt(bulkEdit.stock) || 0;
+    if (bulkEdit.applyStatus) changes.status = bulkEdit.status;
+    if (!Object.keys(changes).length) { alert("Select at least one field to update."); return; }
+    const updates = [...selected].map((id) => ({ id, ...changes }));
+    base44.entities.Product.bulkUpdate(updates).then(() => { load(); setSelected(new Set()); setBulkEdit(null); });
+  };
+
   const uploadImage = async (file) => {
     setUploading(true);
     const { file_url } = await base44.integrations.Core.UploadFile({ file });
@@ -336,8 +362,8 @@ export default function AdminProducts() {
     <div>
       <div className="flex items-center justify-between mb-8">
         <div>
-          <h2 className="display-text text-2xl text-white">Products</h2>
-          <p className="text-sm text-white mt-1">{products.length} objects in the archive</p>
+          <h2 className="display-text text-2xl">Products</h2>
+          <p className="text-sm text-black/50 mt-1">{products.length} objects in the archive</p>
         </div>
         <button onClick={startNew} className="bg-accent text-white px-5 py-2.5 text-xs font-semibold uppercase tracking-[0.2em] hover:bg-accent/90 flex items-center gap-2">
           <Plus className="w-4 h-4" /> Add Product
@@ -345,35 +371,87 @@ export default function AdminProducts() {
       </div>
 
       <div className="relative mb-6">
-        <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-white" />
+        <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-black/40" />
         <input placeholder="Search products…" value={search} onChange={(e) => setSearch(e.target.value)} className="admin-input pl-11" />
       </div>
 
-      <div className="bg-[#0a0a0a] border border-white/5">
+      {/* Bulk action bar */}
+      {selected.size > 0 && (
+        <div className="mb-4 flex flex-wrap items-center gap-3 border border-accent/30 bg-accent/5 p-3">
+          <span className="text-sm font-semibold">{selected.size} selected</span>
+          <button onClick={() => setBulkEdit({ applyPrice: false, price: "", applyCategory: false, category: "", applyStock: false, stock: "", applyStatus: false, status: "published" })} className="bg-accent text-white px-4 py-2 text-xs font-semibold uppercase tracking-[0.15em] hover:bg-accent/90">Bulk Edit</button>
+          <button onClick={bulkDelete} className="border border-red-300 text-black px-4 py-2 text-xs font-semibold uppercase tracking-[0.15em] hover:bg-red-50">Delete Selected</button>
+          <button onClick={clearSel} className="text-xs uppercase tracking-[0.15em] text-black/50 hover:text-black">Clear</button>
+        </div>
+      )}
+
+      {/* Bulk edit panel */}
+      {bulkEdit && (
+        <div className="mb-4 border border-[#e5e7eb] bg-white p-5 space-y-4">
+          <div className="flex items-center justify-between">
+            <h4 className="text-sm font-semibold">Bulk Edit — {selected.size} products</h4>
+            <button onClick={() => setBulkEdit(null)} className="text-black/50 hover:text-black"><X className="w-4 h-4" /></button>
+          </div>
+          <div className="grid sm:grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <label className="flex items-center gap-2 text-sm"><input type="checkbox" checked={bulkEdit.applyPrice} onChange={(e) => setBulkEdit({ ...bulkEdit, applyPrice: e.target.checked })} className="accent-accent w-4 h-4" /> Price ($)</label>
+              <input type="number" step="0.01" disabled={!bulkEdit.applyPrice} value={bulkEdit.price} onChange={(e) => setBulkEdit({ ...bulkEdit, price: e.target.value })} className="admin-input disabled:opacity-40" placeholder="e.g. 29.99" />
+            </div>
+            <div className="space-y-2">
+              <label className="flex items-center gap-2 text-sm"><input type="checkbox" checked={bulkEdit.applyCategory} onChange={(e) => setBulkEdit({ ...bulkEdit, applyCategory: e.target.checked })} className="accent-accent w-4 h-4" /> Category</label>
+              <select disabled={!bulkEdit.applyCategory} value={bulkEdit.category} onChange={(e) => setBulkEdit({ ...bulkEdit, category: e.target.value })} className="admin-input disabled:opacity-40">
+                <option value="">— Select category —</option>
+                {tops.map((c) => { const kids = childrenOf(c.name); return kids.length ? (
+                  <optgroup key={c.id} label={c.name}><option value={c.name}>{c.name}</option>{kids.map((k) => <option key={k.id} value={k.name}>{c.name} › {k.name}</option>)}</optgroup>
+                ) : <option key={c.id} value={c.name}>{c.name}</option>; })}
+              </select>
+            </div>
+            <div className="space-y-2">
+              <label className="flex items-center gap-2 text-sm"><input type="checkbox" checked={bulkEdit.applyStock} onChange={(e) => setBulkEdit({ ...bulkEdit, applyStock: e.target.checked })} className="accent-accent w-4 h-4" /> Stock</label>
+              <input type="number" disabled={!bulkEdit.applyStock} value={bulkEdit.stock} onChange={(e) => setBulkEdit({ ...bulkEdit, stock: e.target.value })} className="admin-input disabled:opacity-40" placeholder="e.g. 100" />
+            </div>
+            <div className="space-y-2">
+              <label className="flex items-center gap-2 text-sm"><input type="checkbox" checked={bulkEdit.applyStatus} onChange={(e) => setBulkEdit({ ...bulkEdit, applyStatus: e.target.checked })} className="accent-accent w-4 h-4" /> Status</label>
+              <select disabled={!bulkEdit.applyStatus} value={bulkEdit.status} onChange={(e) => setBulkEdit({ ...bulkEdit, status: e.target.value })} className="admin-input disabled:opacity-40">
+                <option value="published">Published</option>
+                <option value="draft">Draft</option>
+              </select>
+            </div>
+          </div>
+          <button onClick={applyBulk} className="bg-accent text-white px-6 py-2.5 text-xs font-semibold uppercase tracking-[0.2em] hover:bg-accent/90">Apply to {selected.size} products</button>
+        </div>
+      )}
+
+      <div className="bg-white border border-[#e5e7eb]">
         {loading ? (
-          <div className="p-12 text-center text-white text-sm">Loading…</div>
+          <div className="p-12 text-center text-black/40 text-sm">Loading…</div>
         ) : filtered.length === 0 ? (
-          <div className="p-12 text-center text-white text-sm">No products found.</div>
+          <div className="p-12 text-center text-black/40 text-sm">No products found.</div>
         ) : (
-          <div className="divide-y divide-white/5">
+          <div className="divide-y divide-[#eef0f2]">
+            <div className="px-5 py-3 flex items-center gap-4 bg-[#fafafa]">
+              <input type="checkbox" checked={allSelected} onChange={toggleAll} className="accent-accent w-4 h-4" />
+              <span className="text-[11px] uppercase tracking-[0.15em] text-black/50">{selected.size} of {filtered.length} selected</span>
+            </div>
             {filtered.map((p) => (
-              <div key={p.id} className="px-5 py-4 flex items-center gap-4 hover:bg-white/[0.02] transition-colors">
-                <div className="w-14 h-14 bg-white/5 shrink-0 overflow-hidden">
-                  {p.images?.[0] ? <img src={p.images[0]} alt="" className="w-full h-full object-cover" /> : <div className="w-full h-full flex items-center justify-center text-white"><ImageIcon className="w-5 h-5" /></div>}
+              <div key={p.id} className="px-5 py-4 flex items-center gap-4 hover:bg-[#fafafa] transition-colors">
+                <input type="checkbox" checked={selected.has(p.id)} onChange={() => toggle(p.id)} className="accent-accent w-4 h-4 shrink-0" />
+                <div className="w-14 h-14 bg-[#f3f4f6] shrink-0 overflow-hidden">
+                  {p.images?.[0] ? <img src={p.images[0]} alt="" className="w-full h-full object-cover" /> : <div className="w-full h-full flex items-center justify-center text-black/30"><ImageIcon className="w-5 h-5" /></div>}
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium text-white truncate">{p.name}</p>
-                  <p className="text-xs text-white">{p.category} · {p.sku || "No SKU"} · Stock: {p.stock}</p>
+                  <p className="text-sm font-medium truncate">{p.name}</p>
+                  <p className="text-xs text-black/50">{p.category} · {p.sku || "No SKU"} · Stock: {p.stock}</p>
                 </div>
                 <div className="hidden sm:flex items-center gap-2">
                   {p.featured && <span className="text-[9px] uppercase tracking-wide bg-accent/10 text-accent px-2 py-1">Featured</span>}
-                  {p.is_new && <span className="text-[9px] uppercase tracking-wide bg-green-500/10 text-green-400 px-2 py-1">New</span>}
-                  {p.status === "draft" && <span className="text-[9px] uppercase tracking-wide bg-white/10 text-white px-2 py-1">Draft</span>}
+                  {p.is_new && <span className="text-[9px] uppercase tracking-wide bg-green-100 text-green-700 px-2 py-1">New</span>}
+                  {p.status === "draft" && <span className="text-[9px] uppercase tracking-wide bg-gray-100 text-gray-600 px-2 py-1">Draft</span>}
                 </div>
-                <div className="text-sm font-bold text-white shrink-0">${(p.sale_price || p.price).toFixed(2)}</div>
+                <div className="text-sm font-bold shrink-0">${(p.sale_price || p.price).toFixed(2)}</div>
                 <div className="flex items-center gap-1 shrink-0">
-                  <button onClick={() => startEdit(p)} className="p-2 text-white hover:text-accent transition-colors"><Pencil className="w-4 h-4" /></button>
-                  <button onClick={() => remove(p.id)} className="p-2 text-white hover:text-red-400 transition-colors"><Trash2 className="w-4 h-4" /></button>
+                  <button onClick={() => startEdit(p)} className="p-2 text-black/60 hover:text-accent transition-colors"><Pencil className="w-4 h-4" /></button>
+                  <button onClick={() => remove(p.id)} className="p-2 text-black/60 hover:text-red-500 transition-colors"><Trash2 className="w-4 h-4" /></button>
                 </div>
               </div>
             ))}
