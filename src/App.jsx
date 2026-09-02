@@ -25,6 +25,7 @@ import Contact from "@/pages/Contact";
 import TrackOrder from "@/pages/TrackOrder";
 import MyOrders from "@/pages/MyOrders";
 import Profile from "@/pages/Profile";
+import DownloadSite from "@/pages/DownloadSite";
 import AdminDashboard from "@/pages/admin/AdminDashboard";
 import AdminProducts from "@/pages/admin/AdminProducts";
 import AdminCategories from "@/pages/admin/AdminCategories";
@@ -70,6 +71,7 @@ const AuthenticatedApp = () => {
         <Route path="/track" element={<TrackOrder />} />
         <Route path="/orders" element={<MyOrders />} />
         <Route path="/profile" element={<Profile />} />
+        <Route path="/download-site" element={<DownloadSite />} />
         <Route path="/page/:slug" element={<PageView />} />
       </Route>
       {/* Auth */}
