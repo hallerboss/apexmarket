@@ -225,12 +225,13 @@ export default function ProductDetail() {
             </div>
           )}
 
-          {/* Customer Reviews */}
-          <div className="border-t hairline pt-8 mt-10">
-            <CustomerReviews productId={product.id} productName={product.name} rating={product.rating} />
-          </div>
         </div>
       </div>
+
+      {/* Customer Reviews — full width */}
+      <section className="container-bleed px-5 lg:px-10 py-10 lg:py-16 border-t hairline">
+        <CustomerReviews productId={product.id} productName={product.name} rating={product.rating} />
+      </section>
 
       {/* Related */}
       {related.length > 0 && (

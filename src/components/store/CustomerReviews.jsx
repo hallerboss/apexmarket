@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { base44 } from "@/api/base44Client";
 import { Image } from "@/components/ui/image";
-import { Star, ImagePlus, ThumbsUp, Flag, ChevronLeft, ChevronRight } from "lucide-react";
+import { Star, ImagePlus, ThumbsUp, Flag, ChevronLeft, ChevronRight, ChevronDown } from "lucide-react";
 
 const STOPWORDS = new Set([
   "this", "that", "with", "from", "they", "them", "their", "there", "these", "those",
@@ -22,6 +22,7 @@ export default function CustomerReviews({ productId, productName, rating }) {
   const [form, setForm] = useState({ author: "", email: "", rating: 5, title: "", comment: "" });
   const [media, setMedia] = useState([]);
   const [uploading, setUploading] = useState(false);
+  const [showHow, setShowHow] = useState(false);
   const galleryRef = useRef(null);
 
   const load = () =>
@@ -90,9 +91,9 @@ export default function CustomerReviews({ productId, productName, rating }) {
   const inputCls = "w-full border hairline px-4 py-2.5 text-sm bg-transparent focus:border-accent outline-none";
 
   return (
-    <div>
-      <h3 className="text-[11px] uppercase tracking-[0.2em] font-semibold mb-6">Customer Reviews</h3>
-      <div className="grid lg:grid-cols-[260px_1fr] gap-10 lg:gap-14">
+    <div className="border hairline bg-card p-6 lg:p-10">
+      <h3 className="text-lg font-bold mb-6">Customer reviews</h3>
+      <div className="grid md:grid-cols-[240px_1fr] gap-8 lg:gap-14">
         {/* Left column — summary */}
         <div>
           <div className="flex items-center gap-2 mb-1">
@@ -119,6 +120,15 @@ export default function CustomerReviews({ productId, productName, rating }) {
               );
             })}
           </div>
+
+          <button onClick={() => setShowHow((s) => !s)} className="flex items-center gap-1 text-sm text-accent mb-6">
+            How customer reviews and ratings work <ChevronDown className={`w-4 h-4 transition-transform ${showHow ? "rotate-180" : ""}`} />
+          </button>
+          {showHow && (
+            <p className="text-xs text-muted-foreground border hairline p-3 mb-6">
+              Our ratings are calculated from verified customer reviews. Each star rating is aggregated to produce the overall score and the histogram above.
+            </p>
+          )}
 
           <p className="font-semibold mb-1">Review this product</p>
           <p className="text-sm text-muted-foreground mb-4">Share your thoughts with other customers</p>
