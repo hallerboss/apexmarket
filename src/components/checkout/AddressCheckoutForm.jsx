@@ -1,7 +1,20 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { ChevronDown, Search, ShieldCheck, HelpCircle } from "lucide-react";
 
-const COUNTRIES = ["United States", "Canada", "United Kingdom", "Australia"];
+const COUNTRIES = [
+  "United States", "Canada", "United Kingdom", "Australia", "Germany", "France",
+  "Spain", "Italy", "Netherlands", "Belgium", "Switzerland", "Austria", "Sweden",
+  "Norway", "Denmark", "Finland", "Ireland", "Portugal", "Greece", "Poland",
+  "Czech Republic", "Hungary", "Romania", "Bulgaria", "Croatia", "Slovakia",
+  "Slovenia", "Estonia", "Latvia", "Lithuania", "Luxembourg", "Malta", "Cyprus",
+  "Iceland", "Russia", "Ukraine", "Turkey", "United Arab Emirates", "Saudi Arabia",
+  "Qatar", "Kuwait", "Bahrain", "Oman", "Israel", "Jordan", "Lebanon", "Egypt",
+  "Pakistan", "India", "Bangladesh", "Sri Lanka", "Nepal", "China", "Japan",
+  "South Korea", "Singapore", "Malaysia", "Indonesia", "Thailand", "Vietnam",
+  "Philippines", "Hong Kong", "Taiwan", "New Zealand", "South Africa", "Nigeria",
+  "Kenya", "Ghana", "Morocco", "Algeria", "Tunisia", "Brazil", "Argentina",
+  "Mexico", "Chile", "Colombia", "Peru", "Venezuela",
+];
 const STATES = [
   "Alabama", "Alaska", "Arizona", "Arkansas", "California", "Colorado", "Connecticut",
   "Delaware", "District of Columbia", "Florida", "Georgia", "Hawaii", "Idaho", "Illinois",
@@ -32,6 +45,15 @@ export default function AddressCheckoutForm({ onSubmit, placing }) {
     city: "",
   });
   const set = (k, v) => setForm((f) => ({ ...f, [k]: v }));
+
+  useEffect(() => {
+    fetch("https://ipapi.co/json/")
+      .then((r) => r.json())
+      .then((d) => {
+        if (d && d.country_name && COUNTRIES.includes(d.country_name)) set("country", d.country_name);
+      })
+      .catch(() => {});
+  }, []);
 
   const submit = (e) => {
     e.preventDefault();
@@ -122,19 +144,9 @@ export default function AddressCheckoutForm({ onSubmit, placing }) {
       <div className="grid grid-cols-2 gap-3 mb-5">
         <div>
           <label className={labelCls}>
-            State<span className="text-red-600">*</span>
+            State/Province<span className="text-red-600">*</span>
           </label>
-          <div className="relative">
-            <select required value={form.state} onChange={(e) => set("state", e.target.value)} className={selectRow}>
-              <option value="" disabled>
-                Select
-              </option>
-              {STATES.map((s) => (
-                <option key={s}>{s}</option>
-              ))}
-            </select>
-            <ChevronDown className="w-4 h-4 absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-[#A0A0A0]" />
-          </div>
+          <input required placeholder="State or province" value={form.state} onChange={(e) => set("state", e.target.value)} className={inputCls} />
         </div>
         <div>
           <label className={labelCls}>

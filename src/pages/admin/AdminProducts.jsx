@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
-import { Image as ImageIcon, Upload, X, Plus, Pencil, Trash2, Search } from "lucide-react";
+import { Image as ImageIcon, Upload, X, Plus, Pencil, Trash2, Search, Sparkles } from "lucide-react";
 import RichTextEditor from "@/components/admin/RichTextEditor";
 
 const COUNTRIES = ["United States", "United Kingdom", "Canada", "Australia", "Germany", "France", "Spain", "Italy", "Netherlands", "Pakistan", "India", "UAE", "Saudi Arabia", "China", "Japan", "Brazil", "Mexico", "South Africa"];
@@ -24,6 +24,7 @@ export default function AdminProducts() {
   const [search, setSearch] = useState("");
   const [uploading, setUploading] = useState(false);
   const [vUploading, setVUploading] = useState(null);
+  const [analyzing, setAnalyzing] = useState(false);
 
   const isNew = searchParams.get("new") === "1";
 
@@ -114,6 +115,28 @@ export default function AdminProducts() {
     setUploading(false);
   };
   const removeImage = (idx) => setEditing((e) => ({ ...e, images: e.images.filter((_, i) => i !== idx) }));
+
+  const analyzeImage = async () => {
+    if (!editing.images?.length) { alert("Upload a product image first, then click AI Analyze."); return; }
+    setAnalyzing(true);
+    try {
+      const res = await base44.functions.invoke("analyzeProductImage", { image_url: editing.images[0], product_name: editing.name });
+      const d = res.data || {};
+      setEditing((e) => ({
+        ...e,
+        description: d.description || e.description,
+        short_description: d.short_description || e.short_description,
+        tags: d.features || e.tags,
+        seo_title: d.seo_title || e.seo_title,
+        meta_description: d.meta_description || e.meta_description,
+        focus_keywords: d.focus_keywords || e.focus_keywords,
+      }));
+    } catch (err) {
+      alert(err?.response?.data?.error || err?.message || "AI analysis failed");
+    } finally {
+      setAnalyzing(false);
+    }
+  };
 
   const uploadVariantImage = async (variant, option, file) => {
     setVUploading(`${variant}-${option}`);
@@ -324,6 +347,10 @@ export default function AdminProducts() {
                 </label>
               </div>
               <p className="text-[10px] text-white">Upload high-quality studio images.</p>
+              <button type="button" onClick={analyzeImage} disabled={analyzing} className="w-full mt-3 border border-accent text-accent py-2.5 text-xs font-semibold uppercase tracking-[0.15em] flex items-center justify-center gap-2 hover:bg-accent hover:text-white disabled:opacity-50 transition-colors">
+                <Sparkles className="w-4 h-4" /> {analyzing ? "Analyzing…" : "AI Analyze Image"}
+              </button>
+              <p className="text-[10px] text-white mt-2">Upload an image, then click to auto-generate description, 10 features & SEO from AI + web research.</p>
             </div>
 
             <div>

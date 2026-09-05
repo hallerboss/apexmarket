@@ -34,6 +34,8 @@ import AdminPages from "@/pages/admin/AdminPages";
 import AdminOrders from "@/pages/admin/AdminOrders";
 import AdminBanners from "@/pages/admin/AdminBanners";
 import AdminSettings from "@/pages/admin/AdminSettings";
+import AdminMedia from "@/pages/admin/AdminMedia";
+import AdminPayments from "@/pages/admin/AdminPayments";
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -90,6 +92,8 @@ const AuthenticatedApp = () => {
         <Route path="orders" element={<AdminOrders />} />
         <Route path="banners" element={<AdminBanners />} />
         <Route path="settings" element={<AdminSettings />} />
+        <Route path="media" element={<AdminMedia />} />
+        <Route path="payments" element={<AdminPayments />} />
       </Route>
       </Route>
       <Route path="*" element={<PageNotFound />} />
