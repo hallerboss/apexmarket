@@ -2,11 +2,11 @@ import { Link } from "react-router-dom";
 import { Star, Check } from "lucide-react";
 import { Image } from "@/components/ui/image";
 import { useCart } from "@/lib/cartContext";
-
-const fmt = (n) => `$${Number(n).toFixed(2)}`;
+import { useCurrency } from "@/lib/currencyContext";
 
 export default function ShopProductCard({ product }) {
   const { addItem } = useCart();
+  const { formatPrice } = useCurrency();
   const hasSale = product.sale_price && product.sale_price < product.price;
   const discount = hasSale ? Math.round(((product.price - product.sale_price) / product.price) * 100) : 0;
   const inStock = (product.stock ?? 0) > 0;
@@ -52,11 +52,11 @@ export default function ShopProductCard({ product }) {
       <div className="flex items-baseline gap-2 mt-2">
         {hasSale ? (
           <>
-            <span className="text-base font-bold text-[#333]">{fmt(product.sale_price)}</span>
-            <span className="text-sm text-[#999] line-through">{fmt(product.price)}</span>
+            <span className="text-base font-bold text-[#333]">{formatPrice(product.sale_price)}</span>
+            <span className="text-sm text-[#999] line-through">{formatPrice(product.price)}</span>
           </>
         ) : (
-          <span className="text-base font-bold text-[#333]">{fmt(product.price)}</span>
+          <span className="text-base font-bold text-[#333]">{formatPrice(product.price)}</span>
         )}
       </div>
 

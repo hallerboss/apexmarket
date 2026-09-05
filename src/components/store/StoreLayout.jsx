@@ -7,6 +7,7 @@ import StoreFooter from "@/components/store/StoreFooter";
 import SearchBar from "@/components/store/SearchBar";
 import CategoryNav from "@/components/store/CategoryNav";
 import { base44 } from "@/api/base44Client";
+import CurrencySwitcher from "@/components/store/CurrencySwitcher";
 
 const navLinks = [
   { label: "Home", path: "/" },
@@ -65,6 +66,9 @@ export default function StoreLayout() {
             <Link to="/shop" className="hidden md:block hover:text-accent transition-colors" aria-label="Compare">
               <Scale className="w-5 h-5" />
             </Link>
+            <div className="hidden sm:block">
+              <CurrencySwitcher />
+            </div>
             <button onClick={() => setSearchOpen(true)} className="sm:hidden p-1 hover:text-accent transition-colors" aria-label="Search">
               <Search className="w-5 h-5" />
             </button>

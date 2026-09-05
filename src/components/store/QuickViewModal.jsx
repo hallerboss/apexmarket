@@ -3,9 +3,11 @@ import { Link } from "react-router-dom";
 import { Image } from "@/components/ui/image";
 import { Star, Minus, Plus, ShoppingBag, X } from "lucide-react";
 import { useCart } from "@/lib/cartContext";
+import { useCurrency } from "@/lib/currencyContext";
 
 export default function QuickViewModal({ product, onClose }) {
   const { addItem } = useCart();
+  const { formatPrice } = useCurrency();
   const [activeImg, setActiveImg] = useState(0);
   const [qty, setQty] = useState(1);
   const [selectedVariants, setSelectedVariants] = useState({});
@@ -61,11 +63,11 @@ export default function QuickViewModal({ product, onClose }) {
           <div className="flex items-baseline gap-3 mb-4">
             {hasSale ? (
               <>
-                <span className="text-2xl font-bold text-accent">${product.sale_price.toFixed(2)}</span>
-                <span className="text-base text-muted-foreground line-through">${product.price.toFixed(2)}</span>
+                <span className="text-2xl font-bold text-accent">{formatPrice(product.sale_price)}</span>
+                <span className="text-base text-muted-foreground line-through">{formatPrice(product.price)}</span>
               </>
             ) : (
-              <span className="text-2xl font-bold">${product.price.toFixed(2)}</span>
+              <span className="text-2xl font-bold">{formatPrice(product.price)}</span>
             )}
           </div>
           {product.short_description && <p className="serif-text text-muted-foreground leading-relaxed mb-6">{product.short_description}</p>}

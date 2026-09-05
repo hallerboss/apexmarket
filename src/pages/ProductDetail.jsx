@@ -4,6 +4,7 @@ import { base44 } from "@/api/base44Client";
 import { Image } from "@/components/ui/image";
 import { Star, Minus, Plus, ShoppingBag, Truck, RotateCcw, Shield, Zap } from "lucide-react";
 import { useCart } from "@/lib/cartContext";
+import { useCurrency } from "@/lib/currencyContext";
 import { trackProductView } from "@/lib/analytics";
 import ProductCard from "@/components/store/ProductCard";
 import CustomerReviews from "@/components/store/CustomerReviews";
@@ -18,6 +19,7 @@ export default function ProductDetail() {
   const [selectedVariants, setSelectedVariants] = useState({});
   const [showBuyBar, setShowBuyBar] = useState(false);
   const { addItem } = useCart();
+  const { formatPrice } = useCurrency();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -116,11 +118,11 @@ export default function ProductDetail() {
           <div className="flex items-baseline gap-3 mb-6">
             {hasSale ? (
               <>
-                <span className="text-3xl font-bold text-accent">${product.sale_price.toFixed(2)}</span>
-                <span className="text-lg text-muted-foreground line-through">${product.price.toFixed(2)}</span>
+                <span className="text-3xl font-bold text-accent">{formatPrice(product.sale_price)}</span>
+                <span className="text-lg text-muted-foreground line-through">{formatPrice(product.price)}</span>
               </>
             ) : (
-              <span className="text-3xl font-bold">${product.price.toFixed(2)}</span>
+              <span className="text-3xl font-bold">{formatPrice(product.price)}</span>
             )}
           </div>
 
@@ -251,7 +253,7 @@ export default function ProductDetail() {
               {images[0] && <Image src={images[0]} alt="" className="w-12 h-12 object-cover shrink-0" fittingType="fill" />}
               <div className="min-w-0">
                 <p className="text-sm font-semibold truncate">{product.name}</p>
-                <p className="text-xs text-background/60">${(product.sale_price || product.price).toFixed(2)}</p>
+                <p className="text-xs text-background/60">{formatPrice(product.sale_price || product.price)}</p>
               </div>
             </div>
             <button onClick={handleAdd} disabled={product.stock <= 0} className="btn-mono bg-accent text-white hover:bg-white hover:text-foreground shrink-0 disabled:opacity-50 disabled:cursor-not-allowed">

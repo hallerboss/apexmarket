@@ -3,11 +3,13 @@ import { Link } from "react-router-dom";
 import { Image } from "@/components/ui/image";
 import { Minus, Plus, ShoppingBag, ChevronDown, Trash2 } from "lucide-react";
 import { useCart } from "@/lib/cartContext";
+import { useCurrency } from "@/lib/currencyContext";
 import { base44 } from "@/api/base44Client";
 import AddressCheckoutForm from "@/components/checkout/AddressCheckoutForm";
 
 export default function Cart() {
   const { items, removeItem, updateQty, subtotal, clear } = useCart();
+  const { formatPrice } = useCurrency();
   const [placing, setPlacing] = useState(false);
   const [placed, setPlaced] = useState(null);
   const [products, setProducts] = useState({});
@@ -149,8 +151,8 @@ export default function Cart() {
                     </div>
                   )}
                   <div className="flex items-center gap-2 mt-1.5">
-                    <span className="text-base font-bold text-red-600">${item.price.toFixed(2)}</span>
-                    {onSale && originalPrice > item.price && <span className="text-xs text-muted-foreground line-through">${originalPrice.toFixed(2)}</span>}
+                    <span className="text-base font-bold text-red-600">{formatPrice(item.price)}</span>
+                    {onSale && originalPrice > item.price && <span className="text-xs text-muted-foreground line-through">{formatPrice(originalPrice)}</span>}
                   </div>
                   <div className="flex items-center justify-between mt-2">
                     <div className="inline-flex items-center border border-[#e0e0e0] rounded-full">
@@ -162,7 +164,7 @@ export default function Cart() {
                         <Plus className="w-3.5 h-3.5" />
                       </button>
                     </div>
-                    <p className="text-sm font-bold">${(item.price * item.quantity).toFixed(2)}</p>
+                    <p className="text-sm font-bold">{formatPrice(item.price * item.quantity)}</p>
                   </div>
                 </div>
               </div>
@@ -177,16 +179,16 @@ export default function Cart() {
             <div className="space-y-3 text-sm border-b hairline pb-5 mb-5">
               <div className="flex justify-between">
                 <span className="text-muted-foreground">Subtotal</span>
-                <span>${subtotal.toFixed(2)}</span>
+                <span>{formatPrice(subtotal)}</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-muted-foreground">Shipping</span>
-                <span>{shipping === 0 ? "Free" : `$${shipping.toFixed(2)}`}</span>
+                <span>{shipping === 0 ? "Free" : formatPrice(shipping)}</span>
               </div>
             </div>
             <div className="flex justify-between text-lg font-bold mb-6">
               <span>Total</span>
-              <span>${total.toFixed(2)}</span>
+              <span>{formatPrice(total)}</span>
             </div>
             <AddressCheckoutForm onSubmit={checkout} placing={placing} />
           </div>

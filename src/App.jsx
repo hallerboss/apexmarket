@@ -15,6 +15,7 @@ import ResetPassword from "@/pages/ResetPassword";
 import StoreLayout from "@/components/store/StoreLayout";
 import AdminLayout from "@/components/admin/AdminLayout";
 import { CartProvider } from "@/lib/cartContext";
+import { CurrencyProvider } from "@/lib/currencyContext";
 import { QuickViewProvider } from "@/lib/quickViewContext";
 import Home from "@/pages/Home";
 import Shop from "@/pages/Shop";
@@ -64,7 +65,7 @@ const AuthenticatedApp = () => {
   return (
     <Routes>
       {/* Storefront */}
-      <Route element={<CartProvider><QuickViewProvider><StoreLayout /></QuickViewProvider></CartProvider>}>
+      <Route element={<CartProvider><QuickViewProvider><CurrencyProvider><StoreLayout /></CurrencyProvider></QuickViewProvider></CartProvider>}>
         <Route path="/" element={<Home />} />
         <Route path="/shop" element={<Shop />} />
         <Route path="/product/:id" element={<ProductDetail />} />

@@ -3,6 +3,7 @@ import { Star, Check } from "lucide-react";
 import { Image } from "@/components/ui/image";
 import { useCart } from "@/lib/cartContext";
 import CompareToggle from "@/components/store/CompareToggle";
+import { useCurrency } from "@/lib/currencyContext";
 
 const colorMap = {
   black: "#000000", white: "#ffffff", navy: "#1e2a4a", blue: "#2563eb",
@@ -11,10 +12,10 @@ const colorMap = {
   silver: "#c0c0c0", gold: "#d4af37", purple: "#7c3aed", orange: "#f97316",
 };
 const colorFor = (n) => colorMap[String(n).toLowerCase()] || "#9ca3af";
-const fmt = (n) => `$${Number(n).toFixed(2)}`;
 
 export default function ProductCard({ product, index = 0, compareMode = false }) {
   const { addItem } = useCart();
+  const { formatPrice } = useCurrency();
   const hasSale = product.sale_price && product.sale_price < product.price;
   const discount = hasSale ? Math.round(((product.price - product.sale_price) / product.price) * 100) : 0;
   const colorVariant = (product.variants || []).find((v) => /color/i.test(v.name || ""));
@@ -70,11 +71,11 @@ export default function ProductCard({ product, index = 0, compareMode = false })
         <div className="flex items-baseline gap-2">
           {hasSale ? (
             <>
-              <span className="text-lg font-medium text-foreground">{fmt(product.sale_price)}</span>
-              <span className="text-sm text-muted-foreground line-through">{fmt(product.price)}</span>
+              <span className="text-lg font-medium text-foreground">{formatPrice(product.sale_price)}</span>
+              <span className="text-sm text-muted-foreground line-through">{formatPrice(product.price)}</span>
             </>
           ) : (
-            <span className="text-lg font-medium text-foreground">{fmt(product.price)}</span>
+            <span className="text-lg font-medium text-foreground">{formatPrice(product.price)}</span>
           )}
         </div>
 

@@ -1,20 +1,21 @@
 import { Link } from "react-router-dom";
 import { X } from "lucide-react";
 import { Image } from "@/components/ui/image";
-
-const rows = [
-  { label: "Price", get: (p) => `$${(p.sale_price || p.price).toFixed(2)}` },
-  { label: "Brand", get: (p) => p.brand || "—" },
-  { label: "Category", get: (p) => p.category || "—" },
-  { label: "Rating", get: (p) => (p.rating ? `${p.rating} / 5` : "—") },
-  { label: "Reviews", get: (p) => p.reviews_count || 0 },
-  { label: "SKU", get: (p) => p.sku || "—" },
-  { label: "Stock", get: (p) => (p.stock > 0 ? `${p.stock} available` : "Out of stock") },
-  { label: "Pricing", get: (p) => (p.sale_price && p.sale_price < p.price ? "On Sale" : "Standard") },
-  { label: "Tags", get: (p) => (p.tags?.length ? p.tags.join(", ") : "—") },
-];
+import { useCurrency } from "@/lib/currencyContext";
 
 export default function CompareModal({ products, onClose }) {
+  const { formatPrice } = useCurrency();
+  const rows = [
+    { label: "Price", get: (p) => formatPrice(p.sale_price || p.price) },
+    { label: "Brand", get: (p) => p.brand || "—" },
+    { label: "Category", get: (p) => p.category || "—" },
+    { label: "Rating", get: (p) => (p.rating ? `${p.rating} / 5` : "—") },
+    { label: "Reviews", get: (p) => p.reviews_count || 0 },
+    { label: "SKU", get: (p) => p.sku || "—" },
+    { label: "Stock", get: (p) => (p.stock > 0 ? `${p.stock} available` : "Out of stock") },
+    { label: "Pricing", get: (p) => (p.sale_price && p.sale_price < p.price ? "On Sale" : "Standard") },
+    { label: "Tags", get: (p) => (p.tags?.length ? p.tags.join(", ") : "—") },
+  ];
   return (
     <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4" onClick={onClose}>
       <div className="bg-background w-full max-w-6xl max-h-[90vh] overflow-auto" onClick={(e) => e.stopPropagation()}>

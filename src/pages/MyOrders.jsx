@@ -3,12 +3,14 @@ import { Link } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
 import { ArrowLeft, Search, Package, Truck, MapPin } from "lucide-react";
 import { Image } from "@/components/ui/image";
+import { useCurrency } from "@/lib/currencyContext";
 
 const statusColor = {
   pending: "#f59e0b", processing: "#3b82f6", shipped: "#8b5cf6", delivered: "#16a34a", cancelled: "#ef4444",
 };
 
 export default function MyOrders() {
+  const { formatPrice } = useCurrency();
   const [email, setEmail] = useState("");
   const [orders, setOrders] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -71,7 +73,7 @@ export default function MyOrders() {
                     </div>
                     <div className="text-right">
                       <span className="text-xs font-semibold px-2.5 py-1 rounded-full text-white" style={{ background: statusColor[o.status] || "#888" }}>{o.status}</span>
-                      <p className="text-sm font-bold text-black mt-1">${Number(o.total || 0).toFixed(2)}</p>
+                      <p className="text-sm font-bold text-black mt-1">{formatPrice(o.total || 0)}</p>
                     </div>
                   </div>
                   <div className="p-4">

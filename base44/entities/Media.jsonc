@@ -1,0 +1,49 @@
+{
+  "name": "Media",
+  "type": "object",
+  "properties": {
+    "url": {
+      "type": "string",
+      "title": "URL"
+    },
+    "type": {
+      "type": "string",
+      "enum": [
+        "image",
+        "video"
+      ],
+      "title": "Type",
+      "default": "image"
+    },
+    "name": {
+      "type": "string",
+      "title": "Name"
+    },
+    "source": {
+      "type": "string",
+      "title": "Source",
+      "default": "upload"
+    }
+  },
+  "required": [
+    "url"
+  ],
+  "rls": {
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "read": null,
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}
