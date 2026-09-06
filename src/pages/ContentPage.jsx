@@ -4,7 +4,7 @@ import { base44 } from "@/api/base44Client";
 import { Image } from "@/components/ui/image";
 import ReactMarkdown from "react-markdown";
 
-export default function PageView() {
+export default function ContentPage() {
   const { slug } = useParams();
   const [page, setPage] = useState(null);
   const [loading, setLoading] = useState(true);
