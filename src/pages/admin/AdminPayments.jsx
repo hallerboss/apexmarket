@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
-import { CreditCard, Webhook, ShieldCheck } from "lucide-react";
+import { CreditCard, Webhook, ShieldCheck, Loader2, CheckCircle2, AlertCircle, KeyRound, Eye, EyeOff } from "lucide-react";
 
 const statusColor = {
   pending: "bg-yellow-100 text-yellow-700",
@@ -13,12 +13,35 @@ const statusColor = {
 export default function AdminPayments() {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [secretKey, setSecretKey] = useState("");
+  const [publishableKey, setPublishableKey] = useState("");
+  const [showSecret, setShowSecret] = useState(false);
+  const [verifying, setVerifying] = useState(false);
+  const [result, setResult] = useState(null);
 
   useEffect(() => {
     base44.entities.Order.list("-created_date", 20).then(setOrders).finally(() => setLoading(false));
   }, []);
 
   const revenue = orders.filter((o) => o.status !== "cancelled").reduce((s, o) => s + (o.total || 0), 0);
+
+  const verify = async (e) => {
+    e.preventDefault();
+    if (!secretKey.trim()) return;
+    setVerifying(true);
+    setResult(null);
+    try {
+      const res = await base44.functions.invoke("verifyStripeKey", {
+        secret_key: secretKey.trim(),
+        publishable_key: publishableKey.trim(),
+      });
+      setResult(res.data);
+    } catch (err) {
+      setResult({ error: err?.response?.data?.error || err?.message || "Verification failed" });
+    } finally {
+      setVerifying(false);
+    }
+  };
 
   return (
     <div>
@@ -45,9 +68,87 @@ export default function AdminPayments() {
         </div>
       </div>
 
-      <div className="border border-[#e5e7eb] bg-amber-50 border-l-4 border-l-amber-400 p-4 mb-8 text-sm text-black/70">
-        <p className="font-semibold mb-1">Go live with real payments</p>
-        <p>Go to <span className="font-medium">Dashboard → Integrations</span>, click your Stripe integration, and provide your live Stripe API keys to accept real payments.</p>
+      {/* Activate real payments — upload & verify Stripe keys */}
+      <div className="border border-[#e5e7eb] bg-white p-6 mb-8">
+        <div className="flex items-center gap-2 mb-1">
+          <KeyRound className="w-5 h-5 text-accent" />
+          <h3 className="text-base font-bold">Activate Real Payments</h3>
+        </div>
+        <p className="text-sm text-black/50 mb-5">Paste your live Stripe API keys, click submit, and we'll verify them against Stripe before going live.</p>
+
+        <form onSubmit={verify} className="space-y-4 max-w-xl">
+          <div>
+            <label className="admin-label">Secret Key</label>
+            <div className="relative">
+              <input
+                type={showSecret ? "text" : "password"}
+                value={secretKey}
+                onChange={(e) => setSecretKey(e.target.value)}
+                placeholder="sk_live_..."
+                className="admin-input pr-10 font-mono"
+                autoComplete="off"
+              />
+              <button type="button" onClick={() => setShowSecret((s) => !s)} className="absolute right-3 top-1/2 -translate-y-1/2 text-black/40 hover:text-black">
+                {showSecret ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+              </button>
+            </div>
+          </div>
+          <div>
+            <label className="admin-label">Publishable Key</label>
+            <input
+              type="text"
+              value={publishableKey}
+              onChange={(e) => setPublishableKey(e.target.value)}
+              placeholder="pk_live_..."
+              className="admin-input font-mono"
+              autoComplete="off"
+            />
+          </div>
+          <button
+            type="submit"
+            disabled={verifying || !secretKey.trim()}
+            className="bg-accent text-white px-6 py-2.5 text-xs font-semibold uppercase tracking-[0.2em] hover:bg-accent/90 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+          >
+            {verifying ? <><Loader2 className="w-4 h-4 animate-spin" /> Verifying…</> : "Verify & Activate"}
+          </button>
+        </form>
+
+        {result && (
+          <div className="mt-5 max-w-xl">
+            {result.valid ? (
+              <div className={`border p-4 ${result.livemode ? "border-green-300 bg-green-50" : "border-amber-300 bg-amber-50"}`}>
+                <div className="flex items-center gap-2 mb-1">
+                  <CheckCircle2 className={`w-5 h-5 ${result.livemode ? "text-green-600" : "text-amber-600"}`} />
+                  <p className="font-semibold text-sm">{result.livemode ? "Live key verified" : "Test key verified"}</p>
+                </div>
+                <p className="text-xs text-black/60 mb-2">
+                  Account <span className="font-mono">{result.account_id}</span>
+                  {result.business_name ? ` · ${result.business_name}` : ""}
+                  {result.country ? ` · ${result.country}` : ""}
+                  {result.default_currency ? ` · ${result.default_currency.toUpperCase()}` : ""}
+                </p>
+                {result.livemode ? (
+                  <p className="text-xs text-black/70">
+                    Your live key is valid. To start accepting real payments, add these keys in{" "}
+                    <span className="font-semibold">Dashboard → Secrets</span> as{" "}
+                    <span className="font-mono">STRIPE_SECRET_KEY</span> and{" "}
+                    <span className="font-mono">STRIPE_PUBLISHABLE_KEY</span> (replacing the sandbox values). Checkout will then run in live mode.
+                  </p>
+                ) : (
+                  <p className="text-xs text-black/70">This is a test key. Switch to a live key (<span className="font-mono">sk_live_…</span>) to accept real payments.</p>
+                )}
+              </div>
+            ) : (
+              <div className="border border-red-300 bg-red-50 p-4 flex items-start gap-2">
+                <AlertCircle className="w-5 h-5 text-red-600 shrink-0 mt-0.5" />
+                <div>
+                  <p className="font-semibold text-sm text-red-700">Verification failed</p>
+                  <p className="text-xs text-red-600 mt-0.5">{result.error || "The API key could not be verified."}</p>
+                </div>
+              </div>
+            )}
+          </div>
+        )}
       </div>
 
       <h3 className="text-sm font-semibold uppercase tracking-[0.15em] mb-3">Recent Transactions</h3>

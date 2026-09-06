@@ -97,7 +97,15 @@ export default function Shop() {
   const filtered = useMemo(() => {
     let r = [...products];
     if (activeCategory) r = r.filter((p) => p.category === activeCategory);
-    if (query) r = r.filter((p) => p.name.toLowerCase().includes(query.toLowerCase()));
+    if (query) {
+      const ql = query.toLowerCase();
+      r = r.filter((p) =>
+        p.name.toLowerCase().includes(ql) ||
+        (p.category || "").toLowerCase().includes(ql) ||
+        (p.brand || "").toLowerCase().includes(ql) ||
+        (p.tags || []).some((t) => String(t).toLowerCase().includes(ql))
+      );
+    }
     if (dealsOnly) r = r.filter((p) => p.sale_price && p.sale_price < p.price);
     r = r.filter((p) => {
       const pr = p.sale_price || p.price;
