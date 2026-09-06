@@ -23,6 +23,11 @@
       "type": "string",
       "title": "Source",
       "default": "upload"
+    },
+    "description": {
+      "type": "string",
+      "title": "Description",
+      "maxLength": 1000
     }
   },
   "required": [
