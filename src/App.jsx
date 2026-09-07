@@ -17,6 +17,8 @@ import AdminLayout from "@/components/admin/AdminLayout";
 import { CartProvider } from "@/lib/cartContext";
 import { CurrencyProvider } from "@/lib/currencyContext";
 import { QuickViewProvider } from "@/lib/quickViewContext";
+import { WishlistProvider } from "@/lib/wishlistContext";
+import { CompareProvider } from "@/lib/compareContext";
 import Home from "@/pages/Home";
 import Shop from "@/pages/Shop";
 import About from "@/pages/About";
@@ -67,7 +69,7 @@ const AuthenticatedApp = () => {
   return (
     <Routes>
       {/* Storefront */}
-      <Route element={<CartProvider><QuickViewProvider><CurrencyProvider><StoreLayout /></CurrencyProvider></QuickViewProvider></CartProvider>}>
+      <Route element={<CartProvider><QuickViewProvider><CurrencyProvider><WishlistProvider><CompareProvider><StoreLayout /></CompareProvider></WishlistProvider></CurrencyProvider></QuickViewProvider></CartProvider>}>
         <Route path="/" element={<Home />} />
         <Route path="/shop" element={<Shop />} />
         <Route path="/about" element={<About />} />

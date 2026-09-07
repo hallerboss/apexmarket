@@ -2,8 +2,7 @@ import { useState, useEffect } from "react";
 import { Link, Outlet, useLocation, useNavigate } from "react-router-dom";
 import { Search, ShoppingBag, Menu, X, Phone, Scale, MapPin, Package, ShieldCheck, User, Heart } from "lucide-react";
 import { useCart } from "@/lib/cartContext";
-import { useWishlist, WishlistProvider } from "@/lib/wishlistContext";
-import { CompareProvider } from "@/lib/compareContext";
+import { useWishlist } from "@/lib/wishlistContext";
 import CompareBar from "@/components/store/CompareBar";
 import { trackPageView } from "@/lib/analytics";
 import StoreFooter from "@/components/store/StoreFooter";
@@ -47,8 +46,6 @@ export default function StoreLayout() {
   }, []);
 
   return (
-    <WishlistProvider>
-      <CompareProvider>
     <div className="min-h-screen bg-background">
       <header className="sticky top-0 z-30 bg-white border-b border-[#eeeeee]">
         {/* top row */}
@@ -186,7 +183,5 @@ export default function StoreLayout() {
       )}
       <CompareBar />
     </div>
-      </CompareProvider>
-    </WishlistProvider>
   );
 }
