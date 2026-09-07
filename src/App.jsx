@@ -22,6 +22,7 @@ import Shop from "@/pages/Shop";
 import About from "@/pages/About";
 import ProductDetail from "@/pages/ProductDetail";
 import Cart from "@/pages/Cart";
+import Wishlist from "@/pages/Wishlist";
 import ContentPage from "@/pages/ContentPage";
 import Contact from "@/pages/Contact";
 import TrackOrder from "@/pages/TrackOrder";
@@ -72,6 +73,7 @@ const AuthenticatedApp = () => {
         <Route path="/about" element={<About />} />
         <Route path="/product/:id" element={<ProductDetail />} />
         <Route path="/cart" element={<Cart />} />
+        <Route path="/wishlist" element={<Wishlist />} />
         <Route path="/contact" element={<Contact />} />
         <Route path="/track" element={<TrackOrder />} />
         <Route path="/orders" element={<MyOrders />} />

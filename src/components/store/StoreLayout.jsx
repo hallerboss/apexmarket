@@ -1,7 +1,10 @@
 import { useState, useEffect } from "react";
 import { Link, Outlet, useLocation, useNavigate } from "react-router-dom";
-import { Search, ShoppingBag, Menu, X, Phone, Scale, MapPin, Package, ShieldCheck, User } from "lucide-react";
+import { Search, ShoppingBag, Menu, X, Phone, Scale, MapPin, Package, ShieldCheck, User, Heart } from "lucide-react";
 import { useCart } from "@/lib/cartContext";
+import { useWishlist, WishlistProvider } from "@/lib/wishlistContext";
+import { CompareProvider } from "@/lib/compareContext";
+import CompareBar from "@/components/store/CompareBar";
 import { trackPageView } from "@/lib/analytics";
 import StoreFooter from "@/components/store/StoreFooter";
 import SearchBar from "@/components/store/SearchBar";
@@ -26,6 +29,7 @@ export default function StoreLayout() {
   const [categories, setCategories] = useState([]);
   const [navSearch, setNavSearch] = useState("");
   const { count } = useCart();
+  const { count: wishlistCount } = useWishlist();
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -43,6 +47,8 @@ export default function StoreLayout() {
   }, []);
 
   return (
+    <WishlistProvider>
+      <CompareProvider>
     <div className="min-h-screen bg-background">
       <header className="sticky top-0 z-30 bg-white border-b border-[#eeeeee]">
         {/* top row */}
@@ -75,6 +81,14 @@ export default function StoreLayout() {
             </button>
             <Link to="/profile" className="hidden sm:block hover:text-accent transition-colors" aria-label="Profile">
               <User className="w-5 h-5" />
+            </Link>
+            <Link to="/wishlist" className="relative hover:text-accent transition-colors" aria-label="Wishlist">
+              <Heart className="w-5 h-5" />
+              {wishlistCount > 0 && (
+                <span className="absolute -top-1.5 -right-1.5 bg-red-500 text-white text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center">
+                  {wishlistCount}
+                </span>
+              )}
             </Link>
             <Link to="/cart" className="relative hover:text-accent transition-colors" aria-label="Cart">
               <ShoppingBag className="w-5 h-5" />
@@ -133,6 +147,9 @@ export default function StoreLayout() {
                   <Link to="/track" onClick={() => setMenuOpen(false)} className="flex items-center gap-3 px-5 py-4 text-base text-white border-b border-white/10 hover:bg-white/5">
                     <MapPin className="w-4 h-4 text-[#3b82f6]" /> Track Order
                   </Link>
+                  <Link to="/wishlist" onClick={() => setMenuOpen(false)} className="flex items-center gap-3 px-5 py-4 text-base text-white border-b border-white/10 hover:bg-white/5">
+                    <Heart className="w-4 h-4 text-[#3b82f6]" /> My Wishlist
+                  </Link>
                   <Link to="/orders" onClick={() => setMenuOpen(false)} className="flex items-center gap-3 px-5 py-4 text-base text-white border-b border-white/10 hover:bg-white/5">
                     <Package className="w-4 h-4 text-[#3b82f6]" /> My Orders
                   </Link>
@@ -167,6 +184,9 @@ export default function StoreLayout() {
           </div>
         </div>
       )}
+      <CompareBar />
     </div>
+      </CompareProvider>
+    </WishlistProvider>
   );
 }

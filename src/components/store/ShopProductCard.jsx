@@ -3,6 +3,7 @@ import { Star, Check } from "lucide-react";
 import { Image } from "@/components/ui/image";
 import { useCart } from "@/lib/cartContext";
 import { useCurrency } from "@/lib/currencyContext";
+import WishlistToggle from "@/components/store/WishlistToggle";
 
 export default function ShopProductCard({ product }) {
   const { addItem } = useCart();
@@ -25,6 +26,7 @@ export default function ShopProductCard({ product }) {
           {product.best_seller && <span className="bg-green-600 text-white text-[11px] font-bold px-2 py-0.5 rounded">HOT</span>}
           {product.is_new && !hasSale && !product.best_seller && <span className="bg-[#0066ff] text-white text-[11px] font-bold px-2 py-0.5 rounded">NEW</span>}
         </div>
+        <WishlistToggle productId={product.id} className="absolute top-2 right-2 z-10 w-8 h-8 bg-white/90 border border-[#eee] rounded-full hover:border-red-400" />
       </Link>
 
       <Link to={`/product/${product.id}`}>

@@ -5,8 +5,6 @@ import { SlidersHorizontal, X, LayoutGrid, Rows3, ChevronRight } from "lucide-re
 import { Image } from "@/components/ui/image";
 import { Slider } from "@/components/ui/slider";
 import ShopProductCard from "@/components/store/ShopProductCard";
-import { CompareProvider } from "@/lib/compareContext";
-import CompareBar from "@/components/store/CompareBar";
 
 const sortOptions = [
   { value: "newest", label: "Default sorting" },
@@ -248,7 +246,6 @@ export default function Shop() {
   );
 
   return (
-    <CompareProvider>
       <div>
         {/* Breadcrumbs */}
         <div className="border-b border-[#eee] bg-white">
@@ -365,7 +362,5 @@ export default function Shop() {
           </div>
         )}
       </div>
-      <CompareBar />
-    </CompareProvider>
   );
 }

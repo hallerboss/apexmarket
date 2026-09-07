@@ -3,6 +3,7 @@ import { Star, Check } from "lucide-react";
 import { Image } from "@/components/ui/image";
 import { useCart } from "@/lib/cartContext";
 import CompareToggle from "@/components/store/CompareToggle";
+import WishlistToggle from "@/components/store/WishlistToggle";
 import { useCurrency } from "@/lib/currencyContext";
 
 const colorMap = {
@@ -37,6 +38,7 @@ export default function ProductCard({ product, index = 0, compareMode = false })
         {product.is_new && !hasSale && (
           <span className="absolute top-2 left-2 bg-foreground text-white text-[11px] font-bold px-2 py-1 rounded-sm">NEW</span>
         )}
+        <WishlistToggle productId={product.id} className="absolute top-3 right-3 z-10 w-8 h-8 bg-background/90 border border-[#eeeeee] hover:border-red-400" />
         {compareMode && <CompareToggle productId={product.id} />}
       </Link>
 
