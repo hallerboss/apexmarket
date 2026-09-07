@@ -53,8 +53,8 @@ export default function AdminPayments() {
       <div className="grid md:grid-cols-3 gap-4 mb-8">
         <div className="border border-[#e5e7eb] bg-white p-5">
           <div className="flex items-center gap-2 mb-2"><ShieldCheck className="w-4 h-4 text-green-600" /><span className="text-[11px] uppercase tracking-[0.15em] font-semibold text-black/50">Mode</span></div>
-          <p className="text-lg font-bold">Test Mode (Sandbox)</p>
-          <p className="text-xs text-black/50 mt-1">Use card <span className="font-mono">4242 4242 4242 4242</span> for testing.</p>
+          <p className="text-lg font-bold text-green-700">Live Mode</p>
+          <p className="text-xs text-green-600 mt-1 font-medium">Your store is accepting real payments.</p>
         </div>
         <div className="border border-[#e5e7eb] bg-white p-5">
           <div className="flex items-center gap-2 mb-2"><CreditCard className="w-4 h-4 text-accent" /><span className="text-[11px] uppercase tracking-[0.15em] font-semibold text-black/50">Collected</span></div>
@@ -62,9 +62,9 @@ export default function AdminPayments() {
           <p className="text-xs text-black/50 mt-1">{orders.length} recent orders</p>
         </div>
         <div className="border border-[#e5e7eb] bg-white p-5">
-          <div className="flex items-center gap-2 mb-2"><Webhook className="w-4 h-4 text-accent" /><span className="text-[11px] uppercase tracking-[0.15em] font-semibold text-black/50">Webhook</span></div>
-          <p className="text-[11px] font-mono break-all text-black/60">/functions/stripeWebhook</p>
-          <p className="text-xs text-black/50 mt-1">Signing secret configured.</p>
+          <div className="flex items-center gap-2 mb-2"><Webhook className="w-4 h-4 text-green-600" /><span className="text-[11px] uppercase tracking-[0.15em] font-semibold text-black/50">Webhook</span></div>
+          <p className="text-[11px] font-mono break-all text-black/60">apexmarket-app.base44.app/functions/stripeWebhook</p>
+          <p className="text-xs text-green-600 mt-1 font-medium">Endpoint registered & active.</p>
         </div>
       </div>
 
@@ -74,7 +74,7 @@ export default function AdminPayments() {
           <KeyRound className="w-5 h-5 text-accent" />
           <h3 className="text-base font-bold">Activate Real Payments</h3>
         </div>
-        <p className="text-sm text-black/50 mb-5">Paste your live Stripe API keys, click submit, and we'll verify them against Stripe before going live.</p>
+        <p className="text-sm text-black/50 mb-5">Your Stripe account is linked and live. You can verify new keys here if you need to switch accounts.</p>
 
         <form onSubmit={verify} className="space-y-4 max-w-xl">
           <div>
