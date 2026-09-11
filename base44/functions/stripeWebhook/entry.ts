@@ -85,24 +85,61 @@ export default async function (req) {
           ...(email ? { customer_email: email } : {}),
         });
       }
-      if (orderId && email) {
+      if (orderId) {
         try {
           const order = await base44.asServiceRole.entities.Order.get(orderId);
           if (order) {
-            const { accessToken } = await base44.asServiceRole.connectors.getConnection("gmail");
-            const raw = buildOrderEmail({ ...order, customer_email: email });
-            const res = await fetch("https://gmail.googleapis.com/gmail/v1/users/me/messages/send", {
-              method: "POST",
-              headers: { Authorization: `Bearer ${accessToken}`, "Content-Type": "application/json" },
-              body: JSON.stringify({ raw }),
-            });
-            if (!res.ok) {
-              const errData = await res.json().catch(() => ({}));
-              console.error("Gmail send failed:", errData.error?.message || res.status);
+            const itemsList = (order.items || [])
+              .map((it) => `- ${it.name} x${it.quantity} — $${(it.price * it.quantity).toFixed(2)}`)
+              .join("\n");
+
+            // Admin notification — new order alert
+            try {
+              const admins = await base44.asServiceRole.entities.User.filter({ role: "admin" }, "-created_date", 10);
+              const adminHtml = `<h2>New Order — ${order.order_number || orderId}</h2>
+                <p><strong>Customer:</strong> ${order.customer_name || "—"}</p>
+                <p><strong>Email:</strong> ${email || order.customer_email || "—"}</p>
+                <p><strong>Phone:</strong> ${order.customer_phone || "—"}</p>
+                <p><strong>Shipping Address:</strong> ${order.shipping_address || "—"}</p>
+                <p><strong>Total:</strong> $${(order.total || 0).toFixed(2)}</p>
+                <h3>Items:</h3><pre>${itemsList}</pre>`;
+              for (const a of admins) {
+                if (a.email) {
+                  await base44.asServiceRole.integrations.Core.SendEmail({
+                    to: a.email,
+                    subject: `New Order — ${order.order_number || orderId}`,
+                    html: adminHtml,
+                  });
+                }
+              }
+            } catch (adminErr) {
+              console.error("Admin notification email failed:", adminErr?.message || adminErr);
+            }
+
+            // Customer confirmation
+            const customerEmail = email || order.customer_email;
+            if (customerEmail) {
+              try {
+                const customerHtml = `<h2>Thank you for your order at ApexMarket!</h2>
+                  <p>Hi ${order.customer_name || "there"},</p>
+                  <p>Your payment has been confirmed and we're preparing your items for shipment.</p>
+                  <p><strong>Order Number:</strong> ${order.order_number || "—"}</p>
+                  <p><strong>Total:</strong> $${(order.total || 0).toFixed(2)}</p>
+                  <h3>Items:</h3><pre>${itemsList}</pre>
+                  <p>We'll send you tracking information once your order ships.</p>
+                  <p>Thank you for shopping with us!<br>The ApexMarket Team</p>`;
+                await base44.asServiceRole.integrations.Core.SendEmail({
+                  to: customerEmail,
+                  subject: "Your ApexMarket order is confirmed",
+                  html: customerHtml,
+                });
+              } catch (custErr) {
+                console.error("Customer confirmation email failed:", custErr?.message || custErr);
+              }
             }
           }
         } catch (mailErr) {
-          console.error("Order confirmation email failed:", mailErr?.message || mailErr);
+          console.error("Order email notification failed:", mailErr?.message || mailErr);
         }
       }
     }

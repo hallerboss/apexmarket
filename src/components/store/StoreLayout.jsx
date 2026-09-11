@@ -19,6 +19,7 @@ const navLinks = [
   { label: "Furniture", path: "/shop?category=Furniture" },
   { label: "About", path: "/about" },
   { label: "Contact", path: "/contact" },
+  { label: "FAQ", path: "/faq" },
 ];
 
 export default function StoreLayout() {

@@ -33,6 +33,7 @@ export default function StoreFooter() {
             <ul className="space-y-3 text-sm text-muted-foreground">
               <li><Link to="/about" className="hover:text-foreground">About</Link></li>
               <li><Link to="/contact" className="hover:text-foreground">Contact</Link></li>
+              <li><Link to="/faq" className="hover:text-foreground">FAQ</Link></li>
               <li><Link to="/page/shipping" className="hover:text-foreground">Shipping</Link></li>
               <li><Link to="/page/returns" className="hover:text-foreground">Returns</Link></li>
             </ul>

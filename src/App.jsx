@@ -27,6 +27,7 @@ import Cart from "@/pages/Cart";
 import Wishlist from "@/pages/Wishlist";
 import ContentPage from "@/pages/ContentPage";
 import Contact from "@/pages/Contact";
+import FAQ from "@/pages/FAQ";
 import TrackOrder from "@/pages/TrackOrder";
 import MyOrders from "@/pages/MyOrders";
 import Profile from "@/pages/Profile";
@@ -77,6 +78,7 @@ const AuthenticatedApp = () => {
         <Route path="/cart" element={<Cart />} />
         <Route path="/wishlist" element={<Wishlist />} />
         <Route path="/contact" element={<Contact />} />
+        <Route path="/faq" element={<FAQ />} />
         <Route path="/track" element={<TrackOrder />} />
         <Route path="/orders" element={<MyOrders />} />
         <Route path="/profile" element={<Profile />} />

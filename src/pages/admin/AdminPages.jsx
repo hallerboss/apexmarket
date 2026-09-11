@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
-import { Plus, Pencil, Trash2, X, Upload, Eye } from "lucide-react";
+import { Plus, Pencil, Trash2, X, Upload, Eye, FileText } from "lucide-react";
 
 const empty = { title: "", slug: "", content: "", excerpt: "", featured_image: "", status: "published", show_in_menu: false };
 
@@ -94,23 +94,37 @@ export default function AdminPages() {
           <Plus className="w-4 h-4" /> Add Page
         </button>
       </div>
-      <div className="bg-[#0a0a0a] border border-white/5">
-        {loading ? <div className="p-12 text-center text-white/30 text-sm">Loading…</div> : pages.length === 0 ? (
-          <div className="p-12 text-center text-white/30 text-sm">No pages yet.</div>
+      <div className="bg-white border border-[#e5e7eb]">
+        {loading ? <div className="p-12 text-center text-black/40 text-sm">Loading…</div> : pages.length === 0 ? (
+          <div className="p-12 text-center text-black/40 text-sm">No pages yet.</div>
         ) : (
-          <div className="divide-y divide-white/5">
+          <div className="divide-y divide-[#eef0f2]">
             {pages.map((p) => (
-              <div key={p.id} className="px-5 py-4 flex items-center gap-4 hover:bg-white/[0.02]">
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium text-white truncate">{p.title}</p>
-                  <p className="text-xs text-white/40">/page/{p.slug}</p>
+              <div key={p.id} className="px-5 py-4 flex items-start gap-4 hover:bg-[#fafafa] transition-colors">
+                <div className="w-16 h-16 shrink-0 overflow-hidden bg-[#f3f4f6] border border-[#e5e7eb]">
+                  {p.featured_image ? (
+                    <img src={p.featured_image} alt="" className="w-full h-full object-cover" />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center text-black/20">
+                      <FileText className="w-5 h-5" />
+                    </div>
+                  )}
                 </div>
-                <span className={`text-[9px] uppercase tracking-wide px-2 py-1 ${p.status === "published" ? "bg-green-500/10 text-green-400" : "bg-white/10 text-white/50"}`}>{p.status}</span>
-                {p.show_in_menu && <span className="text-[9px] uppercase tracking-wide bg-accent/10 text-accent px-2 py-1 hidden sm:inline">Menu</span>}
-                <div className="flex gap-1">
-                  <a href={`/page/${p.slug}`} target="_blank" className="p-2 text-white/50 hover:text-accent"><Eye className="w-4 h-4" /></a>
-                  <button onClick={() => setEditing({ ...p })} className="p-2 text-white/50 hover:text-accent"><Pencil className="w-4 h-4" /></button>
-                  <button onClick={() => { if (confirm("Delete?")) base44.entities.Page.delete(p.id).then(load); }} className="p-2 text-white/50 hover:text-red-400"><Trash2 className="w-4 h-4" /></button>
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-medium text-black truncate">{p.title}</p>
+                  <p className="text-xs text-black/40 mt-0.5">/page/{p.slug}</p>
+                  {p.excerpt && <p className="text-xs text-black/50 mt-1 line-clamp-1">{p.excerpt}</p>}
+                  <div className="flex items-center gap-3 mt-1.5">
+                    <span className="text-[10px] text-black/40">{new Date(p.created_date).toLocaleDateString()}</span>
+                    {p.content && <span className="text-[10px] text-black/40">{p.content.length} chars</span>}
+                  </div>
+                </div>
+                <div className="flex items-center gap-2 shrink-0">
+                  <span className={`text-[9px] uppercase tracking-wide px-2 py-1 ${p.status === "published" ? "bg-green-100 text-green-700" : "bg-gray-100 text-gray-600"}`}>{p.status}</span>
+                  {p.show_in_menu && <span className="text-[9px] uppercase tracking-wide bg-accent/10 text-accent px-2 py-1 hidden sm:inline">Menu</span>}
+                  <a href={`/page/${p.slug}`} target="_blank" className="p-2 text-black/50 hover:text-accent"><Eye className="w-4 h-4" /></a>
+                  <button onClick={() => setEditing({ ...p })} className="p-2 text-black/50 hover:text-accent"><Pencil className="w-4 h-4" /></button>
+                  <button onClick={() => { if (confirm("Delete?")) base44.entities.Page.delete(p.id).then(load); }} className="p-2 text-black/50 hover:text-red-500"><Trash2 className="w-4 h-4" /></button>
                 </div>
               </div>
             ))}

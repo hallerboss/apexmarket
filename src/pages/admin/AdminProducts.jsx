@@ -3,6 +3,7 @@ import { useSearchParams } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
 import { Image as ImageIcon, Upload, X, Plus, Pencil, Trash2, Search, Sparkles } from "lucide-react";
 import RichTextEditor from "@/components/admin/RichTextEditor";
+import ProductAgentChat from "@/components/admin/ProductAgentChat";
 
 const COUNTRIES = ["United States", "United Kingdom", "Canada", "Australia", "Germany", "France", "Spain", "Italy", "Netherlands", "Pakistan", "India", "UAE", "Saudi Arabia", "China", "Japan", "Brazil", "Mexico", "South Africa"];
 const COURIERS = ["Cainiao", "DHL Express", "FedEx", "UPS", "USPS", "Royal Mail", "Aramex", "TCS", "DPD", "Local Courier"];
@@ -25,6 +26,7 @@ export default function AdminProducts() {
   const [uploading, setUploading] = useState(false);
   const [vUploading, setVUploading] = useState(null);
   const [analyzing, setAnalyzing] = useState(false);
+  const [showAgent, setShowAgent] = useState(false);
 
   const isNew = searchParams.get("new") === "1";
 
@@ -351,6 +353,10 @@ export default function AdminProducts() {
                 <Sparkles className="w-4 h-4" /> {analyzing ? "Analyzing…" : "AI Analyze Image"}
               </button>
               <p className="text-[10px] text-white mt-2">Upload an image, then click to auto-generate description, 10 features & SEO from AI + web research.</p>
+              <button type="button" onClick={() => setShowAgent(true)} className="w-full mt-3 border border-foreground/30 text-foreground py-2.5 text-xs font-semibold uppercase tracking-[0.15em] flex items-center justify-center gap-2 hover:bg-foreground hover:text-white transition-colors">
+                <Sparkles className="w-4 h-4" /> Ask AI Assistant (Free)
+              </button>
+              <p className="text-[10px] text-white/60 mt-2">Chat with our AI agent to generate descriptions, SEO, or create products by conversation.</p>
             </div>
 
             <div>
@@ -381,6 +387,7 @@ export default function AdminProducts() {
             </button>
           </div>
         </form>
+        {showAgent && <ProductAgentChat onClose={() => setShowAgent(false)} />}
       </div>
     );
   }
