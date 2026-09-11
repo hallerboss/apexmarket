@@ -1,7 +1,8 @@
 import { Link } from "react-router-dom";
-import { Star, Check } from "lucide-react";
+import { Star, Check, Eye } from "lucide-react";
 import { Image } from "@/components/ui/image";
 import { useCart } from "@/lib/cartContext";
+import { useQuickView } from "@/lib/quickViewContext";
 import CompareToggle from "@/components/store/CompareToggle";
 import WishlistToggle from "@/components/store/WishlistToggle";
 import { useCurrency } from "@/lib/currencyContext";
@@ -17,6 +18,7 @@ const colorFor = (n) => colorMap[String(n).toLowerCase()] || "#9ca3af";
 export default function ProductCard({ product, index = 0, compareMode = false }) {
   const { addItem } = useCart();
   const { formatPrice } = useCurrency();
+  const { open: openQuickView } = useQuickView();
   const hasSale = product.sale_price && product.sale_price < product.price;
   const discount = hasSale ? Math.round(((product.price - product.sale_price) / product.price) * 100) : 0;
   const colorVariant = (product.variants || []).find((v) => /color/i.test(v.name || ""));
@@ -39,6 +41,13 @@ export default function ProductCard({ product, index = 0, compareMode = false })
           <span className="absolute top-2 left-2 bg-foreground text-white text-[11px] font-bold px-2 py-1 rounded-sm">NEW</span>
         )}
         <WishlistToggle productId={product.id} className="absolute top-3 right-3 z-10 w-8 h-8 bg-background/90 border border-[#eeeeee] hover:border-red-400" />
+        <button
+          onClick={(e) => { e.preventDefault(); e.stopPropagation(); openQuickView(product); }}
+          className="absolute bottom-3 right-3 z-10 w-8 h-8 bg-background/90 border border-[#eeeeee] hover:border-accent flex items-center justify-center transition-colors"
+          aria-label="Quick view"
+        >
+          <Eye className="w-4 h-4" />
+        </button>
         {compareMode && <CompareToggle productId={product.id} />}
       </Link>
 

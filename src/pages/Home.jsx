@@ -27,6 +27,9 @@ export default function Home() {
   const newArrivals = products.filter((p) => p.is_new);
   const bestSellers = products.filter((p) => p.best_seller);
   const topRated = products.filter((p) => p.top_rated);
+  const seasonalPicks = products.filter(
+    (p) => (p.tags || []).some((t) => /seasonal|summer|winter|fall|spring|holiday/i.test(t)) || (p.sale_price && p.sale_price < p.price)
+  );
 
   return (
     <div>
@@ -83,6 +86,14 @@ export default function Home() {
             <section className="container-bleed px-5 lg:px-10 py-16 lg:py-24">
               <SectionHeader eyebrow="Fresh" title="New Arrivals" link="/shop" />
               <ProductRow products={newArrivals.slice(0, 4)} />
+            </section>
+          )}
+
+          {/* SEASONAL PICKS */}
+          {seasonalPicks.length > 0 && (
+            <section className="container-bleed px-5 lg:px-10 py-16 lg:py-24">
+              <SectionHeader eyebrow="Limited Time" title="Seasonal Picks" link="/shop?deals=1" />
+              <ProductRow products={seasonalPicks.slice(0, 4)} />
             </section>
           )}
 

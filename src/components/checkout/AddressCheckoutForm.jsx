@@ -37,6 +37,7 @@ export default function AddressCheckoutForm({ onSubmit, placing }) {
     country: "United States",
     first_name: "",
     last_name: "",
+    email: "",
     phone: "",
     address_search: "",
     street: "",
@@ -101,6 +102,12 @@ export default function AddressCheckoutForm({ onSubmit, placing }) {
         </div>
       </div>
 
+      {/* Email */}
+      <label className={labelCls}>
+        Email<span className="text-red-600">*</span>
+      </label>
+      <input required type="email" placeholder="your@email.com" value={form.email} onChange={(e) => set("email", e.target.value)} className={`${inputCls} mb-4`} />
+
       {/* Phone */}
       <label className={labelCls}>
         Phone number<span className="text-red-600">*</span>
@@ -156,8 +163,8 @@ export default function AddressCheckoutForm({ onSubmit, placing }) {
         </div>
       </div>
 
-      <button type="submit" disabled={placing} className="w-full h-12 rounded-lg bg-black text-white text-sm font-semibold disabled:opacity-50">
-        {placing ? "Placing…" : "Save"}
+      <button type="submit" disabled={placing} className="w-full h-12 rounded-lg bg-black text-white text-sm font-semibold disabled:opacity-50 flex items-center justify-center gap-2">
+        {placing ? "Placing…" : (<>Proceed to Payment</>)}
       </button>
     </form>
   );

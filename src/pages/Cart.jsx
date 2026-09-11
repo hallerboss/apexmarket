@@ -5,6 +5,7 @@ import { Minus, Plus, ShoppingBag, ChevronDown, Trash2 } from "lucide-react";
 import { useCart } from "@/lib/cartContext";
 import { useCurrency } from "@/lib/currencyContext";
 import { base44 } from "@/api/base44Client";
+import { trackOrderPlaced } from "@/lib/analytics";
 import AddressCheckoutForm from "@/components/checkout/AddressCheckoutForm";
 
 export default function Cart() {
@@ -39,6 +40,7 @@ export default function Cart() {
       base44.entities.Order.get(orderId).then((order) => {
         setPlaced(order);
         clear();
+        trackOrderPlaced(order);
       });
     } else if (status === "cancel") {
       window.history.replaceState({}, "", "/cart");
@@ -57,6 +59,7 @@ export default function Cart() {
       const orderNumber = `WM-${Date.now().toString().slice(-6)}`;
       const order = await base44.entities.Order.create({
         customer_name,
+        customer_email: form.email,
         customer_phone: form.phone,
         shipping_address,
         order_number: orderNumber,
@@ -70,6 +73,7 @@ export default function Cart() {
       const res = await base44.functions.invoke("createCheckoutSession", {
         order_id: order.id,
         items: items.map((i) => ({ name: i.name, price: i.price, quantity: i.quantity })),
+        customer_email: form.email,
         shipping,
         success_url: `${origin}/cart?status=success&order=${order.id}`,
         cancel_url: `${origin}/cart?status=cancel`,

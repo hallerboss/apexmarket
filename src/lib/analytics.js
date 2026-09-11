@@ -42,3 +42,47 @@ export function trackPageView(path) {
     },
   });
 }
+
+export function trackAddToCart(product, quantity = 1) {
+  if (!product) return;
+  const price = product.sale_price || product.price;
+  if (typeof window !== "undefined" && typeof window.gtag === "function") {
+    window.gtag("event", "add_to_cart", {
+      currency: "USD",
+      value: price * quantity,
+      items: [{
+        item_id: product.id,
+        item_name: product.name,
+        item_brand: product.brand || undefined,
+        item_category: product.category || undefined,
+        price,
+        quantity,
+      }],
+    });
+  }
+  base44.analytics.track({
+    eventName: "add_to_cart",
+    properties: { product_id: product.id, name: product.name, quantity },
+  });
+}
+
+export function trackOrderPlaced(order) {
+  if (!order) return;
+  if (typeof window !== "undefined" && typeof window.gtag === "function") {
+    window.gtag("event", "purchase", {
+      transaction_id: order.order_number || order.id,
+      value: order.total,
+      currency: "USD",
+      items: (order.items || []).map((i) => ({
+        item_id: i.product_id,
+        item_name: i.name,
+        price: i.price,
+        quantity: i.quantity,
+      })),
+    });
+  }
+  base44.analytics.track({
+    eventName: "order_placed",
+    properties: { order_id: order.id, total: order.total },
+  });
+}

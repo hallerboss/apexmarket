@@ -10,6 +10,7 @@ import { useCompare } from "@/lib/compareContext";
 import WishlistToggle from "@/components/store/WishlistToggle";
 import { trackProductView } from "@/lib/analytics";
 import ProductCard from "@/components/store/ProductCard";
+import FrequentlyBoughtTogether from "@/components/store/FrequentlyBoughtTogether";
 import CustomerReviews from "@/components/store/CustomerReviews";
 
 export default function ProductDetail() {
@@ -244,6 +245,9 @@ export default function ProductDetail() {
 
         </div>
       </div>
+
+      {/* Frequently Bought Together */}
+      <FrequentlyBoughtTogether product={product} />
 
       {/* Customer Reviews — full width */}
       <section className="container-bleed px-5 lg:px-10 py-10 lg:py-16 border-t hairline">

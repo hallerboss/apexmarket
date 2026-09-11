@@ -1,13 +1,15 @@
 import { Link } from "react-router-dom";
-import { Star, Check } from "lucide-react";
+import { Star, Check, Eye } from "lucide-react";
 import { Image } from "@/components/ui/image";
 import { useCart } from "@/lib/cartContext";
 import { useCurrency } from "@/lib/currencyContext";
+import { useQuickView } from "@/lib/quickViewContext";
 import WishlistToggle from "@/components/store/WishlistToggle";
 
 export default function ShopProductCard({ product }) {
   const { addItem } = useCart();
   const { formatPrice } = useCurrency();
+  const { open: openQuickView } = useQuickView();
   const hasSale = product.sale_price && product.sale_price < product.price;
   const discount = hasSale ? Math.round(((product.price - product.sale_price) / product.price) * 100) : 0;
   const inStock = (product.stock ?? 0) > 0;
@@ -27,6 +29,13 @@ export default function ShopProductCard({ product }) {
           {product.is_new && !hasSale && !product.best_seller && <span className="bg-[#0066ff] text-white text-[11px] font-bold px-2 py-0.5 rounded">NEW</span>}
         </div>
         <WishlistToggle productId={product.id} className="absolute top-2 right-2 z-10 w-8 h-8 bg-white/90 border border-[#eee] rounded-full hover:border-red-400" />
+        <button
+          onClick={(e) => { e.preventDefault(); e.stopPropagation(); openQuickView(product); }}
+          className="absolute bottom-0 inset-x-0 z-10 bg-black/80 text-white text-xs font-semibold py-2 opacity-0 group-hover:opacity-100 transition-opacity"
+          aria-label="Quick view"
+        >
+          Quick View
+        </button>
       </Link>
 
       <Link to={`/product/${product.id}`}>

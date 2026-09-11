@@ -1,4 +1,5 @@
 import { createContext, useContext, useState, useEffect, useCallback } from "react";
+import { trackAddToCart } from "@/lib/analytics";
 
 const CartContext = createContext(null);
 
@@ -17,6 +18,7 @@ export function CartProvider({ children }) {
   }, [items]);
 
   const addItem = useCallback((product, qty = 1, variant = null) => {
+    trackAddToCart(product, qty);
     setItems((prev) => {
       const key = variant ? `${product.id}_${variant}` : product.id;
       const existing = prev.find((i) => i.key === key);
