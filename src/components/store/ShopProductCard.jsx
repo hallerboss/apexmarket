@@ -24,9 +24,10 @@ export default function ShopProductCard({ product }) {
           <div className="w-full h-full" />
         )}
         <div className="absolute top-2 left-2 flex flex-col gap-1">
-          {hasSale && <span className="bg-[#ff9f43] text-white text-[11px] font-bold px-2 py-0.5 rounded">-{discount}%</span>}
+          {hasSale && <span className="bg-red-600 text-white text-[11px] font-bold px-2 py-0.5 rounded">-{discount}%</span>}
           {product.best_seller && <span className="bg-green-600 text-white text-[11px] font-bold px-2 py-0.5 rounded">HOT</span>}
-          {product.is_new && !hasSale && !product.best_seller && <span className="bg-[#0066ff] text-white text-[11px] font-bold px-2 py-0.5 rounded">NEW</span>}
+          {product.is_new && <span className="bg-[#0066ff] text-white text-[11px] font-bold px-2 py-0.5 rounded">NEW</span>}
+          {product.top_rated && <span className="bg-purple-600 text-white text-[11px] font-bold px-2 py-0.5 rounded">TOP RATED</span>}
         </div>
         <WishlistToggle productId={product.id} className="absolute top-2 right-2 z-10 w-8 h-8 bg-white/90 border border-[#eee] rounded-full hover:border-red-400" />
         <button
@@ -51,6 +52,9 @@ export default function ShopProductCard({ product }) {
           </div>
           <span className="text-xs text-[#666]">({product.reviews_count || 0})</span>
         </div>
+      )}
+      {product.total_sales > 0 && (
+        <p className="text-[11px] text-[#999] mt-0.5">Sales: ({product.total_sales})</p>
       )}
 
       <div className="flex items-center gap-1.5 mt-1.5">

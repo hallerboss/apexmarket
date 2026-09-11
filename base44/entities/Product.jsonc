@@ -65,6 +65,12 @@
       "title": "Reviews Count",
       "default": 0
     },
+    "total_sales": {
+      "type": "number",
+      "title": "Total Sales",
+      "minimum": 0,
+      "default": 0
+    },
     "featured": {
       "type": "boolean",
       "title": "Featured",

@@ -32,14 +32,19 @@ export default function ProductCard({ product, index = 0, compareMode = false })
         ) : (
           <div className="w-full h-full bg-secondary" />
         )}
-        {hasSale && (
-          <span className="absolute top-2 left-2 bg-[#ff9f43] text-white text-[11px] font-bold px-2 py-1 rounded-sm">
-            {discount}% OFF
-          </span>
-        )}
-        {product.is_new && !hasSale && (
-          <span className="absolute top-2 left-2 bg-foreground text-white text-[11px] font-bold px-2 py-1 rounded-sm">NEW</span>
-        )}
+        <div className="absolute top-2 left-2 flex flex-col gap-1 z-10">
+          {hasSale && (
+            <span className="bg-red-600 text-white text-[11px] font-bold px-2 py-1 rounded-sm">
+              -{discount}%
+            </span>
+          )}
+          {product.is_new && (
+            <span className="bg-[#0066ff] text-white text-[11px] font-bold px-2 py-1 rounded-sm">NEW</span>
+          )}
+          {product.top_rated && (
+            <span className="bg-purple-600 text-white text-[11px] font-bold px-2 py-1 rounded-sm">TOP RATED</span>
+          )}
+        </div>
         <WishlistToggle productId={product.id} className="absolute top-3 right-3 z-10 w-8 h-8 bg-background/90 border border-[#eeeeee] hover:border-red-400" />
         <button
           onClick={(e) => { e.preventDefault(); e.stopPropagation(); openQuickView(product); }}
@@ -72,6 +77,9 @@ export default function ProductCard({ product, index = 0, compareMode = false })
             <span className="text-xs text-foreground">{product.rating.toFixed(1)}</span>
             <span className="text-xs text-muted-foreground">({product.reviews_count || 0})</span>
           </div>
+        )}
+        {product.total_sales > 0 && (
+          <p className="text-[11px] text-muted-foreground">Sales: ({product.total_sales})</p>
         )}
 
         <div className="flex items-center gap-1.5 text-xs">

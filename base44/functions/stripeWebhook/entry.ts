@@ -137,6 +137,22 @@ export default async function (req) {
                 console.error("Customer confirmation email failed:", custErr?.message || custErr);
               }
             }
+
+            // Increment total_sales for ordered products
+            try {
+              for (const item of (order.items || [])) {
+                if (item.product_id) {
+                  const p = await base44.asServiceRole.entities.Product.get(item.product_id).catch(() => null);
+                  if (p) {
+                    await base44.asServiceRole.entities.Product.update(item.product_id, {
+                      total_sales: (p.total_sales || 0) + (item.quantity || 1)
+                    });
+                  }
+                }
+              }
+            } catch (salesErr) {
+              console.error("Failed to update total_sales:", salesErr?.message || salesErr);
+            }
           }
         } catch (mailErr) {
           console.error("Order email notification failed:", mailErr?.message || mailErr);

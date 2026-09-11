@@ -20,6 +20,8 @@ export default function Home() {
     ])
       .then(([data, b]) => { setProducts(data); setBanners(b); })
       .finally(() => setLoading(false));
+    // Fire-and-forget: process abandoned cart recovery emails
+    base44.functions.invoke("processCartRecovery").catch(() => {});
   }, []);
 
   const promoBanner = banners.find((b) => b.position === "promo" && b.active);

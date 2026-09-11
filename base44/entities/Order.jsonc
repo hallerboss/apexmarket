@@ -87,6 +87,11 @@
       "type": "string",
       "title": "Carrier"
     },
+    "recovery_sent": {
+      "type": "boolean",
+      "title": "Recovery Email Sent",
+      "default": false
+    },
     "description": {
       "type": "string",
       "title": "Description",
