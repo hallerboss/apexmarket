@@ -7,6 +7,7 @@ import { useCurrency } from "@/lib/currencyContext";
 import { base44 } from "@/api/base44Client";
 import { trackOrderPlaced } from "@/lib/analytics";
 import AddressCheckoutForm from "@/components/checkout/AddressCheckoutForm";
+import ShopProductCard from "@/components/store/ShopProductCard";
 
 export default function Cart() {
   const { items, removeItem, updateQty, subtotal, clear } = useCart();
@@ -14,6 +15,7 @@ export default function Cart() {
   const [placing, setPlacing] = useState(false);
   const [placed, setPlaced] = useState(null);
   const [products, setProducts] = useState({});
+  const [recs, setRecs] = useState([]);
 
   const shipping = subtotal > 50 ? 0 : 9.99;
   const total = subtotal + shipping;
@@ -29,6 +31,17 @@ export default function Cart() {
       });
       setProducts(map);
     });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [itemsKey]);
+
+  useEffect(() => {
+    if (items.length === 0) { setRecs([]); return; }
+    base44.entities.Product.list("-rating", 12)
+      .then((all) => {
+        const cartIds = new Set(items.map((i) => i.product_id));
+        setRecs(all.filter((p) => !cartIds.has(p.id) && p.status !== "draft").slice(0, 4));
+      })
+      .catch(() => {});
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [itemsKey]);
 
@@ -198,6 +211,16 @@ export default function Cart() {
           </div>
         </div>
       </div>
+
+      {/* Cross-sell — You May Also Like */}
+      {recs.length > 0 && (
+        <div className="mt-16 pt-12 border-t hairline">
+          <h2 className="display-text text-3xl mb-8">You May Also Like</h2>
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+            {recs.map((p) => <ShopProductCard key={p.id} product={p} />)}
+          </div>
+        </div>
+      )}
     </div>
   );
 }

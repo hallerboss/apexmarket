@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
-import { Image as ImageIcon, Upload, X, Plus, Pencil, Trash2, Search, Sparkles } from "lucide-react";
+import { Image as ImageIcon, Upload, X, Plus, Pencil, Trash2, Search, Sparkles, Link2 } from "lucide-react";
 import RichTextEditor from "@/components/admin/RichTextEditor";
 import ProductAgentChat from "@/components/admin/ProductAgentChat";
 
@@ -27,6 +27,8 @@ export default function AdminProducts() {
   const [vUploading, setVUploading] = useState(null);
   const [analyzing, setAnalyzing] = useState(false);
   const [showAgent, setShowAgent] = useState(false);
+  const [importUrl, setImportUrl] = useState("");
+  const [importing, setImporting] = useState(false);
 
   const isNew = searchParams.get("new") === "1";
 
@@ -117,6 +119,35 @@ export default function AdminProducts() {
     setUploading(false);
   };
   const removeImage = (idx) => setEditing((e) => ({ ...e, images: e.images.filter((_, i) => i !== idx) }));
+
+  const importFromUrl = async () => {
+    if (!importUrl.trim()) return;
+    setImporting(true);
+    try {
+      const res = await base44.functions.invoke("importProductFromUrl", { url: importUrl.trim() });
+      const d = res.data?.product || {};
+      setEditing({
+        ...emptyProduct,
+        name: d.name || "",
+        description: d.description || "",
+        short_description: d.short_description || "",
+        price: d.price || 0,
+        sale_price: d.sale_price || 0,
+        brand: d.brand || "",
+        category: d.category || "",
+        sku: d.sku || "",
+        images: d.images || [],
+        variants: d.variants || [],
+        tags: d.tags || [],
+        status: "published",
+      });
+      setImportUrl("");
+    } catch (err) {
+      alert(err?.response?.data?.error || err?.message || "Import failed");
+    } finally {
+      setImporting(false);
+    }
+  };
 
   const analyzeImage = async () => {
     if (!editing.images?.length) { alert("Upload a product image first, then click AI Analyze."); return; }
@@ -401,6 +432,24 @@ export default function AdminProducts() {
         </div>
         <button onClick={startNew} className="bg-accent text-white px-5 py-2.5 text-xs font-semibold uppercase tracking-[0.2em] hover:bg-accent/90 flex items-center gap-2">
           <Plus className="w-4 h-4" /> Add Product
+        </button>
+      </div>
+
+      {/* URL Import */}
+      <div className="mb-6 flex flex-col sm:flex-row gap-2">
+        <input
+          placeholder="Paste a product URL to auto-import details, images & variations…"
+          value={importUrl}
+          onChange={(e) => setImportUrl(e.target.value)}
+          onKeyDown={(e) => { if (e.key === "Enter" && importUrl.trim()) importFromUrl(); }}
+          className="admin-input flex-1"
+        />
+        <button
+          onClick={importFromUrl}
+          disabled={importing || !importUrl.trim()}
+          className="bg-accent text-white px-6 py-2.5 text-xs font-semibold uppercase tracking-[0.15em] hover:bg-accent/90 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap"
+        >
+          {importing ? <><div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" /> Importing…</> : <><Link2 className="w-4 h-4" /> Import from URL</>}
         </button>
       </div>
 

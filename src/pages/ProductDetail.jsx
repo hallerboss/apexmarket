@@ -120,6 +120,9 @@ export default function ProductDetail() {
               <span className="text-sm text-muted-foreground">{product.rating} ({product.reviews_count || 0} reviews)</span>
             </div>
           )}
+          {product.total_sales > 0 && (
+            <p className="text-sm text-muted-foreground mb-6">Sales: ({product.total_sales})</p>
+          )}
           <div className="flex items-baseline gap-3 mb-6">
             {hasSale ? (
               <>
