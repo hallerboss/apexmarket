@@ -149,17 +149,40 @@ export default function AdminProducts() {
     }
   };
 
+  const insertFromAI = (data) => {
+    const features = Array.isArray(data.tags) ? data.tags : [];
+    const bullets = features.length ? `<ul>${features.map((f) => `<li>${f}</li>`).join("")}</ul>` : "";
+    setEditing((e) => {
+      const baseDesc = data.description || e.description || "";
+      const desc = data.description && bullets ? `${data.description}${bullets}` : baseDesc;
+      return {
+        ...e,
+        name: data.name || e.name,
+        description: desc,
+        short_description: data.short_description || e.short_description,
+        tags: features.length ? features : e.tags,
+        seo_title: data.seo_title || e.seo_title,
+        meta_description: data.meta_description || e.meta_description,
+        focus_keywords: data.focus_keywords || e.focus_keywords,
+        images: data.images ? [...(e.images || []), ...data.images.filter((u) => !(e.images || []).includes(u))] : e.images,
+      };
+    });
+  };
+
   const analyzeImage = async () => {
     if (!editing.images?.length) { alert("Upload a product image first, then click AI Analyze."); return; }
     setAnalyzing(true);
     try {
       const res = await base44.functions.invoke("analyzeProductImage", { image_url: editing.images[0], product_name: editing.name });
-      const d = res.data || {};
+      const d = res.data || res || {};
+      const features = Array.isArray(d.features) ? d.features : [];
+      const bullets = features.length ? `<ul>${features.map((f) => `<li>${f}</li>`).join("")}</ul>` : "";
+      const desc = d.description ? (features.length ? `${d.description}${bullets}` : d.description) : null;
       setEditing((e) => ({
         ...e,
-        description: d.description || e.description,
+        description: desc || e.description,
         short_description: d.short_description || e.short_description,
-        tags: d.features || e.tags,
+        tags: features.length ? features : e.tags,
         seo_title: d.seo_title || e.seo_title,
         meta_description: d.meta_description || e.meta_description,
         focus_keywords: d.focus_keywords || e.focus_keywords,
@@ -418,7 +441,7 @@ export default function AdminProducts() {
             </button>
           </div>
         </form>
-        {showAgent && <ProductAgentChat onClose={() => setShowAgent(false)} />}
+        {showAgent && <ProductAgentChat onClose={() => setShowAgent(false)} onInsert={insertFromAI} />}
       </div>
     );
   }
