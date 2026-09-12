@@ -85,7 +85,7 @@ export default function ProductAgentChat({ onClose, onInsert }) {
   const handleInsert = () => {
     if (!imageResult || !onInsert) return;
     onInsert({
-      images: [imageResult.image_url, ...(imageResult.image_url ? [] : [])],
+      images: [imageResult.image_url],
       description: imageResult.description,
       short_description: imageResult.short_description,
       tags: imageResult.features,
@@ -94,6 +94,7 @@ export default function ProductAgentChat({ onClose, onInsert }) {
       focus_keywords: imageResult.focus_keywords,
     });
     setInserted(true);
+    setTimeout(() => { onClose(); }, 900);
   };
 
   const suggestions = [

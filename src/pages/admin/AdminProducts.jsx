@@ -152,21 +152,17 @@ export default function AdminProducts() {
   const insertFromAI = (data) => {
     const features = Array.isArray(data.tags) ? data.tags : [];
     const bullets = features.length ? `<ul>${features.map((f) => `<li>${f}</li>`).join("")}</ul>` : "";
-    setEditing((e) => {
-      const baseDesc = data.description || e.description || "";
-      const desc = data.description && bullets ? `${data.description}${bullets}` : baseDesc;
-      return {
-        ...e,
-        name: data.name || e.name,
-        description: desc,
-        short_description: data.short_description || e.short_description,
-        tags: features.length ? features : e.tags,
-        seo_title: data.seo_title || e.seo_title,
-        meta_description: data.meta_description || e.meta_description,
-        focus_keywords: data.focus_keywords || e.focus_keywords,
-        images: data.images ? [...(e.images || []), ...data.images.filter((u) => !(e.images || []).includes(u))] : e.images,
-      };
-    });
+    setEditing((e) => ({
+      ...e,
+      name: data.name || e.name,
+      description: data.description || e.description,
+      short_description: bullets || data.short_description || e.short_description,
+      tags: features.length ? features : e.tags,
+      seo_title: data.seo_title || e.seo_title,
+      meta_description: data.meta_description || e.meta_description,
+      focus_keywords: data.focus_keywords || e.focus_keywords,
+      images: data.images ? [...(e.images || []), ...data.images.filter((u) => !(e.images || []).includes(u))] : e.images,
+    }));
   };
 
   const analyzeImage = async () => {
