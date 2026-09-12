@@ -1,0 +1,98 @@
+{
+  "name": "BlogPost",
+  "type": "object",
+  "properties": {
+    "title": {
+      "type": "string",
+      "title": "Title"
+    },
+    "slug": {
+      "type": "string",
+      "title": "Slug"
+    },
+    "content": {
+      "type": "string",
+      "title": "Content"
+    },
+    "excerpt": {
+      "type": "string",
+      "title": "Excerpt"
+    },
+    "featured_image": {
+      "type": "string",
+      "title": "Featured Image"
+    },
+    "category": {
+      "type": "string",
+      "title": "Category",
+      "enum": [
+        "Product Updates",
+        "Buying Guides",
+        "News",
+        "Reviews",
+        "Tips & How-To"
+      ],
+      "default": "Buying Guides"
+    },
+    "tags": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "title": "Tags"
+    },
+    "author": {
+      "type": "string",
+      "title": "Author",
+      "default": "ApexMarket Team"
+    },
+    "seo_title": {
+      "type": "string",
+      "title": "SEO Title"
+    },
+    "meta_description": {
+      "type": "string",
+      "title": "Meta Description"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "published",
+        "draft"
+      ],
+      "title": "Status",
+      "default": "draft"
+    },
+    "published_date": {
+      "type": "string",
+      "format": "date",
+      "title": "Published Date"
+    },
+    "view_count": {
+      "type": "number",
+      "title": "View Count",
+      "default": 0
+    }
+  },
+  "required": [
+    "title"
+  ],
+  "rls": {
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "read": null,
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

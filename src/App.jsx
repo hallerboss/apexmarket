@@ -42,6 +42,9 @@ import AdminBanners from "@/pages/admin/AdminBanners";
 import AdminSettings from "@/pages/admin/AdminSettings";
 import AdminMedia from "@/pages/admin/AdminMedia";
 import AdminPayments from "@/pages/admin/AdminPayments";
+import AdminBlog from "@/pages/admin/AdminBlog";
+import Blog from "@/pages/Blog";
+import BlogPostPage from "@/pages/BlogPostPage";
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -84,6 +87,8 @@ const AuthenticatedApp = () => {
         <Route path="/profile" element={<Profile />} />
         <Route path="/download-site" element={<DownloadSite />} />
         <Route path="/page/:slug" element={<ContentPage />} />
+        <Route path="/blog" element={<Blog />} />
+        <Route path="/blog/:slug" element={<BlogPostPage />} />
       </Route>
       {/* Auth */}
       <Route path="/login" element={<Login />} />
@@ -103,6 +108,7 @@ const AuthenticatedApp = () => {
         <Route path="settings" element={<AdminSettings />} />
         <Route path="media" element={<AdminMedia />} />
         <Route path="payments" element={<AdminPayments />} />
+        <Route path="blog" element={<AdminBlog />} />
       </Route>
       </Route>
       <Route path="*" element={<PageNotFound />} />

@@ -4,6 +4,7 @@ import { base44 } from "@/api/base44Client";
 import { Image as ImageIcon, Upload, X, Plus, Pencil, Trash2, Search, Sparkles, Link2 } from "lucide-react";
 import RichTextEditor from "@/components/admin/RichTextEditor";
 import ProductAgentChat from "@/components/admin/ProductAgentChat";
+import FieldAIButton from "@/components/admin/FieldAIButton";
 
 const COUNTRIES = ["United States", "United Kingdom", "Canada", "Australia", "Germany", "France", "Spain", "Italy", "Netherlands", "Pakistan", "India", "UAE", "Saudi Arabia", "China", "Japan", "Brazil", "Mexico", "South Africa"];
 const COURIERS = ["Cainiao", "DHL Express", "FedEx", "UPS", "USPS", "Royal Mail", "Aramex", "TCS", "DPD", "Local Courier"];
@@ -231,7 +232,10 @@ export default function AdminProducts() {
           {/* Main fields */}
           <div className="lg:col-span-2 space-y-5">
             <div>
-              <label className="admin-label">Title Product</label>
+              <div className="flex items-center justify-between mb-2">
+                <label className="text-[11px] font-semibold uppercase tracking-[0.15em] text-muted-foreground">Title Product</label>
+                <FieldAIButton type="title" imageUrl={editing.images?.[0]} productName={editing.name} onSelect={(val) => setEditing({ ...editing, name: val })} label="AI Titles" />
+              </div>
               <input required value={editing.name} onChange={(e) => setEditing({ ...editing, name: e.target.value })} className="admin-input" />
             </div>
             <div className="grid grid-cols-2 gap-4">
@@ -278,7 +282,10 @@ export default function AdminProducts() {
               </div>
             </div>
             <div>
-              <label className="admin-label">Short Description</label>
+              <div className="flex items-center justify-between mb-2">
+                <label className="text-[11px] font-semibold uppercase tracking-[0.15em] text-muted-foreground">Short Description</label>
+                <FieldAIButton type="short_description" imageUrl={editing.images?.[0]} onSelect={(val) => setEditing({ ...editing, short_description: val })} label="AI Features" />
+              </div>
               <RichTextEditor value={editing.short_description || ""} onChange={(html) => setEditing({ ...editing, short_description: html })} minHeight={140} title="Product short description" placeholder="One-line summary shown under the product title…" />
             </div>
             <div>
@@ -291,11 +298,17 @@ export default function AdminProducts() {
               <h4 className="text-[11px] uppercase tracking-[0.2em] font-semibold text-white mb-4">Google Search / SEO</h4>
               <div className="space-y-4">
                 <div>
-                  <label className="admin-label">SEO Title</label>
+                  <div className="flex items-center justify-between mb-2">
+                    <label className="text-[11px] font-semibold uppercase tracking-[0.15em] text-muted-foreground">SEO Title</label>
+                    <FieldAIButton type="seo_title" productName={editing.name} onSelect={(val) => setEditing({ ...editing, seo_title: val })} label="AI SEO Title" />
+                  </div>
                   <input value={editing.seo_title || ""} onChange={(e) => setEditing({ ...editing, seo_title: e.target.value })} className="admin-input" placeholder="Title for Google search results" />
                 </div>
                 <div>
-                  <label className="admin-label">Meta Description</label>
+                  <div className="flex items-center justify-between mb-2">
+                    <label className="text-[11px] font-semibold uppercase tracking-[0.15em] text-muted-foreground">Meta Description</label>
+                    <FieldAIButton type="meta_description" productName={editing.name} productDescription={editing.description} onSelect={(val) => setEditing({ ...editing, meta_description: val })} label="AI Meta" />
+                  </div>
                   <textarea rows={2} value={editing.meta_description || ""} onChange={(e) => setEditing({ ...editing, meta_description: e.target.value })} className="admin-input resize-none" placeholder="Short description shown in search results" />
                 </div>
                 <div>
