@@ -1,0 +1,35 @@
+{
+  "name": "SiteSetting",
+  "type": "object",
+  "properties": {
+    "key": {
+      "type": "string",
+      "title": "Key"
+    },
+    "value": {
+      "type": "string",
+      "title": "Value"
+    }
+  },
+  "required": [
+    "key"
+  ],
+  "rls": {
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "read": null,
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

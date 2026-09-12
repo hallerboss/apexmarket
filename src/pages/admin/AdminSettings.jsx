@@ -1,5 +1,6 @@
-import { useState } from "react";
-import { Save } from "lucide-react";
+import { useState, useEffect } from "react";
+import { base44 } from "@/api/base44Client";
+import { Save, ShoppingBag, DollarSign, CheckCircle2, Link2, Loader2 } from "lucide-react";
 
 export default function AdminSettings() {
   const [settings, setSettings] = useState({
@@ -11,6 +12,35 @@ export default function AdminSettings() {
     tax_rate: "8",
   });
   const [saved, setSaved] = useState(false);
+  const [siteSettings, setSiteSettings] = useState([]);
+  const [merchantId, setMerchantId] = useState("");
+  const [adsenseId, setAdsenseId] = useState("");
+  const [connecting, setConnecting] = useState(null);
+
+  useEffect(() => {
+    base44.entities.SiteSetting.list().then((data) => {
+      setSiteSettings(data);
+      const m = data.find((s) => s.key === "google_merchant_id");
+      const a = data.find((s) => s.key === "adsense_publisher_id");
+      if (m) setMerchantId(m.value);
+      if (a) setAdsenseId(a.value);
+    }).catch(() => {});
+  }, []);
+
+  const getSetting = (key) => siteSettings.find((s) => s.key === key)?.value || "";
+  const isMerchantConnected = !!getSetting("google_merchant_id");
+  const isAdsenseConnected = !!getSetting("adsense_publisher_id");
+
+  const saveSetting = async (key, value) => {
+    const existing = siteSettings.find((s) => s.key === key);
+    if (existing) {
+      await base44.entities.SiteSetting.update(existing.id, { value });
+    } else {
+      await base44.entities.SiteSetting.create({ key, value });
+    }
+    const refreshed = await base44.entities.SiteSetting.list();
+    setSiteSettings(refreshed);
+  };
 
   const save = (e) => {
     e.preventDefault();
@@ -18,13 +48,33 @@ export default function AdminSettings() {
     setTimeout(() => setSaved(false), 2000);
   };
 
+  const connectMerchant = async () => {
+    if (!merchantId.trim()) return;
+    setConnecting("merchant");
+    try { await saveSetting("google_merchant_id", merchantId.trim()); } finally { setConnecting(null); }
+  };
+
+  const connectAdsense = async () => {
+    if (!adsenseId.trim()) return;
+    setConnecting("adsense");
+    try { await saveSetting("adsense_publisher_id", adsenseId.trim()); } finally { setConnecting(null); }
+  };
+
+  const disconnect = async (key) => {
+    await saveSetting(key, "");
+    if (key === "google_merchant_id") setMerchantId("");
+    if (key === "adsense_publisher_id") setAdsenseId("");
+  };
+
   return (
-    <div className="max-w-2xl">
-      <div className="mb-8">
+    <div className="max-w-3xl space-y-10">
+      <div>
         <h2 className="display-text text-2xl text-white">Settings</h2>
-        <p className="text-sm text-white/40 mt-1">Store configuration</p>
+        <p className="text-sm text-black/50 mt-1">Store configuration & account connections</p>
       </div>
+
       <form onSubmit={save} className="space-y-5">
+        <h3 className="text-[11px] uppercase tracking-[0.2em] font-semibold text-white border-b border-white/10 pb-3">Store Details</h3>
         <div><label className="admin-label">Store Name</label><input value={settings.store_name} onChange={(e) => setSettings({ ...settings, store_name: e.target.value })} className="admin-input" /></div>
         <div className="grid md:grid-cols-2 gap-4">
           <div><label className="admin-label">Contact Email</label><input value={settings.store_email} onChange={(e) => setSettings({ ...settings, store_email: e.target.value })} className="admin-input" /></div>
@@ -39,6 +89,58 @@ export default function AdminSettings() {
           <Save className="w-4 h-4" /> {saved ? "Saved!" : "Save Settings"}
         </button>
       </form>
+
+      <div>
+        <h3 className="text-[11px] uppercase tracking-[0.2em] font-semibold text-white border-b border-white/10 pb-3 mb-6">Account Connections</h3>
+        <div className="space-y-4">
+          <div className="border border-[#e5e7eb] bg-white p-5">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-10 h-10 bg-[#4285F4]/10 flex items-center justify-center rounded">
+                <ShoppingBag className="w-5 h-5 text-[#4285F4]" />
+              </div>
+              <div className="flex-1">
+                <p className="text-sm font-semibold">Google Merchant Center</p>
+                <p className="text-xs text-black/50">List products on Google Shopping</p>
+              </div>
+              {isMerchantConnected && <span className="text-[10px] uppercase tracking-wide bg-green-100 text-green-700 px-2 py-1 rounded flex items-center gap-1"><CheckCircle2 className="w-3 h-3" /> Connected</span>}
+            </div>
+            <div className="flex gap-2">
+              <input placeholder="Merchant Center ID (e.g. 123456789)" value={merchantId} onChange={(e) => setMerchantId(e.target.value)} className="admin-input flex-1" />
+              {isMerchantConnected ? (
+                <button type="button" onClick={() => disconnect("google_merchant_id")} className="border border-red-300 text-black px-4 py-2.5 text-xs font-semibold uppercase tracking-[0.15em] hover:bg-red-50 whitespace-nowrap">Disconnect</button>
+              ) : (
+                <button type="button" onClick={connectMerchant} disabled={connecting === "merchant" || !merchantId.trim()} className="bg-accent text-white px-6 py-2.5 text-xs font-semibold uppercase tracking-[0.15em] hover:bg-accent/90 disabled:opacity-50 flex items-center gap-2 whitespace-nowrap">
+                  {connecting === "merchant" ? <Loader2 className="w-4 h-4 animate-spin" /> : <Link2 className="w-4 h-4" />} Connect
+                </button>
+              )}
+            </div>
+          </div>
+
+          <div className="border border-[#e5e7eb] bg-white p-5">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-10 h-10 bg-[#ea4335]/10 flex items-center justify-center rounded">
+                <DollarSign className="w-5 h-5 text-[#ea4335]" />
+              </div>
+              <div className="flex-1">
+                <p className="text-sm font-semibold">Google AdSense</p>
+                <p className="text-xs text-black/50">Monetize blog posts with display ads</p>
+              </div>
+              {isAdsenseConnected && <span className="text-[10px] uppercase tracking-wide bg-green-100 text-green-700 px-2 py-1 rounded flex items-center gap-1"><CheckCircle2 className="w-3 h-3" /> Connected</span>}
+            </div>
+            <div className="flex gap-2">
+              <input placeholder="Publisher ID (ca-pub-XXXXXXXXX)" value={adsenseId} onChange={(e) => setAdsenseId(e.target.value)} className="admin-input flex-1" />
+              {isAdsenseConnected ? (
+                <button type="button" onClick={() => disconnect("adsense_publisher_id")} className="border border-red-300 text-black px-4 py-2.5 text-xs font-semibold uppercase tracking-[0.15em] hover:bg-red-50 whitespace-nowrap">Disconnect</button>
+              ) : (
+                <button type="button" onClick={connectAdsense} disabled={connecting === "adsense" || !adsenseId.trim()} className="bg-accent text-white px-6 py-2.5 text-xs font-semibold uppercase tracking-[0.15em] hover:bg-accent/90 disabled:opacity-50 flex items-center gap-2 whitespace-nowrap">
+                  {connecting === "adsense" ? <Loader2 className="w-4 h-4 animate-spin" /> : <Link2 className="w-4 h-4" />} Connect
+                </button>
+              )}
+            </div>
+            {isAdsenseConnected && <p className="text-[11px] text-green-600 mt-2 flex items-center gap-1"><CheckCircle2 className="w-3 h-3" /> Ads are now displaying on your blog posts.</p>}
+          </div>
+        </div>
+      </div>
     </div>
   );
 }

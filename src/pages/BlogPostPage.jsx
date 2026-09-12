@@ -3,6 +3,7 @@ import { useParams, Link } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
 import { Image } from "@/components/ui/image";
 import { Calendar, ArrowLeft, Tag } from "lucide-react";
+import AdSenseAd from "@/components/store/AdSenseAd";
 
 export default function BlogPostPage() {
   const { slug } = useParams();
@@ -55,12 +56,16 @@ export default function BlogPostPage() {
             </div>
           )}
 
+          <AdSenseAd />
+
           {post.excerpt && <p className="serif-text text-xl text-muted-foreground leading-relaxed mb-8">{post.excerpt}</p>}
 
           <div
             className="prose prose-lg max-w-none [&_h2]:text-2xl [&_h2]:font-bold [&_h2]:mt-8 [&_h2]:mb-4 [&_h3]:text-xl [&_h3]:font-semibold [&_h3]:mt-6 [&_h3]:mb-3 [&_p]:text-muted-foreground [&_p]:leading-relaxed [&_p]:mb-4 [&_ul]:list-disc [&_ul]:pl-6 [&_ul]:space-y-2 [&_ul]:text-muted-foreground [&_li]:leading-relaxed"
             dangerouslySetInnerHTML={{ __html: post.content || "" }}
           />
+
+          <AdSenseAd />
 
           {post.tags?.length > 0 && (
             <div className="flex flex-wrap gap-2 mt-8 pt-8 border-t hairline">

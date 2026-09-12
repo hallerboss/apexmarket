@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useRef, useEffect } from "react";
 import ReactQuill from "react-quill-new";
 import "react-quill-new/dist/quill.snow.css";
 import { base44 } from "@/api/base44Client";
@@ -17,6 +17,19 @@ const modules = {
 export default function RichTextEditor({ value = "", onChange, placeholder = "", minHeight = 200, title = "Product description" }) {
   const [mode, setMode] = useState("visual");
   const [fullscreen, setFullscreen] = useState(false);
+  const quillRef = useRef(null);
+
+  // Sync external value changes (e.g. from AI Insert) into the Quill editor
+  useEffect(() => {
+    if (mode !== "visual" || !quillRef.current) return;
+    const editor = quillRef.current.getEditor?.();
+    if (!editor) return;
+    const current = editor.root.innerHTML;
+    if (value !== current) {
+      editor.deleteText(0, editor.getLength(), "silent");
+      if (value) editor.clipboard.dangerouslyPasteHTML(0, value, "silent");
+    }
+  }, [value, mode]);
 
   const wordCount = useMemo(() => {
     const text = (value || "").replace(/<[^>]+>/g, " ").replace(/&nbsp;/g, " ").trim();
@@ -63,7 +76,7 @@ export default function RichTextEditor({ value = "", onChange, placeholder = "",
 
       {mode === "visual" ? (
         <div className="flex-1 flex flex-col" style={{ minHeight: fullscreen ? "60vh" : minHeight }}>
-          <ReactQuill theme="snow" value={value} onChange={onChange} modules={modules} placeholder={placeholder} style={{ flex: 1, minHeight: "100%" }} />
+          <ReactQuill ref={quillRef} theme="snow" value={value} onChange={onChange} modules={modules} placeholder={placeholder} style={{ flex: 1, minHeight: "100%" }} />
         </div>
       ) : (
         <textarea

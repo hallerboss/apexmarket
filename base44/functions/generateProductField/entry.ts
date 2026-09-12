@@ -52,6 +52,16 @@ Return exactly 5 options.`;
         properties: { descriptions: { type: 'array', items: { type: 'string' } } },
         required: ['descriptions']
       };
+    } else if (type === 'focus_keywords') {
+      prompt = `Generate 5 different sets of SEO focus keywords for a product. Each set should contain 8-10 relevant, high-search-volume keywords that shoppers would use to find this product.
+${product_name ? `Product name: ${product_name}` : ''}
+${product_description ? `Product description: ${product_description}` : ''}
+Return exactly 5 sets, each as a comma-separated string of keywords.`;
+      schema = {
+        type: 'object',
+        properties: { keywords: { type: 'array', items: { type: 'string' } } },
+        required: ['keywords']
+      };
     } else if (type === 'seo_title') {
       prompt = `Generate 5 SEO-optimized title tags for a product based on its name.
 ${product_name ? `Product name: ${product_name}` : ''}

@@ -9,6 +9,32 @@ import FieldAIButton from "@/components/admin/FieldAIButton";
 const COUNTRIES = ["United States", "United Kingdom", "Canada", "Australia", "Germany", "France", "Spain", "Italy", "Netherlands", "Pakistan", "India", "UAE", "Saudi Arabia", "China", "Japan", "Brazil", "Mexico", "South Africa"];
 const COURIERS = ["Cainiao", "DHL Express", "FedEx", "UPS", "USPS", "Royal Mail", "Aramex", "TCS", "DPD", "Local Courier"];
 
+const PREDEFINED_ATTRIBUTES = ["Color", "Gender", "Size", "Material", "Style", "Pattern", "Fit", "Sleeve Length", "Neckline", "Season"];
+
+const COLOR_OPTIONS = ["Red", "Crimson", "Maroon", "Burgundy", "Rose", "Pink", "Hot Pink", "Coral", "Salmon", "Orange", "Peach", "Amber", "Gold", "Yellow", "Mustard", "Lime", "Olive", "Green", "Emerald", "Jade", "Mint", "Teal", "Cyan", "Turquoise", "Sky Blue", "Blue", "Navy", "Royal Blue", "Indigo", "Sapphire", "Purple", "Violet", "Lavender", "Lilac", "Plum", "Magenta", "Fuchsia", "Brown", "Chocolate", "Coffee", "Tan", "Beige", "Khaki", "Camel", "Gray", "Charcoal", "Slate", "Silver", "White", "Cream", "Ivory", "Off White", "Black", "Onyx", "Multi-Color"];
+
+const GENDER_OPTIONS = ["Men", "Women", "Unisex", "Boys", "Girls", "Kids", "Baby Boy", "Baby Girl", "Baby Unisex", "Toddler Boy", "Toddler Girl", "Toddler Unisex"];
+
+const SIZE_OPTIONS = ["XS", "S", "M", "L", "XL", "XXL", "3XL", "4XL", "5XL", "6XL", "One Size", "Small", "Medium", "Large", "Extra Large", "28", "30", "32", "34", "36", "38", "40", "42", "44", "46", "48", "0-3M", "3-6M", "6-9M", "9-12M", "12-18M", "18-24M", "2T", "3T", "4T", "5T", "6", "7", "8", "10", "12", "14"];
+
+const MATERIAL_OPTIONS = ["Cotton", "Polyester", "Wool", "Silk", "Linen", "Denim", "Leather", "Suede", "Canvas", "Nylon", "Spandex", "Rayon", "Bamboo", "Hemp", "Cashmere", "Fleece", "Velvet", "Satin", "Chiffon", "Lace", "Mesh", "Knit", "Woven"];
+
+const STYLE_OPTIONS = ["Casual", "Formal", "Sporty", "Bohemian", "Vintage", "Modern", "Classic", "Streetwear", "Preppy", "Minimalist", "Luxe", "Athleisure", "Smart Casual", "Business", "Festival"];
+
+const PATTERN_OPTIONS = ["Solid", "Striped", "Plaid", "Floral", "Geometric", "Polka Dot", "Animal Print", "Camouflage", "Tie-Dye", "Paisley", "Checkered", "Abstract", "Tropical", "Color Block"];
+
+const FIT_OPTIONS = ["Slim Fit", "Regular Fit", "Loose Fit", "Relaxed Fit", "Tailored Fit", "Oversized", "Skinny", "Bootcut", "Straight", "Tapered"];
+
+const AUTO_OPTIONS = {
+  Color: COLOR_OPTIONS,
+  Gender: GENDER_OPTIONS,
+  Size: SIZE_OPTIONS,
+  Material: MATERIAL_OPTIONS,
+  Style: STYLE_OPTIONS,
+  Pattern: PATTERN_OPTIONS,
+  Fit: FIT_OPTIONS,
+};
+
 const emptyProduct = {
   name: "", slug: "", description: "", short_description: "", price: 0, sale_price: 0,
   sku: "", category: "", brand: "", images: [], stock: 0, rating: 0, reviews_count: 0,
@@ -312,7 +338,10 @@ export default function AdminProducts() {
                   <textarea rows={2} value={editing.meta_description || ""} onChange={(e) => setEditing({ ...editing, meta_description: e.target.value })} className="admin-input resize-none" placeholder="Short description shown in search results" />
                 </div>
                 <div>
-                  <label className="admin-label">Focus Keywords (comma separated)</label>
+                  <div className="flex items-center justify-between mb-2">
+                    <label className="text-[11px] font-semibold uppercase tracking-[0.15em] text-muted-foreground">Focus Keywords (comma separated)</label>
+                    <FieldAIButton type="focus_keywords" productName={editing.name} productDescription={editing.description} onSelect={(val) => setEditing({ ...editing, focus_keywords: val.split(",").map((t) => t.trim()).filter(Boolean) })} label="AI Keywords" />
+                  </div>
                   <input value={(editing.focus_keywords || []).join(", ")} onChange={(e) => setEditing({ ...editing, focus_keywords: e.target.value.split(",").map((t) => t.trim()).filter(Boolean) })} className="admin-input" placeholder="wireless headphones, bluetooth" />
                 </div>
                 <label className="flex items-center gap-3 cursor-pointer text-sm text-white">
@@ -336,7 +365,24 @@ export default function AdminProducts() {
                   return (
                     <div key={i} className="border border-white/10 p-4">
                       <div className="flex items-center gap-3 mb-3">
-                        <input placeholder="Attribute name (Size / Color / Gender…)" value={v.name} onChange={(e) => setVariantName(i, e.target.value)} className="admin-input flex-1" />
+                        <select
+                          value={PREDEFINED_ATTRIBUTES.includes(v.name) ? v.name : "__custom__"}
+                          onChange={(e) => {
+                            const val = e.target.value;
+                            if (val === "__custom__") {
+                              setVariantName(i, "");
+                            } else {
+                              setVariantName(i, val);
+                              if (AUTO_OPTIONS[val]) setVariantOptions(i, [...AUTO_OPTIONS[val]]);
+                            }
+                          }}
+                          className="admin-input w-44 shrink-0"
+                        >
+                          <option value="">Quick select…</option>
+                          {PREDEFINED_ATTRIBUTES.map((a) => <option key={a} value={a}>{a}</option>)}
+                          <option value="__custom__">✏️ Add your own…</option>
+                        </select>
+                        <input placeholder="Attribute name…" value={v.name} onChange={(e) => setVariantName(i, e.target.value)} className="admin-input flex-1" />
                         <button type="button" onClick={() => removeVariant(i)} className="text-white hover:text-red-400"><Trash2 className="w-4 h-4" /></button>
                       </div>
                       <input placeholder="Options (comma separated): S, M, L, XL" value={(v.options || []).join(", ")} onChange={(e) => setVariantOptions(i, e.target.value.split(",").map((t) => t.trim()).filter(Boolean))} className="admin-input mb-3" />

@@ -38,6 +38,8 @@ export default function FieldAIButton({ type, imageUrl, productName, productDesc
         setOptions(d.titles || []);
       } else if (type === "meta_description") {
         setOptions(d.descriptions || []);
+      } else if (type === "focus_keywords") {
+        setOptions(d.keywords || []);
       } else if (type === "short_description") {
         if (d.features_html) {
           onSelect(d.features_html);
