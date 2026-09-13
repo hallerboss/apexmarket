@@ -257,6 +257,32 @@ export default function AdminProducts() {
         <form onSubmit={save} className="grid lg:grid-cols-3 gap-8">
           {/* Main fields */}
           <div className="lg:col-span-2 space-y-5">
+            {/* Product Images */}
+            <div>
+              <label className="admin-label">Product Images</label>
+              <div className="grid grid-cols-4 sm:grid-cols-6 gap-2 mb-3">
+                {(editing.images || []).map((img, i) => (
+                  <div key={i} className="relative aspect-square bg-white/5 overflow-hidden group">
+                    <img src={img} alt="" className="w-full h-full object-cover" />
+                    <button type="button" onClick={() => removeImage(i)} className="absolute top-1 right-1 bg-black/70 text-white p-1 opacity-0 group-hover:opacity-100 transition-opacity"><X className="w-3 h-3" /></button>
+                  </div>
+                ))}
+                <label className="aspect-square border border-dashed border-white/20 flex flex-col items-center justify-center cursor-pointer hover:border-accent transition-colors text-white hover:text-accent">
+                  {uploading ? <div className="w-5 h-5 border-2 border-white/20 border-t-accent rounded-full animate-spin" /> : <><Upload className="w-5 h-5 mb-1" /><span className="text-[10px]">Upload</span></>}
+                  <input type="file" accept="image/*" className="hidden" onChange={(e) => e.target.files[0] && uploadImage(e.target.files[0])} />
+                </label>
+              </div>
+              <div className="flex flex-wrap gap-2">
+                <button type="button" onClick={analyzeImage} disabled={analyzing} className="border border-accent text-accent px-4 py-2.5 text-xs font-semibold uppercase tracking-[0.15em] flex items-center gap-2 hover:bg-accent hover:text-white disabled:opacity-50 transition-colors">
+                  <Sparkles className="w-4 h-4" /> {analyzing ? "Analyzing…" : "AI Analyze Image"}
+                </button>
+                <button type="button" onClick={() => setShowAgent(true)} className="border border-foreground/30 text-foreground px-4 py-2.5 text-xs font-semibold uppercase tracking-[0.15em] flex items-center gap-2 hover:bg-foreground hover:text-white transition-colors">
+                  <Sparkles className="w-4 h-4" /> Ask AI Assistant (Free)
+                </button>
+              </div>
+              <p className="text-[10px] text-white mt-2">Upload high-quality studio images, then use AI to auto-generate descriptions, features & SEO.</p>
+            </div>
+
             <div>
               <div className="flex items-center justify-between mb-2">
                 <label className="text-[11px] font-semibold uppercase tracking-[0.15em] text-muted-foreground">Title Product</label>
@@ -441,33 +467,8 @@ export default function AdminProducts() {
             </div>
           </div>
 
-          {/* Sidebar: images, flags, status */}
+          {/* Sidebar: status, flags */}
           <div className="space-y-6">
-            <div>
-              <label className="admin-label">Product Images</label>
-              <div className="grid grid-cols-2 gap-2 mb-3">
-                {(editing.images || []).map((img, i) => (
-                  <div key={i} className="relative aspect-square bg-white/5 overflow-hidden group">
-                    <img src={img} alt="" className="w-full h-full object-cover" />
-                    <button type="button" onClick={() => removeImage(i)} className="absolute top-1 right-1 bg-black/70 text-white p-1 opacity-0 group-hover:opacity-100 transition-opacity"><X className="w-3 h-3" /></button>
-                  </div>
-                ))}
-                <label className="aspect-square border border-dashed border-white/20 flex flex-col items-center justify-center cursor-pointer hover:border-accent transition-colors text-white hover:text-accent">
-                  {uploading ? <div className="w-5 h-5 border-2 border-white/20 border-t-accent rounded-full animate-spin" /> : <><Upload className="w-5 h-5 mb-1" /><span className="text-[10px]">Upload</span></>}
-                  <input type="file" accept="image/*" className="hidden" onChange={(e) => e.target.files[0] && uploadImage(e.target.files[0])} />
-                </label>
-              </div>
-              <p className="text-[10px] text-white">Upload high-quality studio images.</p>
-              <button type="button" onClick={analyzeImage} disabled={analyzing} className="w-full mt-3 border border-accent text-accent py-2.5 text-xs font-semibold uppercase tracking-[0.15em] flex items-center justify-center gap-2 hover:bg-accent hover:text-white disabled:opacity-50 transition-colors">
-                <Sparkles className="w-4 h-4" /> {analyzing ? "Analyzing…" : "AI Analyze Image"}
-              </button>
-              <p className="text-[10px] text-white mt-2">Upload an image, then click to auto-generate description, 10 features & SEO from AI + web research.</p>
-              <button type="button" onClick={() => setShowAgent(true)} className="w-full mt-3 border border-foreground/30 text-foreground py-2.5 text-xs font-semibold uppercase tracking-[0.15em] flex items-center justify-center gap-2 hover:bg-foreground hover:text-white transition-colors">
-                <Sparkles className="w-4 h-4" /> Ask AI Assistant (Free)
-              </button>
-              <p className="text-[10px] text-white/60 mt-2">Chat with our AI agent to generate descriptions, SEO, or create products by conversation.</p>
-            </div>
-
             <div>
               <label className="admin-label">Status</label>
               <select value={editing.status} onChange={(e) => setEditing({ ...editing, status: e.target.value })} className="admin-input">

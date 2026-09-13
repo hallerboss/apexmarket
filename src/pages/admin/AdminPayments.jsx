@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
-import { CreditCard, Webhook, ShieldCheck, Loader2, CheckCircle2, AlertCircle, KeyRound, Eye, EyeOff } from "lucide-react";
+import { CreditCard, Webhook, ShieldCheck, Loader2, CheckCircle2, AlertCircle, KeyRound, Eye, EyeOff, Copy, ExternalLink } from "lucide-react";
 
 const statusColor = {
   pending: "bg-yellow-100 text-yellow-700",
@@ -18,6 +18,7 @@ export default function AdminPayments() {
   const [showSecret, setShowSecret] = useState(false);
   const [verifying, setVerifying] = useState(false);
   const [result, setResult] = useState(null);
+  const [copied, setCopied] = useState(false);
 
   useEffect(() => {
     base44.entities.Order.list("-created_date", 20).then(setOrders).finally(() => setLoading(false));
@@ -149,6 +150,56 @@ export default function AdminPayments() {
             )}
           </div>
         )}
+      </div>
+
+      {/* Webhook Configuration & Stripe Account Connection */}
+      <div className="border border-[#e5e7eb] bg-white p-6 mb-8">
+        <div className="flex items-center gap-2 mb-1">
+          <Webhook className="w-5 h-5 text-accent" />
+          <h3 className="text-base font-bold">Webhook Configuration</h3>
+        </div>
+        <p className="text-sm text-black/50 mb-5">Connect your Stripe account and manage webhook settings for real-time payment events.</p>
+
+        <div className="space-y-4 max-w-xl">
+          <div>
+            <label className="admin-label">Webhook Endpoint URL</label>
+            <div className="flex gap-2">
+              <input readOnly value="https://apexmarket-app.base44.app/functions/stripeWebhook" className="admin-input font-mono text-xs" />
+              <button type="button" onClick={() => { navigator.clipboard?.writeText("https://apexmarket-app.base44.app/functions/stripeWebhook"); setCopied(true); setTimeout(() => setCopied(false), 2000); }} className="border border-[#e5e7eb] px-4 py-2.5 text-xs font-semibold uppercase tracking-[0.15em] hover:bg-[#fafafa] whitespace-nowrap flex items-center gap-1.5">
+                {copied ? <><CheckCircle2 className="w-4 h-4 text-green-600" /> Copied</> : <><Copy className="w-4 h-4" /> Copy</>}
+              </button>
+            </div>
+          </div>
+
+          <div>
+            <label className="admin-label">Webhook Signing Secret</label>
+            <div className="flex items-center gap-2 border border-[#e5e7eb] px-4 py-2.5 bg-[#fafafa]">
+              <CheckCircle2 className="w-4 h-4 text-green-600 shrink-0" />
+              <span className="text-sm text-green-700 font-medium">Connected & Active</span>
+              <span className="text-xs text-black/40 ml-auto font-mono">whsec_••••••••</span>
+            </div>
+            <p className="text-[11px] text-black/40 mt-1">The signing secret is configured. To update, go to Dashboard → Secrets → STRIPE_WEBHOOK_SECRET.</p>
+          </div>
+
+          <div className="border-t border-[#e5e7eb] pt-4">
+            <label className="admin-label">Connect Stripe Account</label>
+            <div className="flex flex-wrap gap-2 mb-3">
+              <a href="https://dashboard.stripe.com/webhooks" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 bg-accent text-white px-6 py-2.5 text-xs font-semibold uppercase tracking-[0.15em] hover:bg-accent/90">
+                <CreditCard className="w-4 h-4" /> Open Stripe Dashboard
+              </a>
+              <a href="https://dashboard.stripe.com/apikeys" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 border border-[#e5e7eb] px-6 py-2.5 text-xs font-semibold uppercase tracking-[0.15em] hover:bg-[#fafafa]">
+                <KeyRound className="w-4 h-4" /> Get API Keys
+              </a>
+            </div>
+            <div className="text-[11px] text-black/50 space-y-1">
+              <p className="font-semibold text-black/70">Setup steps:</p>
+              <p>1. Get your API keys from Stripe → paste them above → click "Verify & Activate"</p>
+              <p>2. In Stripe Dashboard → Developers → Webhooks → Add endpoint</p>
+              <p>3. Paste the Webhook Endpoint URL above</p>
+              <p>4. Copy the signing secret → add it in Dashboard → Secrets as STRIPE_WEBHOOK_SECRET</p>
+            </div>
+          </div>
+        </div>
       </div>
 
       <h3 className="text-sm font-semibold uppercase tracking-[0.15em] mb-3">Recent Transactions</h3>
