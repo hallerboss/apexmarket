@@ -5,6 +5,7 @@ import { SlidersHorizontal, X, LayoutGrid, Rows3, ChevronRight } from "lucide-re
 import { Image } from "@/components/ui/image";
 import { Slider } from "@/components/ui/slider";
 import ShopProductCard from "@/components/store/ShopProductCard";
+import AdSenseAd from "@/components/store/AdSenseAd";
 
 const sortOptions = [
   { value: "newest", label: "Default sorting" },
@@ -335,6 +336,8 @@ export default function Shop() {
                 ))}
               </div>
             )}
+
+            <AdSenseAd slot="shop-listing" />
 
             {filtered.length > showCount && (
               <div className="text-center mt-8">

@@ -12,6 +12,7 @@ import { trackProductView } from "@/lib/analytics";
 import ProductCard from "@/components/store/ProductCard";
 import FrequentlyBoughtTogether from "@/components/store/FrequentlyBoughtTogether";
 import CustomerReviews from "@/components/store/CustomerReviews";
+import ProductVariantSelector from "@/components/store/ProductVariantSelector";
 
 export default function ProductDetail() {
   const { id } = useParams();
@@ -68,9 +69,14 @@ export default function ProductDetail() {
   const variantImageFor = (variant, option) =>
     (product.variant_images || []).find((v) => v.variant === variant && v.option === option)?.image;
 
+  const allVariantsSelected = (product.variants || []).every((v) => selectedVariants[v.name]);
   const variantStr = () => Object.values(selectedVariants).join(", ") || null;
-  const handleAdd = () => addItem(product, qty, variantStr());
+  const handleAdd = () => {
+    if (product.variants?.length && !allVariantsSelected) return;
+    addItem(product, qty, variantStr());
+  };
   const handleBuyNow = () => {
+    if (product.variants?.length && !allVariantsSelected) return;
     addItem(product, qty, variantStr());
     navigate("/cart");
   };
@@ -150,38 +156,19 @@ export default function ProductDetail() {
           {product.short_description && <div className="serif-text text-lg text-muted-foreground leading-relaxed mb-8 max-w-prose whitespace-pre-line" dangerouslySetInnerHTML={{ __html: product.short_description }} />}
 
           {/* Variants */}
-          {product.variants?.map((v) => {
-            const isColor = /color/i.test(v.name || "");
-            return (
-              <div key={v.name} className="mb-6">
-                <p className="text-[11px] uppercase tracking-[0.2em] font-semibold mb-3">{v.name}</p>
-                <div className="flex flex-wrap gap-2">
-                  {v.options.map((opt) => {
-                    const vImg = variantImageFor(v.name, opt);
-                    const selected = selectedVariants[v.name] === opt;
-                    return (
-                      <button
-                        key={opt}
-                        onClick={() => {
-                          setSelectedVariants((s) => ({ ...s, [v.name]: opt }));
-                          if (vImg) {
-                            const idx = images.indexOf(vImg);
-                            if (idx >= 0) setActiveImg(idx);
-                          }
-                        }}
-                        className={`flex items-center gap-2 pl-1 pr-3 py-1 text-sm border transition-colors ${selected ? "border-foreground bg-foreground text-background" : "border-border hover:border-foreground"}`}
-                      >
-                        {isColor && vImg && (
-                          <img src={vImg} alt={opt} className="w-7 h-7 object-cover rounded" />
-                        )}
-                        {opt}
-                      </button>
-                    );
-                  })}
-                </div>
-              </div>
-            );
-          })}
+          <ProductVariantSelector
+            variants={product.variants}
+            selected={selectedVariants}
+            onSelect={(name, opt) => setSelectedVariants((s) => ({ ...s, [name]: opt }))}
+            variantImageFor={variantImageFor}
+            onImageSelect={(imgUrl) => {
+              const idx = images.indexOf(imgUrl);
+              if (idx >= 0) setActiveImg(idx);
+            }}
+          />
+          {product.variants?.length > 0 && !allVariantsSelected && (
+            <p className="text-xs text-amber-600 mb-4">Please select all options above before adding to cart.</p>
+          )}
 
           {/* Wishlist + Compare */}
           <div className="flex items-center gap-3 mb-6">
@@ -201,10 +188,10 @@ export default function ProductDetail() {
               <span className="w-12 text-center text-sm font-semibold">{qty}</span>
               <button onClick={() => setQty((q) => (product.stock > 0 ? Math.min(product.stock, q + 1) : q))} className="p-3 hover:text-accent"><Plus className="w-4 h-4" /></button>
             </div>
-            <button onClick={handleAdd} disabled={product.stock <= 0} className="btn-mono flex-1 min-w-[150px] bg-red-600 text-white hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed">
+            <button onClick={handleAdd} disabled={product.stock <= 0 || (product.variants?.length > 0 && !allVariantsSelected)} className="btn-mono flex-1 min-w-[150px] bg-red-600 text-white hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed">
               <ShoppingBag className="w-4 h-4" /> Add to Cart
             </button>
-            <button onClick={handleBuyNow} disabled={product.stock <= 0} className="btn-mono flex-1 min-w-[150px] bg-red-600 text-white hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed">
+            <button onClick={handleBuyNow} disabled={product.stock <= 0 || (product.variants?.length > 0 && !allVariantsSelected)} className="btn-mono flex-1 min-w-[150px] bg-red-600 text-white hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed">
               <Zap className="w-4 h-4" /> Buy Now
             </button>
           </div>

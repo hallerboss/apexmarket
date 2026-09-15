@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
-import { Save, ShoppingBag, DollarSign, CheckCircle2, Link2, Loader2 } from "lucide-react";
+import { Save, ShoppingBag, DollarSign, CheckCircle2, Link2, Loader2, RefreshCw, ExternalLink } from "lucide-react";
 
 export default function AdminSettings() {
   const [settings, setSettings] = useState({
@@ -16,6 +16,8 @@ export default function AdminSettings() {
   const [merchantId, setMerchantId] = useState("");
   const [adsenseId, setAdsenseId] = useState("");
   const [connecting, setConnecting] = useState(null);
+  const [syncing, setSyncing] = useState(false);
+  const [syncResult, setSyncResult] = useState(null);
 
   useEffect(() => {
     base44.entities.SiteSetting.list().then((data) => {
@@ -30,6 +32,8 @@ export default function AdminSettings() {
   const getSetting = (key) => siteSettings.find((s) => s.key === key)?.value || "";
   const isMerchantConnected = !!getSetting("google_merchant_id");
   const isAdsenseConnected = !!getSetting("adsense_publisher_id");
+  const lastSync = getSetting("merchant_last_sync");
+  const feedUrl = "https://apexmarket-app.base44.app/functions/syncGoogleMerchant";
 
   const saveSetting = async (key, value) => {
     const existing = siteSettings.find((s) => s.key === key);
@@ -58,6 +62,21 @@ export default function AdminSettings() {
     if (!adsenseId.trim()) return;
     setConnecting("adsense");
     try { await saveSetting("adsense_publisher_id", adsenseId.trim()); } finally { setConnecting(null); }
+  };
+
+  const syncMerchant = async () => {
+    setSyncing(true);
+    setSyncResult(null);
+    try {
+      const res = await base44.functions.invoke("syncGoogleMerchant", {});
+      setSyncResult(res.data);
+      const refreshed = await base44.entities.SiteSetting.list();
+      setSiteSettings(refreshed);
+    } catch (err) {
+      setSyncResult({ error: err?.response?.data?.error || err?.message || "Sync failed" });
+    } finally {
+      setSyncing(false);
+    }
   };
 
   const disconnect = async (key) => {
@@ -137,10 +156,54 @@ export default function AdminSettings() {
                 </button>
               )}
             </div>
-            {isAdsenseConnected && <p className="text-[11px] text-green-600 mt-2 flex items-center gap-1"><CheckCircle2 className="w-3 h-3" /> Ads are now displaying on your blog posts.</p>}
+            {isAdsenseConnected && <p className="text-[11px] text-green-600 mt-2 flex items-center gap-1"><CheckCircle2 className="w-3 h-3" /> Ads are now displaying on your blog posts and store pages.</p>}
           </div>
         </div>
       </div>
+
+      {/* Google Merchant Center — Catalog Sync */}
+      {isMerchantConnected && (
+        <div>
+          <h3 className="text-[11px] uppercase tracking-[0.2em] font-semibold text-white border-b border-white/10 pb-3 mb-6">Google Merchant — Catalog Sync</h3>
+          <div className="border border-[#e5e7eb] bg-white p-5 space-y-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-semibold">Product Feed Status</p>
+                <p className="text-xs text-black/50 mt-0.5">
+                  {lastSync ? `Last synced: ${new Date(lastSync).toLocaleString()}` : "Not synced yet — click Sync Now to generate your feed."}
+                </p>
+              </div>
+              {lastSync && <span className="text-[10px] uppercase tracking-wide bg-green-100 text-green-700 px-2 py-1 rounded flex items-center gap-1"><CheckCircle2 className="w-3 h-3" /> Active</span>}
+            </div>
+
+            <div>
+              <label className="admin-label">Feed URL — register this in Google Merchant Center</label>
+              <div className="flex gap-2">
+                <input readOnly value={feedUrl} className="admin-input font-mono text-xs flex-1" />
+                <button type="button" onClick={() => navigator.clipboard?.writeText(feedUrl)} className="border border-[#e5e7eb] px-4 py-2.5 text-xs font-semibold uppercase tracking-[0.15em] hover:bg-[#fafafa] whitespace-nowrap">Copy</button>
+              </div>
+              <p className="text-[11px] text-black/40 mt-1">In Merchant Center: Products → Feeds → Add primary feed → Scheduled fetch → paste this URL. Google will fetch your product catalog automatically.</p>
+            </div>
+
+            <div className="flex flex-wrap items-center gap-3">
+              <button type="button" onClick={syncMerchant} disabled={syncing} className="bg-accent text-white px-6 py-2.5 text-xs font-semibold uppercase tracking-[0.15em] hover:bg-accent/90 disabled:opacity-50 flex items-center gap-2">
+                {syncing ? <Loader2 className="w-4 h-4 animate-spin" /> : <RefreshCw className="w-4 h-4" />} {syncing ? "Syncing…" : "Sync Now"}
+              </button>
+              <a href="https://merchants.google.com/mc/feeds" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1.5 text-xs text-accent hover:underline">
+                <ExternalLink className="w-3.5 h-3.5" /> Open Merchant Center
+              </a>
+            </div>
+
+            {syncResult?.error && <p className="text-xs text-red-600">{syncResult.error}</p>}
+            {syncResult?.success && (
+              <div className="border border-green-300 bg-green-50 p-3 flex items-center gap-2">
+                <CheckCircle2 className="w-4 h-4 text-green-600 shrink-0" />
+                <p className="text-xs text-green-700">{syncResult.synced} products synced to Google Shopping feed. Register the Feed URL above in Merchant Center to go live.</p>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 }

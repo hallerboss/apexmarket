@@ -5,6 +5,7 @@ import { Image } from "@/components/ui/image";
 import ProductRow from "@/components/store/ProductRow";
 import SectionHeader from "@/components/store/SectionHeader";
 import HeroCarousel from "@/components/store/HeroCarousel";
+import AdSenseAd from "@/components/store/AdSenseAd";
 
 const FASHION_BANNER = "https://media.base44.com/images/public/6a8447d4dfbc61d89c33872d/c1a582fac_generated_6bd4c4e4.png";
 
@@ -90,6 +91,11 @@ export default function Home() {
               <ProductRow products={newArrivals.slice(0, 4)} />
             </section>
           )}
+
+          {/* AdSense — store page */}
+          <section className="container-bleed px-5 lg:px-10">
+            <AdSenseAd slot="home-midpage" />
+          </section>
 
           {/* SEASONAL PICKS */}
           {seasonalPicks.length > 0 && (
