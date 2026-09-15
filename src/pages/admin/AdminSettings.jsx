@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
-import { Save, ShoppingBag, DollarSign, CheckCircle2, Link2, Loader2, RefreshCw, ExternalLink } from "lucide-react";
+import { Save, ShoppingBag, DollarSign, CheckCircle2, Link2, Loader2, RefreshCw, ExternalLink, BarChart3 } from "lucide-react";
 
 export default function AdminSettings() {
   const [settings, setSettings] = useState({
@@ -15,6 +15,7 @@ export default function AdminSettings() {
   const [siteSettings, setSiteSettings] = useState([]);
   const [merchantId, setMerchantId] = useState("");
   const [adsenseId, setAdsenseId] = useState("");
+  const [gaId, setGaId] = useState("");
   const [connecting, setConnecting] = useState(null);
   const [syncing, setSyncing] = useState(false);
   const [syncResult, setSyncResult] = useState(null);
@@ -24,14 +25,17 @@ export default function AdminSettings() {
       setSiteSettings(data);
       const m = data.find((s) => s.key === "google_merchant_id");
       const a = data.find((s) => s.key === "adsense_publisher_id");
+      const g = data.find((s) => s.key === "ga_measurement_id");
       if (m) setMerchantId(m.value);
       if (a) setAdsenseId(a.value);
+      if (g) setGaId(g.value);
     }).catch(() => {});
   }, []);
 
   const getSetting = (key) => siteSettings.find((s) => s.key === key)?.value || "";
   const isMerchantConnected = !!getSetting("google_merchant_id");
   const isAdsenseConnected = !!getSetting("adsense_publisher_id");
+  const isGaConnected = !!getSetting("ga_measurement_id");
   const lastSync = getSetting("merchant_last_sync");
   const feedUrl = "https://apexmarket-app.base44.app/functions/syncGoogleMerchant";
 
@@ -64,6 +68,12 @@ export default function AdminSettings() {
     try { await saveSetting("adsense_publisher_id", adsenseId.trim()); } finally { setConnecting(null); }
   };
 
+  const connectGa = async () => {
+    if (!gaId.trim()) return;
+    setConnecting("ga");
+    try { await saveSetting("ga_measurement_id", gaId.trim()); } finally { setConnecting(null); }
+  };
+
   const syncMerchant = async () => {
     setSyncing(true);
     setSyncResult(null);
@@ -83,6 +93,7 @@ export default function AdminSettings() {
     await saveSetting(key, "");
     if (key === "google_merchant_id") setMerchantId("");
     if (key === "adsense_publisher_id") setAdsenseId("");
+    if (key === "ga_measurement_id") setGaId("");
   };
 
   return (
@@ -157,6 +168,32 @@ export default function AdminSettings() {
               )}
             </div>
             {isAdsenseConnected && <p className="text-[11px] text-green-600 mt-2 flex items-center gap-1"><CheckCircle2 className="w-3 h-3" /> Ads are now displaying on your blog posts and store pages.</p>}
+          </div>
+
+          {/* Google Analytics */}
+          <div className="border border-[#e5e7eb] bg-white p-5">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-10 h-10 bg-[#f9ab00]/10 flex items-center justify-center rounded">
+                <BarChart3 className="w-5 h-5 text-[#f9ab00]" />
+              </div>
+              <div className="flex-1">
+                <p className="text-sm font-semibold">Google Analytics 4</p>
+                <p className="text-xs text-black/50">Track visitors, page views & product interest</p>
+              </div>
+              {isGaConnected && <span className="text-[10px] uppercase tracking-wide bg-green-100 text-green-700 px-2 py-1 rounded flex items-center gap-1"><CheckCircle2 className="w-3 h-3" /> Connected</span>}
+            </div>
+            <div className="flex gap-2">
+              <input placeholder="Measurement ID (e.g. G-XXXXXXXXXX)" value={gaId} onChange={(e) => setGaId(e.target.value)} className="admin-input flex-1" />
+              {isGaConnected ? (
+                <button type="button" onClick={() => disconnect("ga_measurement_id")} className="border border-red-300 text-black px-4 py-2.5 text-xs font-semibold uppercase tracking-[0.15em] hover:bg-red-50 whitespace-nowrap">Disconnect</button>
+              ) : (
+                <button type="button" onClick={connectGa} disabled={connecting === "ga" || !gaId.trim()} className="bg-accent text-white px-6 py-2.5 text-xs font-semibold uppercase tracking-[0.15em] hover:bg-accent/90 disabled:opacity-50 flex items-center gap-2 whitespace-nowrap">
+                  {connecting === "ga" ? <Loader2 className="w-4 h-4 animate-spin" /> : <Link2 className="w-4 h-4" />} Connect
+                </button>
+              )}
+            </div>
+            {isGaConnected && <p className="text-[11px] text-green-600 mt-2 flex items-center gap-1"><CheckCircle2 className="w-3 h-3" /> Tracking page views, product views, add-to-cart and purchases.</p>}
+            {!isGaConnected && <p className="text-[11px] text-black/40 mt-2">Find your Measurement ID in Google Analytics → Admin → Data Streams. It starts with "G-".</p>}
           </div>
         </div>
       </div>

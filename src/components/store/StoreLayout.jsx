@@ -10,6 +10,7 @@ import SearchBar from "@/components/store/SearchBar";
 import CategoryNav from "@/components/store/CategoryNav";
 import { base44 } from "@/api/base44Client";
 import CurrencySwitcher from "@/components/store/CurrencySwitcher";
+import GoogleAnalyticsLoader from "@/components/GoogleAnalyticsLoader";
 
 const navLinks = [
   { label: "Home", path: "/" },
@@ -48,6 +49,7 @@ export default function StoreLayout() {
 
   return (
     <div className="min-h-screen bg-background">
+      <GoogleAnalyticsLoader />
       <header className="sticky top-0 z-30 bg-white border-b border-[#eeeeee]">
         {/* top row */}
         <div className="container-bleed px-5 lg:px-10 flex items-center justify-between gap-4 h-16 lg:h-20">
