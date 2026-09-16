@@ -1,7 +1,7 @@
 import { Link, Outlet, useLocation } from "react-router-dom";
 import {
   LayoutDashboard, Package, FolderTree, Star, FileText, ShoppingCart,
-  Image as ImageIcon, Settings, ArrowLeft, Film, CreditCard, Newspaper,
+  Image as ImageIcon, Settings, ArrowLeft, Film, CreditCard, Newspaper, LayoutTemplate,
 } from "lucide-react";
 
 const navItems = [
@@ -10,6 +10,7 @@ const navItems = [
   { label: "Categories", path: "/admin/categories", icon: FolderTree },
   { label: "Reviews", path: "/admin/reviews", icon: Star },
   { label: "Pages", path: "/admin/pages", icon: FileText },
+  { label: "Page Builder", path: "/admin/builder", icon: LayoutTemplate },
   { label: "Blog", path: "/admin/blog", icon: Newspaper },
   { label: "Orders", path: "/admin/orders", icon: ShoppingCart },
   { label: "Banners", path: "/admin/banners", icon: ImageIcon },

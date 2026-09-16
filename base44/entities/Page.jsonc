@@ -35,6 +35,19 @@
       "type": "boolean",
       "title": "Show in Menu",
       "default": false
+    },
+    "builder_mode": {
+      "type": "boolean",
+      "title": "Use Page Builder",
+      "default": false
+    },
+    "blocks": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": true
+      },
+      "title": "Builder Blocks"
     }
   },
   "required": [

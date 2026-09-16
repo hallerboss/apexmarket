@@ -125,7 +125,8 @@
     @apply w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105;
   }
   .admin-main { background: #f7f7f8; }
-  .admin-main, .admin-main *:not(option) { color: #1a1a1a !important; }
+  .admin-main { color: #1a1a1a !important; }
+  .admin-main *:not(option):not(.builder-canvas):not(.builder-canvas *) { color: #1a1a1a !important; }
   .admin-main option { color: #000000 !important; background: #ffffff !important; }
   .admin-main [class*="bg-[#0a0a0a]"], .admin-main [class*="bg-[#050505]"], .admin-main [class*="bg-white/5"], .admin-main [class*="bg-white/10"], .admin-main [class*="bg-white/[0.02]"], .admin-main [class*="bg-black/5"], .admin-main [class*="bg-black/10"] { background-color: #ffffff !important; }
   .admin-main [class*="border-white/5"], .admin-main [class*="border-white/10"], .admin-main [class*="border-white/20"] { border-color: #e5e7eb !important; }

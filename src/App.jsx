@@ -37,6 +37,7 @@ import AdminProducts from "@/pages/admin/AdminProducts";
 import AdminCategories from "@/pages/admin/AdminCategories";
 import AdminReviews from "@/pages/admin/AdminReviews";
 import AdminPages from "@/pages/admin/AdminPages";
+import AdminPageBuilder from "@/pages/admin/AdminPageBuilder";
 import AdminOrders from "@/pages/admin/AdminOrders";
 import AdminBanners from "@/pages/admin/AdminBanners";
 import AdminSettings from "@/pages/admin/AdminSettings";
@@ -103,6 +104,7 @@ const AuthenticatedApp = () => {
         <Route path="categories" element={<AdminCategories />} />
         <Route path="reviews" element={<AdminReviews />} />
         <Route path="pages" element={<AdminPages />} />
+        <Route path="builder" element={<AdminPageBuilder />} />
         <Route path="orders" element={<AdminOrders />} />
         <Route path="banners" element={<AdminBanners />} />
         <Route path="settings" element={<AdminSettings />} />

@@ -3,6 +3,7 @@ import { useParams } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
 import { Image } from "@/components/ui/image";
 import ReactMarkdown from "react-markdown";
+import BlockRenderer from "@/components/store/BlockRenderer";
 
 export default function ContentPage() {
   const { slug } = useParams();
@@ -18,6 +19,10 @@ export default function ContentPage() {
 
   if (loading) return <div className="container-bleed px-5 lg:px-10 py-32 text-center"><div className="w-8 h-8 border-2 border-muted border-t-foreground rounded-full animate-spin mx-auto" /></div>;
   if (!page) return <div className="container-bleed px-5 lg:px-10 py-32 text-center"><h1 className="display-text text-4xl mb-4">Page Not Found</h1></div>;
+
+  if (page.builder_mode && page.blocks?.length) {
+    return <div>{page.blocks.map((b) => <BlockRenderer key={b.id} block={b} />)}</div>;
+  }
 
   return (
     <div>
