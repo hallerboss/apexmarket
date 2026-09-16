@@ -137,9 +137,9 @@ export default function AdminSettings() {
             <div className="flex gap-2">
               <input placeholder="Merchant Center ID (e.g. 123456789)" value={merchantId} onChange={(e) => setMerchantId(e.target.value)} className="admin-input flex-1" />
               {isMerchantConnected ? (
-                <button type="button" onClick={() => disconnect("google_merchant_id")} className="border border-red-300 text-black px-4 py-2.5 text-xs font-semibold uppercase tracking-[0.15em] hover:bg-red-50 whitespace-nowrap">Disconnect</button>
+                <button type="button" onClick={() => disconnect("google_merchant_id")} className="bg-accent text-white px-4 py-2.5 text-xs font-semibold uppercase tracking-[0.15em] hover:bg-accent/90 whitespace-nowrap">Disconnect</button>
               ) : (
-                <button type="button" onClick={connectMerchant} disabled={connecting === "merchant" || !merchantId.trim()} className="bg-accent text-white px-6 py-2.5 text-xs font-semibold uppercase tracking-[0.15em] hover:bg-accent/90 disabled:opacity-50 flex items-center gap-2 whitespace-nowrap">
+                <button type="button" onClick={connectMerchant} disabled={connecting === "merchant" || !merchantId.trim()} className="bg-yellow-400 text-black px-6 py-2.5 text-xs font-semibold uppercase tracking-[0.15em] hover:bg-yellow-500 disabled:opacity-50 flex items-center gap-2 whitespace-nowrap">
                   {connecting === "merchant" ? <Loader2 className="w-4 h-4 animate-spin" /> : <Link2 className="w-4 h-4" />} Connect
                 </button>
               )}
@@ -160,9 +160,9 @@ export default function AdminSettings() {
             <div className="flex gap-2">
               <input placeholder="Publisher ID (ca-pub-XXXXXXXXX)" value={adsenseId} onChange={(e) => setAdsenseId(e.target.value)} className="admin-input flex-1" />
               {isAdsenseConnected ? (
-                <button type="button" onClick={() => disconnect("adsense_publisher_id")} className="border border-red-300 text-black px-4 py-2.5 text-xs font-semibold uppercase tracking-[0.15em] hover:bg-red-50 whitespace-nowrap">Disconnect</button>
+                <button type="button" onClick={() => disconnect("adsense_publisher_id")} className="bg-accent text-white px-4 py-2.5 text-xs font-semibold uppercase tracking-[0.15em] hover:bg-accent/90 whitespace-nowrap">Disconnect</button>
               ) : (
-                <button type="button" onClick={connectAdsense} disabled={connecting === "adsense" || !adsenseId.trim()} className="bg-accent text-white px-6 py-2.5 text-xs font-semibold uppercase tracking-[0.15em] hover:bg-accent/90 disabled:opacity-50 flex items-center gap-2 whitespace-nowrap">
+                <button type="button" onClick={connectAdsense} disabled={connecting === "adsense" || !adsenseId.trim()} className="bg-yellow-400 text-black px-6 py-2.5 text-xs font-semibold uppercase tracking-[0.15em] hover:bg-yellow-500 disabled:opacity-50 flex items-center gap-2 whitespace-nowrap">
                   {connecting === "adsense" ? <Loader2 className="w-4 h-4 animate-spin" /> : <Link2 className="w-4 h-4" />} Connect
                 </button>
               )}
@@ -185,9 +185,9 @@ export default function AdminSettings() {
             <div className="flex gap-2">
               <input placeholder="Measurement ID (e.g. G-XXXXXXXXXX)" value={gaId} onChange={(e) => setGaId(e.target.value)} className="admin-input flex-1" />
               {isGaConnected ? (
-                <button type="button" onClick={() => disconnect("ga_measurement_id")} className="border border-red-300 text-black px-4 py-2.5 text-xs font-semibold uppercase tracking-[0.15em] hover:bg-red-50 whitespace-nowrap">Disconnect</button>
+                <button type="button" onClick={() => disconnect("ga_measurement_id")} className="bg-accent text-white px-4 py-2.5 text-xs font-semibold uppercase tracking-[0.15em] hover:bg-accent/90 whitespace-nowrap">Disconnect</button>
               ) : (
-                <button type="button" onClick={connectGa} disabled={connecting === "ga" || !gaId.trim()} className="bg-accent text-white px-6 py-2.5 text-xs font-semibold uppercase tracking-[0.15em] hover:bg-accent/90 disabled:opacity-50 flex items-center gap-2 whitespace-nowrap">
+                <button type="button" onClick={connectGa} disabled={connecting === "ga" || !gaId.trim()} className="bg-yellow-400 text-black px-6 py-2.5 text-xs font-semibold uppercase tracking-[0.15em] hover:bg-yellow-500 disabled:opacity-50 flex items-center gap-2 whitespace-nowrap">
                   {connecting === "ga" ? <Loader2 className="w-4 h-4 animate-spin" /> : <Link2 className="w-4 h-4" />} Connect
                 </button>
               )}
