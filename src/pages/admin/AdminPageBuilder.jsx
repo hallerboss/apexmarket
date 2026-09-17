@@ -1,22 +1,31 @@
 import { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
 import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
 import { base44 } from "@/api/base44Client";
-import { Plus, Trash2, Save, GripVertical, Sparkles, Loader2, ExternalLink, FilePlus2 } from "lucide-react";
-import { BLOCK_LIBRARY, createBlock } from "@/lib/pageBlocks";
+import {
+  GripVertical, Trash2, Copy, Sparkles, Loader2, Plus, FolderOpen, Wand2, LayoutGrid, X,
+} from "lucide-react";
+import { WIDGET_LIBRARY, createBlock, widgetLabel } from "@/lib/pageBlocks";
 import BlockRenderer from "@/components/store/BlockRenderer";
 import BlockSettings from "@/components/admin/builder/BlockSettings";
+import WidgetPanel from "@/components/admin/builder/WidgetPanel";
+import BuilderTopBar from "@/components/admin/builder/BuilderTopBar";
 import { Field, ImageField } from "@/components/admin/builder/BuilderFields";
+
+const DEVICE_WIDTH = { desktop: "100%", tablet: "768px", mobile: "390px" };
 
 export default function AdminPageBuilder() {
   const [pages, setPages] = useState([]);
   const [pageId, setPageId] = useState("");
   const [title, setTitle] = useState("");
   const [slug, setSlug] = useState("");
+  const [status, setStatus] = useState("draft");
   const [blocks, setBlocks] = useState([]);
   const [selectedId, setSelectedId] = useState(null);
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
+  const [device, setDevice] = useState("desktop");
+  const [showWidgets, setShowWidgets] = useState(true);
+  const [showAi, setShowAi] = useState(false);
   const [aiPrompt, setAiPrompt] = useState("");
   const [aiRef, setAiRef] = useState("");
   const [generating, setGenerating] = useState(false);
@@ -28,36 +37,78 @@ export default function AdminPageBuilder() {
   const loadPage = (id) => {
     setPageId(id);
     setSelectedId(null);
-    if (!id) { setTitle(""); setSlug(""); setBlocks([]); return; }
+    setSaved(false);
+    if (!id) { setTitle(""); setSlug(""); setStatus("draft"); setBlocks([]); return; }
     const p = pages.find((x) => x.id === id);
-    if (p) { setTitle(p.title || ""); setSlug(p.slug || ""); setBlocks(p.blocks || []); }
+    if (p) {
+      setTitle(p.title || "");
+      setSlug(p.slug || "");
+      setStatus(p.status || "draft");
+      setBlocks(p.blocks || []);
+    }
   };
 
   const newPage = () => {
     setPageId("");
     setTitle("");
     setSlug("");
+    setStatus("draft");
     setBlocks([]);
     setSelectedId(null);
+    setSaved(false);
   };
 
   const addBlock = (type) => {
     const b = createBlock(type);
-    setBlocks((prev) => [...prev, b]);
+    setBlocks((prev) => {
+      const next = [...prev];
+      const idx = prev.findIndex((x) => x.id === selectedId);
+      next.splice(idx >= 0 ? idx + 1 : next.length, 0, b);
+      return next;
+    });
     setSelectedId(b.id);
   };
 
   const updateBlock = (b) => setBlocks((prev) => prev.map((x) => (x.id === b.id ? b : x)));
+
   const deleteBlock = (id) => {
     setBlocks((prev) => prev.filter((x) => x.id !== id));
     setSelectedId((cur) => (cur === id ? null : cur));
   };
 
+  const duplicateBlock = (id) => {
+    const src = blocks.find((b) => b.id === id);
+    if (!src) return;
+    const copy = { ...JSON.parse(JSON.stringify(src)), id: createBlock(src.type).id };
+    setBlocks((prev) => {
+      const next = [...prev];
+      next.splice(next.findIndex((b) => b.id === id) + 1, 0, copy);
+      return next;
+    });
+    setSelectedId(copy.id);
+  };
+
   const onDragEnd = (result) => {
-    if (!result.destination) return;
+    const { source, destination, draggableId } = result;
+    if (!destination) return;
+
+    if (source.droppableId === "widgets") {
+      if (destination.droppableId !== "canvas") return;
+      const type = draggableId.replace(/^w_/, "");
+      if (!WIDGET_LIBRARY.some((w) => w.type === type)) return;
+      const b = createBlock(type);
+      setBlocks((prev) => {
+        const next = [...prev];
+        next.splice(destination.index, 0, b);
+        return next;
+      });
+      setSelectedId(b.id);
+      return;
+    }
+
     const items = Array.from(blocks);
-    const [moved] = items.splice(result.source.index, 1);
-    items.splice(result.destination.index, 0, moved);
+    const [moved] = items.splice(source.index, 1);
+    items.splice(destination.index, 0, moved);
     setBlocks(items);
   };
 
@@ -67,13 +118,15 @@ export default function AdminPageBuilder() {
     try {
       const data = {
         title: title.trim(),
-        slug: slug.trim() || title.trim().toLowerCase().replace(/\s+/g, "-"),
+        slug: (slug.trim() || title.trim().toLowerCase().replace(/\s+/g, "-")).replace(/^-+|-+$/g, ""),
         blocks,
         builder_mode: true,
         status: "published",
       };
-      if (pageId) { await base44.entities.Page.update(pageId, data); }
-      else { const created = await base44.entities.Page.create(data); setPageId(created.id); setSlug(data.slug); }
+      if (pageId) await base44.entities.Page.update(pageId, data);
+      else { const created = await base44.entities.Page.create(data); setPageId(created.id); }
+      setSlug(data.slug);
+      setStatus("published");
       await refresh();
       setSaved(true);
       setTimeout(() => setSaved(false), 2000);
@@ -104,126 +157,150 @@ export default function AdminPageBuilder() {
 
   return (
     <div>
-      <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
-        <div>
-          <h2 className="display-text text-2xl">Page Builder</h2>
-          <p className="text-sm text-black/50 mt-1">Drag blocks to arrange, style them, or describe a page to the AI assistant.</p>
-        </div>
-        <div className="flex items-center gap-2">
-          {slug && (
-            <Link to={`/page/${slug}`} target="_blank" className="border border-[#e5e7eb] px-4 py-2.5 text-xs font-semibold uppercase tracking-[0.15em] hover:bg-[#fafafa] flex items-center gap-2">
-              <ExternalLink className="w-3.5 h-3.5" /> Preview
-            </Link>
-          )}
-          <button onClick={save} disabled={saving} className="bg-accent text-white px-5 py-2.5 text-xs font-semibold uppercase tracking-[0.15em] hover:bg-accent/90 disabled:opacity-50 flex items-center gap-2">
-            {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />} {saved ? "Saved" : "Save Page"}
-          </button>
-        </div>
-      </div>
+      <BuilderTopBar
+        title={title}
+        onTitleChange={setTitle}
+        status={status}
+        onNew={newPage}
+        device={device}
+        onDevice={setDevice}
+        showWidgets={showWidgets}
+        onToggleWidgets={() => setShowWidgets((v) => !v)}
+        slug={slug}
+        onSave={save}
+        saving={saving}
+        saved={saved}
+      />
 
-      <div className="grid grid-cols-1 xl:grid-cols-[250px_1fr_300px] gap-5">
-        {/* Left column */}
-        <div className="space-y-5">
-          <div className="bg-white border border-[#e5e7eb] p-4 space-y-3">
-            <h3 className="text-[11px] uppercase tracking-[0.2em] font-semibold">Page</h3>
-            <select value={pageId} onChange={(e) => loadPage(e.target.value)} className="admin-input text-sm">
-              <option value="">— New page —</option>
-              {pages.map((p) => <option key={p.id} value={p.id}>{p.title}</option>)}
-            </select>
-            <button type="button" onClick={newPage} className="text-xs text-accent flex items-center gap-1 hover:underline">
-              <FilePlus2 className="w-3.5 h-3.5" /> Start a new page
-            </button>
-            <Field label="Page title">
-              <input value={title} onChange={(e) => setTitle(e.target.value)} className="admin-input text-sm" placeholder="e.g. Summer Lookbook" />
-            </Field>
-            <Field label="URL slug">
-              <input value={slug} onChange={(e) => setSlug(e.target.value)} className="admin-input text-sm" placeholder="summer-lookbook" />
-            </Field>
-          </div>
+      <DragDropContext onDragEnd={onDragEnd}>
+        <div className="flex flex-col xl:flex-row gap-0 border border-[#e5e7eb] bg-[#f0f0f1]">
+          {showWidgets && <WidgetPanel onAdd={addBlock} onClose={() => setShowWidgets(false)} />}
 
-          <div className="bg-white border border-[#e5e7eb] p-4">
-            <h3 className="text-[11px] uppercase tracking-[0.2em] font-semibold mb-3">Blocks</h3>
-            <div className="grid grid-cols-2 gap-2">
-              {BLOCK_LIBRARY.map((b) => (
-                <button key={b.type} type="button" onClick={() => addBlock(b.type)} className="border border-[#e5e7eb] px-2 py-2.5 text-[11px] font-medium hover:border-accent hover:text-accent transition-colors flex items-center justify-center gap-1">
-                  <Plus className="w-3 h-3" /> {b.label}
-                </button>
-              ))}
+          {/* Canvas */}
+          <div className="flex-1 min-w-0 p-4 lg:p-6 overflow-x-auto">
+            <div
+              style={{ maxWidth: DEVICE_WIDTH[device] }}
+              className="mx-auto bg-white shadow-sm min-h-[520px]"
+            >
+              <Droppable droppableId="canvas">
+                {(provided) => (
+                  <div ref={provided.innerRef} {...provided.droppableProps} className="builder-canvas">
+                    {blocks.length === 0 && (
+                      <div className="border-2 border-dashed border-[#d1d5db] m-6 py-24 text-center">
+                        <div className="flex items-center justify-center gap-4 text-[#c4c8cf] mb-5">
+                          <Plus className="w-5 h-5" />
+                          <FolderOpen className="w-5 h-5" />
+                          <Wand2 className="w-5 h-5" />
+                          <LayoutGrid className="w-5 h-5" />
+                        </div>
+                        <p className="text-sm text-muted-foreground">Drag widget here</p>
+                      </div>
+                    )}
+
+                    {blocks.map((b, i) => (
+                      <Draggable key={b.id} draggableId={b.id} index={i}>
+                        {(prov) => (
+                          <div
+                            ref={prov.innerRef}
+                            {...prov.draggableProps}
+                            onClick={() => setSelectedId(b.id)}
+                            className={`relative group border-b transition-colors ${
+                              selectedId === b.id ? "border-accent ring-2 ring-accent/40" : "border-transparent hover:border-accent/30"
+                            }`}
+                          >
+                            <div className={`absolute top-1 right-1 z-10 flex items-center gap-0.5 bg-accent text-white px-1.5 py-1 transition-opacity ${
+                              selectedId === b.id ? "opacity-100" : "opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto"
+                            }`}>
+                              <span className="cursor-grab px-1 text-[10px] uppercase tracking-[0.1em] flex items-center gap-1">
+                                <GripVertical className="w-3 h-3" /> {widgetLabel(b.type)}
+                              </span>
+                              <button type="button" onClick={(e) => { e.stopPropagation(); duplicateBlock(b.id); }} className="p-1 hover:bg-black/20" title="Duplicate">
+                                <Copy className="w-3 h-3" />
+                              </button>
+                              <button type="button" onClick={(e) => { e.stopPropagation(); deleteBlock(b.id); }} className="p-1 hover:bg-black/20" title="Delete">
+                                <Trash2 className="w-3 h-3" />
+                              </button>
+                            </div>
+                            <div className="pointer-events-none">
+                              <BlockRenderer block={b} />
+                            </div>
+                          </div>
+                        )}
+                      </Draggable>
+                    ))}
+                    {provided.placeholder}
+                  </div>
+                )}
+              </Droppable>
+            </div>
+
+            <div className="mx-auto mt-4 flex items-center justify-center gap-3 text-[11px] text-muted-foreground" style={{ maxWidth: DEVICE_WIDTH[device] }}>
+              <span>{blocks.length} widget{blocks.length === 1 ? "" : "s"}</span>
+              <span>·</span>
+              <span className="capitalize">{device} preview</span>
             </div>
           </div>
 
-          <div className="bg-white border border-[#e5e7eb] p-4 space-y-3">
-            <h3 className="text-[11px] uppercase tracking-[0.2em] font-semibold flex items-center gap-1.5">
-              <Sparkles className="w-3.5 h-3.5 text-accent" /> AI Assistant
-            </h3>
-            <p className="text-[11px] text-black/50">Describe the page — or upload a screenshot of a design you like and ask to match its style.</p>
-            <textarea
-              rows={4}
-              value={aiPrompt}
-              onChange={(e) => setAiPrompt(e.target.value)}
-              placeholder="e.g. Build a landing page with a big hero, autumn colors and a featured product grid"
-              className="admin-input text-sm resize-none"
-            />
-            <ImageField label="Reference design (optional)" value={aiRef} onChange={setAiRef} />
-            <button
-              type="button"
-              onClick={generate}
-              disabled={generating || !aiPrompt.trim()}
-              className="w-full bg-yellow-400 text-black px-4 py-2.5 text-xs font-semibold uppercase tracking-[0.15em] hover:bg-yellow-500 disabled:opacity-50 flex items-center justify-center gap-2"
-            >
-              {generating ? <Loader2 className="w-4 h-4 animate-spin" /> : <Sparkles className="w-4 h-4" />}
-              {generating ? "Generating…" : "Generate Page"}
-            </button>
-          </div>
-        </div>
+          {/* Right panel */}
+          <div className="w-full xl:w-[320px] shrink-0 bg-white border-t xl:border-t-0 xl:border-l border-[#e5e7eb] p-4 space-y-5">
+            {selected ? (
+              <BlockSettings block={selected} onChange={updateBlock} onDelete={() => deleteBlock(selected.id)} />
+            ) : (
+              <div className="space-y-4">
+                <p className="text-[10px] font-semibold uppercase tracking-[0.15em] text-muted-foreground">Page</p>
+                <div>
+                  <label className="block text-[10px] font-semibold uppercase tracking-[0.15em] text-muted-foreground mb-1.5">Edit an existing page</label>
+                  <select value={pageId} onChange={(e) => loadPage(e.target.value)} className="admin-input text-sm">
+                    <option value="">— New page —</option>
+                    {pages.map((p) => <option key={p.id} value={p.id}>{p.title}</option>)}
+                  </select>
+                </div>
+                <Field label="Page title">
+                  <input value={title} onChange={(e) => setTitle(e.target.value)} className="admin-input text-sm" placeholder="e.g. Summer Lookbook" />
+                </Field>
+                <Field label="URL slug">
+                  <input value={slug} onChange={(e) => setSlug(e.target.value)} className="admin-input text-sm" placeholder="summer-lookbook" />
+                </Field>
+                <p className="text-[11px] text-muted-foreground">Select a widget on the canvas to edit its content and style.</p>
+              </div>
+            )}
 
-        {/* Canvas */}
-        <div className="min-w-0">
-          <DragDropContext onDragEnd={onDragEnd}>
-            <Droppable droppableId="canvas">
-              {(provided) => (
-                <div ref={provided.innerRef} {...provided.droppableProps} className="builder-canvas space-y-3">
-                  {blocks.length === 0 && (
-                    <div className="border-2 border-dashed border-[#d1d5db] p-16 text-center text-sm text-muted-foreground">
-                      Add a block from the left, or describe your page to the AI assistant.
-                    </div>
-                  )}
-                  {blocks.map((b, i) => (
-                    <Draggable key={b.id} draggableId={b.id} index={i}>
-                      {(prov) => (
-                        <div
-                          ref={prov.innerRef}
-                          {...prov.draggableProps}
-                          onClick={() => setSelectedId(b.id)}
-                          className={`relative bg-white border transition-colors ${selectedId === b.id ? "border-accent" : "border-[#e5e7eb]"}`}
-                        >
-                          <div className="flex items-center justify-between px-3 py-2 border-b border-[#f0f0f0] bg-[#fafafa]">
-                            <span {...prov.dragHandleProps} className="flex items-center gap-2 text-[11px] uppercase tracking-[0.15em] text-muted-foreground cursor-grab">
-                              <GripVertical className="w-3.5 h-3.5" /> {b.type}
-                            </span>
-                            <button type="button" onClick={(e) => { e.stopPropagation(); deleteBlock(b.id); }} className="text-muted-foreground hover:text-red-500">
-                              <Trash2 className="w-3.5 h-3.5" />
-                            </button>
-                          </div>
-                          <div className="pointer-events-none">
-                            <BlockRenderer block={b} />
-                          </div>
-                        </div>
-                      )}
-                    </Draggable>
-                  ))}
-                  {provided.placeholder}
+            <div className="border-t border-[#eef0f2] pt-4">
+              <button
+                type="button"
+                onClick={() => setShowAi((v) => !v)}
+                className="w-full flex items-center justify-between text-[10px] font-semibold uppercase tracking-[0.15em] text-muted-foreground"
+              >
+                <span className="flex items-center gap-1.5"><Sparkles className="w-3.5 h-3.5 text-accent" /> AI Assistant</span>
+                {showAi ? <X className="w-3.5 h-3.5" /> : <Plus className="w-3.5 h-3.5" />}
+              </button>
+
+              {showAi && (
+                <div className="space-y-3 mt-4">
+                  <p className="text-[11px] text-muted-foreground">Describe the page — or upload a screenshot of a design you like and ask to match its style.</p>
+                  <textarea
+                    rows={4}
+                    value={aiPrompt}
+                    onChange={(e) => setAiPrompt(e.target.value)}
+                    placeholder="e.g. Build a landing page with a big hero, warm colors and a featured product grid"
+                    className="admin-input text-sm resize-none"
+                  />
+                  <ImageField label="Reference design (optional)" value={aiRef} onChange={setAiRef} />
+                  <button
+                    type="button"
+                    onClick={generate}
+                    disabled={generating || !aiPrompt.trim()}
+                    className="w-full bg-yellow-400 text-black px-4 py-2.5 text-xs font-semibold uppercase tracking-[0.15em] hover:bg-yellow-500 disabled:opacity-50 flex items-center justify-center gap-2"
+                  >
+                    {generating ? <Loader2 className="w-4 h-4 animate-spin" /> : <Sparkles className="w-4 h-4" />}
+                    {generating ? "Generating…" : "Generate Page"}
+                  </button>
                 </div>
               )}
-            </Droppable>
-          </DragDropContext>
+            </div>
+          </div>
         </div>
-
-        {/* Right column */}
-        <div className="bg-white border border-[#e5e7eb] p-4 h-fit xl:sticky xl:top-24">
-          <BlockSettings block={selected} onChange={updateBlock} onDelete={() => deleteBlock(selected.id)} />
-        </div>
-      </div>
+      </DragDropContext>
     </div>
   );
 }
