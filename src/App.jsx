@@ -19,6 +19,7 @@ import { CurrencyProvider } from "@/lib/currencyContext";
 import { QuickViewProvider } from "@/lib/quickViewContext";
 import { WishlistProvider } from "@/lib/wishlistContext";
 import { CompareProvider } from "@/lib/compareContext";
+import { ThemeProvider } from "@/lib/themeContext";
 import Home from "@/pages/Home";
 import Shop from "@/pages/Shop";
 import About from "@/pages/About";
@@ -128,7 +129,9 @@ function App() {
       <QueryClientProvider client={queryClientInstance}>
         <Router>
           <ScrollToTop />
-          <AuthenticatedApp />
+          <ThemeProvider>
+            <AuthenticatedApp />
+          </ThemeProvider>
         </Router>
         <Toaster />
       </QueryClientProvider>

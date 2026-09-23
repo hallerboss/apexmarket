@@ -3,6 +3,7 @@ import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
 import { base44 } from "@/api/base44Client";
 import {
   GripVertical, Trash2, Copy, Sparkles, Loader2, Plus, FolderOpen, Wand2, LayoutGrid, X,
+  ChevronUp, ChevronDown,
 } from "lucide-react";
 import { WIDGET_LIBRARY, createBlock, widgetLabel } from "@/lib/pageBlocks";
 import BlockRenderer from "@/components/store/BlockRenderer";
@@ -87,6 +88,33 @@ export default function AdminPageBuilder() {
     });
     setSelectedId(copy.id);
   };
+
+  const moveBlock = (id, dir) => {
+    setBlocks((prev) => {
+      const i = prev.findIndex((b) => b.id === id);
+      if (i < 0) return prev;
+      const j = i + dir;
+      if (j < 0 || j >= prev.length) return prev;
+      const next = [...prev];
+      const [m] = next.splice(i, 1);
+      next.splice(j, 0, m);
+      return next;
+    });
+  };
+
+  useEffect(() => {
+    if (!selectedId) return;
+    const handler = (e) => {
+      const tag = e.target?.tagName;
+      if (tag === "INPUT" || tag === "TEXTAREA" || e.target?.isContentEditable) return;
+      if (e.key === "ArrowUp") { e.preventDefault(); moveBlock(selectedId, -1); }
+      else if (e.key === "ArrowDown") { e.preventDefault(); moveBlock(selectedId, 1); }
+      else if (e.key === "Delete" || e.key === "Backspace") { e.preventDefault(); deleteBlock(selectedId); }
+      else if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "d") { e.preventDefault(); duplicateBlock(selectedId); }
+    };
+    window.addEventListener("keydown", handler);
+    return () => window.removeEventListener("keydown", handler);
+  }, [selectedId]);
 
   const onDragEnd = (result) => {
     const { source, destination, draggableId } = result;
@@ -214,6 +242,12 @@ export default function AdminPageBuilder() {
                               <span className="cursor-grab px-1 text-[10px] uppercase tracking-[0.1em] flex items-center gap-1">
                                 <GripVertical className="w-3 h-3" /> {widgetLabel(b.type)}
                               </span>
+                              <button type="button" onClick={(e) => { e.stopPropagation(); moveBlock(b.id, -1); }} className="p-1 hover:bg-black/20" title="Move up">
+                                <ChevronUp className="w-3 h-3" />
+                              </button>
+                              <button type="button" onClick={(e) => { e.stopPropagation(); moveBlock(b.id, 1); }} className="p-1 hover:bg-black/20" title="Move down">
+                                <ChevronDown className="w-3 h-3" />
+                              </button>
                               <button type="button" onClick={(e) => { e.stopPropagation(); duplicateBlock(b.id); }} className="p-1 hover:bg-black/20" title="Duplicate">
                                 <Copy className="w-3 h-3" />
                               </button>
