@@ -1,11 +1,13 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
-import { Package, ShoppingCart, Star, FolderTree, TrendingUp, DollarSign, Clock } from "lucide-react";
+import { Package, ShoppingCart, Star, FolderTree, TrendingUp, DollarSign, Clock, AlertTriangle } from "lucide-react";
+import LowStockAlerts from "@/components/admin/LowStockAlerts";
 
 export default function AdminDashboard() {
-  const [stats, setStats] = useState({ products: 0, orders: 0, reviews: 0, pendingReviews: 0, categories: 0, revenue: 0, pendingOrders: 0 });
+  const [stats, setStats] = useState({ products: 0, orders: 0, reviews: 0, pendingReviews: 0, categories: 0, revenue: 0, pendingOrders: 0, lowStock: 0 });
   const [recentOrders, setRecentOrders] = useState([]);
+  const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -19,6 +21,7 @@ export default function AdminDashboard() {
       const pendingOrders = orders.filter((o) => o.status === "pending").length;
       const revenue = orders.reduce((s, o) => s + (o.total || 0), 0);
       const totalStock = prods.reduce((s, p) => s + (p.stock || 0), 0);
+      const lowStock = prods.filter((p) => (p.stock || 0) <= 5).length;
       setStats({
         products: prods.length,
         orders: orders.length,
@@ -28,7 +31,9 @@ export default function AdminDashboard() {
         revenue,
         pendingOrders,
         totalStock,
+        lowStock,
       });
+      setProducts(prods);
       setRecentOrders(orders.slice(0, 5));
       setLoading(false);
     });
@@ -43,6 +48,7 @@ export default function AdminDashboard() {
     { label: "Pending Reviews", value: stats.pendingReviews, icon: Star, link: "/admin/reviews" },
     { label: "Categories", value: stats.categories, icon: FolderTree, link: "/admin/categories" },
     { label: "Total Stock", value: stats.totalStock, icon: Package, link: "/admin/products" },
+    { label: "Low Stock", value: stats.lowStock, icon: AlertTriangle, link: "/admin/products" },
   ];
 
   return (
@@ -67,6 +73,9 @@ export default function AdminDashboard() {
           return s.link ? <Link key={s.label} to={s.link}>{Card}</Link> : <div key={s.label}>{Card}</div>;
         })}
       </div>
+
+      {/* Low stock alerts */}
+      <LowStockAlerts products={products} />
 
       {/* Recent orders */}
       <div className="bg-[#0a0a0a] border border-white/5">
