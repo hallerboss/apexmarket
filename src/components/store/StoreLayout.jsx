@@ -70,7 +70,7 @@ export default function StoreLayout() {
                 <p className="text-sm font-bold text-foreground">0(800)123-456</p>
               </div>
             </div>
-            <Link to="/shop" className="hidden md:block hover:text-accent transition-colors" aria-label="Compare">
+            <Link to="/compare" className="hidden md:block hover:text-accent transition-colors" aria-label="Compare">
               <Scale className="w-5 h-5" />
             </Link>
             <div className="hidden sm:block">

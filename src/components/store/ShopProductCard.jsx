@@ -5,6 +5,7 @@ import { useCart } from "@/lib/cartContext";
 import { useCurrency } from "@/lib/currencyContext";
 import { useQuickView } from "@/lib/quickViewContext";
 import WishlistToggle from "@/components/store/WishlistToggle";
+import CompareToggle from "@/components/store/CompareToggle";
 
 export default function ShopProductCard({ product }) {
   const { addItem } = useCart();
@@ -30,6 +31,7 @@ export default function ShopProductCard({ product }) {
           {product.top_rated && <span className="bg-purple-600 text-white text-[11px] font-bold px-2 py-0.5 rounded">TOP RATED</span>}
         </div>
         <WishlistToggle productId={product.id} className="absolute top-2 right-2 z-10 w-8 h-8 bg-white/90 border border-[#eee] rounded-full hover:border-red-400" />
+        <CompareToggle productId={product.id} className="absolute top-11 right-2 rounded-full" />
         <button
           onClick={(e) => { e.preventDefault(); e.stopPropagation(); openQuickView(product); }}
           className="absolute bottom-0 inset-x-0 z-10 bg-black/80 text-white text-xs font-semibold py-2 opacity-0 group-hover:opacity-100 transition-opacity"

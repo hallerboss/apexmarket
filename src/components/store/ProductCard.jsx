@@ -53,7 +53,7 @@ export default function ProductCard({ product, index = 0, compareMode = false })
         >
           <Eye className="w-4 h-4" />
         </button>
-        {compareMode && <CompareToggle productId={product.id} />}
+        <CompareToggle productId={product.id} className="absolute top-12 right-3" />
       </Link>
 
       <div className="p-4 flex flex-col gap-3 flex-1">
