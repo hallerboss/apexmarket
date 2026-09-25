@@ -19,6 +19,7 @@ export default function AdminSettings() {
   const [connecting, setConnecting] = useState(null);
   const [syncing, setSyncing] = useState(false);
   const [syncResult, setSyncResult] = useState(null);
+  const [gaDashboard, setGaDashboard] = useState(null);
 
   useEffect(() => {
     base44.entities.SiteSetting.list().then((data) => {
@@ -30,6 +31,10 @@ export default function AdminSettings() {
       if (a) setAdsenseId(a.value);
       if (g) setGaId(g.value);
     }).catch(() => {});
+
+    base44.functions.invoke("getAnalyticsOverview", {})
+      .then(() => setGaDashboard(true))
+      .catch(() => setGaDashboard(false));
   }, []);
 
   const getSetting = (key) => siteSettings.find((s) => s.key === key)?.value || "";
@@ -194,6 +199,8 @@ export default function AdminSettings() {
             </div>
             {isGaConnected && <p className="text-[11px] text-green-600 mt-2 flex items-center gap-1"><CheckCircle2 className="w-3 h-3" /> Tracking page views, product views, add-to-cart and purchases.</p>}
             {!isGaConnected && <p className="text-[11px] text-black/40 mt-2">Find your Measurement ID in Google Analytics → Admin → Data Streams. It starts with "G-".</p>}
+            {gaDashboard === true && <p className="text-[11px] text-green-600 mt-2 flex items-center gap-1"><BarChart3 className="w-3 h-3" /> Dashboard analytics connected — visitor stats &amp; top products appear on your dashboard.</p>}
+            {gaDashboard === false && <p className="text-[11px] text-amber-600 mt-2 flex items-center gap-1"><BarChart3 className="w-3 h-3" /> Dashboard data not connected — reconnect Google Analytics to pull visitor stats.</p>}
           </div>
         </div>
       </div>

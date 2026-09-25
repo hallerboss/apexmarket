@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
 import { Package, ShoppingCart, Star, FolderTree, TrendingUp, DollarSign, Clock, AlertTriangle } from "lucide-react";
 import LowStockAlerts from "@/components/admin/LowStockAlerts";
+import AnalyticsOverview from "@/components/admin/AnalyticsOverview";
 
 export default function AdminDashboard() {
   const [stats, setStats] = useState({ products: 0, orders: 0, reviews: 0, pendingReviews: 0, categories: 0, revenue: 0, pendingOrders: 0, lowStock: 0 });
@@ -74,8 +75,11 @@ export default function AdminDashboard() {
         })}
       </div>
 
-      {/* Low stock alerts */}
-      <LowStockAlerts products={products} />
+      {/* Low stock alerts + analytics */}
+      <div className="grid lg:grid-cols-2 gap-4">
+        <LowStockAlerts products={products} />
+        <AnalyticsOverview />
+      </div>
 
       {/* Recent orders */}
       <div className="bg-[#0a0a0a] border border-white/5">
