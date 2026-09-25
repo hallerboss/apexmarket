@@ -7,6 +7,7 @@ export default function FieldAIButton({ type, imageUrl, productName, productDesc
   const [loading, setLoading] = useState(false);
   const [options, setOptions] = useState([]);
   const [selected, setSelected] = useState(null);
+  const [error, setError] = useState(null);
   const ref = useRef(null);
 
   useEffect(() => {
@@ -26,6 +27,7 @@ export default function FieldAIButton({ type, imageUrl, productName, productDesc
     setOpen(true);
     setLoading(true);
     setOptions([]);
+    setError(null);
     try {
       const res = await base44.functions.invoke("generateProductField", {
         type,
@@ -42,13 +44,11 @@ export default function FieldAIButton({ type, imageUrl, productName, productDesc
         setOptions(d.keywords || []);
       } else if (type === "short_description") {
         if (d.features_html) {
-          onSelect(d.features_html);
-          setOpen(false);
+          setOptions([d.features_html]);
         }
       }
     } catch (err) {
-      alert(err?.response?.data?.error || err?.message || "AI generation failed");
-      setOpen(false);
+      setError(err?.response?.data?.error || err?.message || "AI generation failed");
     } finally {
       setLoading(false);
     }
@@ -83,6 +83,8 @@ export default function FieldAIButton({ type, imageUrl, productName, productDesc
             <div className="p-6 flex items-center justify-center">
               <Loader2 className="w-5 h-5 animate-spin text-accent" />
             </div>
+          ) : error ? (
+            <div className="p-4 text-xs text-red-600 text-center">{error}</div>
           ) : options.length === 0 ? (
             <div className="p-4 text-xs text-black/40 text-center">No options generated.</div>
           ) : (
@@ -100,7 +102,9 @@ export default function FieldAIButton({ type, imageUrl, productName, productDesc
                   ) : (
                     <span className="w-3.5 text-black/30 shrink-0 mt-0.5">{i + 1}.</span>
                   )}
-                  <span className="text-black/80">{opt}</span>
+                  <span className="text-black/80">
+                    {type === "short_description" ? <span dangerouslySetInnerHTML={{ __html: opt }} /> : opt}
+                  </span>
                 </button>
               ))}
             </div>

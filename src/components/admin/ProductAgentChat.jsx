@@ -94,7 +94,6 @@ export default function ProductAgentChat({ onClose, onInsert }) {
       focus_keywords: imageResult.focus_keywords,
     });
     setInserted(true);
-    setTimeout(() => { onClose(); }, 900);
   };
 
   const suggestions = [
