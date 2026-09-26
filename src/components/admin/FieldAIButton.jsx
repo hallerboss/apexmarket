@@ -46,6 +46,10 @@ export default function FieldAIButton({ type, imageUrl, productName, productDesc
         if (d.features_html) {
           setOptions([d.features_html]);
         }
+      } else if (type === "description") {
+        if (d.description_html) {
+          setOptions([d.description_html]);
+        }
       }
     } catch (err) {
       setError(err?.response?.data?.error || err?.message || "AI generation failed");
@@ -57,7 +61,6 @@ export default function FieldAIButton({ type, imageUrl, productName, productDesc
   const pick = (val) => {
     setSelected(val);
     onSelect(val);
-    setTimeout(() => { setOpen(false); setSelected(null); }, 700);
   };
 
   return (
@@ -103,7 +106,7 @@ export default function FieldAIButton({ type, imageUrl, productName, productDesc
                     <span className="w-3.5 text-black/30 shrink-0 mt-0.5">{i + 1}.</span>
                   )}
                   <span className="text-black/80">
-                    {type === "short_description" ? <span dangerouslySetInnerHTML={{ __html: opt }} /> : opt}
+                    {type === "short_description" || type === "description" ? <span dangerouslySetInnerHTML={{ __html: opt }} /> : opt}
                   </span>
                 </button>
               ))}

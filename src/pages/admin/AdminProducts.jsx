@@ -341,7 +341,10 @@ export default function AdminProducts() {
               <RichTextEditor value={editing.short_description || ""} onChange={(html) => setEditing({ ...editing, short_description: html })} minHeight={140} title="Product short description" placeholder="One-line summary shown under the product title…" />
             </div>
             <div>
-              <label className="admin-label">Full Description</label>
+              <div className="flex items-center justify-between mb-2">
+                <label className="text-[11px] font-semibold uppercase tracking-[0.15em] text-muted-foreground">Full Description</label>
+                <FieldAIButton type="description" imageUrl={editing.images?.[0]} productName={editing.name} onSelect={(val) => setEditing({ ...editing, description: val })} label="AI Description" />
+              </div>
               <RichTextEditor value={editing.description || ""} onChange={(html) => setEditing({ ...editing, description: html })} minHeight={260} title="Product description" placeholder="Full product description — use the toolbar to format text, lists, links and images…" />
             </div>
 

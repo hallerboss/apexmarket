@@ -41,6 +41,17 @@ Also return the features as a plain array of strings.`;
         },
         required: ['features_html', 'features']
       };
+    } else if (type === 'description') {
+      if (!image_url) return Response.json({ error: 'Product image required' }, { status: 400 });
+      useImage = true;
+      prompt = `Analyze this product image and write a rich, original e-commerce product description.
+${product_name ? `Product name: ${product_name}` : 'No name set — infer the product from the image.'}
+Write 2-3 short paragraphs wrapped in <p> tags. Describe what the product is, its build quality, materials, design details and intended use, grounded in what you actually see in the image. Do not invent specifications that are not visible or well-known for this product type. Return the description as HTML.`;
+      schema = {
+        type: 'object',
+        properties: { description_html: { type: 'string' } },
+        required: ['description_html']
+      };
     } else if (type === 'meta_description') {
       prompt = `Generate 5 different SEO meta descriptions for a product.
 ${product_name ? `Product title: ${product_name}` : ''}
@@ -73,7 +84,7 @@ Return exactly 5 options.`;
         required: ['titles']
       };
     } else {
-      return Response.json({ error: 'Invalid type. Use: title, short_description, meta_description, or seo_title' }, { status: 400 });
+      return Response.json({ error: 'Invalid type. Use: title, short_description, description, meta_description, seo_title, or focus_keywords' }, { status: 400 });
     }
 
     const llmParams: any = { prompt, response_json_schema: schema, model: 'gemini_3_1_pro' };
