@@ -36,6 +36,20 @@ export default function AdminTracking() {
       (o.customer_name || "").toLowerCase().includes(q);
   });
   const missing = orders.filter((o) => !o.tracking_number).length;
+  const [updatingStage, setUpdatingStage] = useState(null);
+
+  const setStage = async (orderId, stage) => {
+    setUpdatingStage(stage);
+    try {
+      const res = await base44.functions.invoke("updateOrderTracking", { order_id: orderId, tracking_status: stage, note: "" });
+      setOrders((list) => list.map((o) => (o.id === orderId ? { ...o, ...res.data.order } : o)));
+      alert(`Status updated to "${stageLabel(stage)}" — the customer has been emailed.`);
+    } catch (e) {
+      alert(e?.response?.data?.error || "Failed to update status");
+    } finally {
+      setUpdatingStage(null);
+    }
+  };
 
   return (
     <div>
@@ -90,13 +104,23 @@ export default function AdminTracking() {
                         {TRACKING_STAGES.map((s, i) => {
                           const done = i <= reached;
                           const entry = history.filter((h) => h.status === s.key).pop();
+                          const isUpdating = updatingStage === s.key;
+                          const clickable = i > reached;
                           return (
-                            <div key={s.key} className="relative mb-4 last:mb-0">
-                              <span className={`absolute -left-6 top-1 w-4 h-4 rounded-full border-2 border-white shadow ${done ? "bg-[#16a34a]" : "bg-[#d8d8d8]"}`} />
+                            <button
+                              key={s.key}
+                              type="button"
+                              disabled={!clickable || isUpdating}
+                              onClick={() => clickable && setStage(o.id, s.key)}
+                              className={`relative mb-4 last:mb-0 text-left block w-full ${clickable ? "cursor-pointer" : "cursor-default"} disabled:opacity-60`}
+                            >
+                              <span className={`absolute -left-6 top-1 w-4 h-4 rounded-full border-2 border-white shadow flex items-center justify-center ${done ? "bg-[#16a34a]" : clickable ? "bg-white border-[#16a34a]" : "bg-[#d8d8d8]"}`} />
                               <p className={`text-sm ${done ? "font-semibold text-black" : "text-black/40"}`}>{s.label}</p>
                               {entry && <p className="text-xs text-black/40">{new Date(entry.timestamp).toLocaleString()}</p>}
                               {entry?.note && <p className="text-xs text-black/50 mt-0.5">{entry.note}</p>}
-                            </div>
+                              {clickable && !isUpdating && <p className="text-[10px] text-accent mt-0.5">Click to set & notify customer</p>}
+                              {isUpdating && <p className="text-[10px] text-accent mt-0.5">Updating…</p>}
+                            </button>
                           );
                         })}
                       </div>

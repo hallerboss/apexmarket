@@ -5,13 +5,21 @@ export default async function(req) {
     const base44 = createClientFromRequest(req);
     const body = await req.json().catch(() => ({}));
     const orderNumber = String(body.order_number || "").trim();
-    if (!orderNumber) {
-      return Response.json({ error: "Order number is required" }, { status: 400 });
+    const trackingNumber = String(body.tracking_number || "").trim();
+    if (!orderNumber && !trackingNumber) {
+      return Response.json({ error: "Order number or tracking number is required" }, { status: 400 });
     }
-    const orders = await base44.asServiceRole.entities.Order.filter({ order_number: orderNumber });
-    const order = orders[0];
+    let order = null;
+    if (orderNumber) {
+      const orders = await base44.asServiceRole.entities.Order.filter({ order_number: orderNumber });
+      order = orders[0];
+    }
+    if (!order && trackingNumber) {
+      const orders = await base44.asServiceRole.entities.Order.filter({ tracking_number: trackingNumber });
+      order = orders[0];
+    }
     if (!order) {
-      return Response.json({ error: "Order not found" }, { status: 404 });
+      return Response.json({ error: "We couldn't find an order with that number. Please check and try again." }, { status: 404 });
     }
     return Response.json({
       order_number: order.order_number,
