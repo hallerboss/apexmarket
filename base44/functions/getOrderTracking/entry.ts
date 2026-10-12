@@ -19,6 +19,8 @@ export default async function(req) {
       carrier: order.carrier || "",
       shipping_address: order.shipping_address || "",
       status: order.status || "",
+      tracking_status: order.tracking_status || "",
+      tracking_history: order.tracking_history || [],
     });
   } catch (error) {
     return Response.json({ error: error.message }, { status: 500 });

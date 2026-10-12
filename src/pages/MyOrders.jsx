@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
 import { ArrowLeft, Search, Package, Truck, MapPin } from "lucide-react";
+import { stageLabel } from "@/lib/orderTracking";
 import { Image } from "@/components/ui/image";
 import { useCurrency } from "@/lib/currencyContext";
 
@@ -86,15 +87,20 @@ export default function MyOrders() {
                       <span className="text-xs text-[#808080]">{o.items.reduce((s, i) => s + (i.quantity || 0), 0)} item(s)</span>
                     </div>
                     <div className="flex items-center justify-between border-t border-[#eee] pt-3">
-                      <div className="flex items-center gap-2 text-xs text-[#808080] min-w-0">
-                        {o.tracking_number ? (
-                          <><Truck className="w-4 h-4 text-[#16a34a] shrink-0" /> <span className="truncate">Tracking: {o.tracking_number}</span></>
-                        ) : (
-                          <><Package className="w-4 h-4 shrink-0" /> No tracking yet</>
+                      <div className="flex flex-col gap-1 min-w-0">
+                        <div className="flex items-center gap-2 text-xs text-[#808080]">
+                          {o.tracking_number ? (
+                            <><Truck className="w-4 h-4 text-[#16a34a] shrink-0" /> <span className="truncate">Tracking: {o.tracking_number}</span></>
+                          ) : (
+                            <><Package className="w-4 h-4 shrink-0" /> No tracking yet</>
+                          )}
+                        </div>
+                        {o.tracking_status && o.tracking_status !== "order_received" && (
+                          <span className="text-[11px] text-[#16a34a] font-medium">{stageLabel(o.tracking_status)}</span>
                         )}
                       </div>
-                      {o.tracking_number ? (
-                        <Link to={`/track?tracking=${encodeURIComponent(o.tracking_number)}`} className="text-[#0066ff] text-sm font-medium flex items-center gap-1 shrink-0">
+                      {o.order_number || o.tracking_number ? (
+                        <Link to={o.order_number ? `/track?order=${encodeURIComponent(o.order_number)}` : `/track?tracking=${encodeURIComponent(o.tracking_number)}`} className="text-[#0066ff] text-sm font-medium flex items-center gap-1 shrink-0">
                           <MapPin className="w-4 h-4" /> Track
                         </Link>
                       ) : (

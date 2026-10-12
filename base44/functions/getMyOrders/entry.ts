@@ -15,6 +15,8 @@ export default async function (req) {
       total: o.total ?? 0,
       tracking_number: o.tracking_number || "",
       carrier: o.carrier || "",
+      tracking_status: o.tracking_status || "",
+      tracking_history: o.tracking_history || [],
       items: (o.items || []).map((i) => ({ name: i.name, image: i.image, quantity: i.quantity, price: i.price })),
     }));
     mapped.sort((a, b) => new Date(b.created_date || 0) - new Date(a.created_date || 0));

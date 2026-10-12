@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
 import { Eye, X, Trash2 } from "lucide-react";
+import { TRACKING_STAGES, stageLabel } from "@/lib/orderTracking";
 
 const statuses = ["pending", "processing", "shipped", "delivered", "cancelled"];
 
@@ -8,6 +9,7 @@ export default function AdminOrders() {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [viewing, setViewing] = useState(null);
+  const [trackNote, setTrackNote] = useState("");
 
   const load = () => {
     setLoading(true);
@@ -37,6 +39,17 @@ export default function AdminOrders() {
       alert("Notification sent to " + email);
     } catch (e) {
       alert(e?.response?.data?.error || e?.message || "Failed to send");
+    }
+  };
+
+  const setTrackingStatus = async (status) => {
+    try {
+      const res = await base44.functions.invoke("updateOrderTracking", { order_id: viewing.id, tracking_status: status, note: trackNote });
+      setViewing(res.data.order);
+      setTrackNote("");
+      load();
+    } catch (e) {
+      alert(e?.response?.data?.error || "Failed to update status");
     }
   };
 
@@ -93,9 +106,37 @@ export default function AdminOrders() {
           <div className="flex flex-wrap gap-3">
             <input value={viewing.tracking_number || ""} onChange={(e) => setViewing({ ...viewing, tracking_number: e.target.value })} placeholder="Carrier tracking number" className="admin-input flex-1 min-w-[200px]" />
             <input value={viewing.carrier || ""} onChange={(e) => setViewing({ ...viewing, carrier: e.target.value })} placeholder="Carrier (optional)" className="admin-input w-48" />
-            <button onClick={() => base44.functions.invoke("updateOrderTracking", { order_id: viewing.id, tracking_number: viewing.tracking_number || "", carrier: viewing.carrier || "" }).then(() => alert("Tracking saved")).catch((e) => alert(e?.response?.data?.error || "Failed to save"))} className="bg-accent text-white px-5 py-2.5 text-xs font-semibold uppercase tracking-[0.2em]">Save</button>
+            <button onClick={() => base44.functions.invoke("updateOrderTracking", { order_id: viewing.id, tracking_number: viewing.tracking_number || "", carrier: viewing.carrier || "" }).then((res) => { setViewing(res.data.order); alert("Tracking saved — customer emailed their tracking number."); }).catch((e) => alert(e?.response?.data?.error || "Failed to save"))} className="bg-accent text-white px-5 py-2.5 text-xs font-semibold uppercase tracking-[0.2em]">Save</button>
           </div>
         </div>
+
+        <div className="mt-6 border-t border-white/10 pt-6">
+          <label className="admin-label">Tracking Status</label>
+          <p className="text-sm text-white mb-3">Current: <span className="font-semibold text-accent">{stageLabel(viewing.tracking_status)}</span></p>
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 mb-4">
+            {TRACKING_STAGES.filter((s) => s.key !== "order_received").map((s) => (
+              <button key={s.key} onClick={() => setTrackingStatus(s.key)} className={`px-3 py-2.5 text-xs font-semibold uppercase tracking-[0.1em] border ${viewing.tracking_status === s.key ? "border-accent bg-accent text-white" : "border-white/15 text-white hover:bg-white/5"}`}>{s.label}</button>
+            ))}
+          </div>
+          <input value={trackNote} onChange={(e) => setTrackNote(e.target.value)} placeholder="Add a note to the next status update (optional)…" className="admin-input mb-4" />
+        </div>
+
+        {viewing.tracking_history?.length > 0 && (
+          <div className="mt-6 border-t border-white/10 pt-6">
+            <label className="admin-label">Status History</label>
+            <div className="space-y-3">
+              {[...viewing.tracking_history].reverse().map((h, i) => (
+                <div key={i} className="border border-white/10 p-3">
+                  <div className="flex items-center justify-between">
+                    <p className="text-sm font-semibold text-white">{stageLabel(h.status)}</p>
+                    <p className="text-[11px] text-white/40">{new Date(h.timestamp).toLocaleString()}</p>
+                  </div>
+                  {h.note && <p className="text-xs text-white/60 mt-1">{h.note}</p>}
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
 
         <div className="mt-6 border-t border-white/10 pt-6">
           <label className="admin-label">Notify Customer</label>

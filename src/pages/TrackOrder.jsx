@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
 import { ArrowLeft, Info, Package, ShieldCheck, Home as HomeIcon, Copy, Check, ChevronDown, Search } from "lucide-react";
+import OrderTrackingTimeline from "@/components/store/OrderTrackingTimeline";
 
 const GREEN = "#00A651";
 const LGREEN = "#E8F8E8";
@@ -45,10 +46,10 @@ export default function TrackOrder() {
           const res = await base44.functions.invoke("getOrderTracking", { order_number: order });
           const o = res.data;
           setOrderInfo(o);
-          if (o.tracking_number) {
-            setInput(o.tracking_number);
+          if (o.tracking_number) setInput(o.tracking_number);
+          if (o.tracking_number && (!o.tracking_history || o.tracking_history.length === 0)) {
             track(o.tracking_number, o.carrier);
-          } else {
+          } else if (!o.tracking_number && (!o.tracking_history || o.tracking_history.length === 0)) {
             setError("No tracking number assigned to this order yet. Check back once the store confirms shipment.");
           }
         } catch (e) {
@@ -111,6 +112,15 @@ export default function TrackOrder() {
             <div className="w-8 h-8 border-2 border-[#eee] border-t-[#0066ff] rounded-full animate-spin mx-auto mb-3" />
             <p className="text-sm text-[#808080]">Searching the web for your parcel…</p>
           </div>
+        )}
+
+        {orderInfo?.tracking_history?.length > 0 && !loading && (
+          <OrderTrackingTimeline
+            history={orderInfo.tracking_history}
+            currentStatus={orderInfo.tracking_status}
+            trackingNumber={orderInfo.tracking_number}
+            carrier={orderInfo.carrier}
+          />
         )}
 
         {data && !loading && (
