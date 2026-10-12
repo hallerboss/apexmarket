@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef } from "react";
 import { base44 } from "@/api/base44Client";
 import { Sparkles, Loader2, Check, X } from "lucide-react";
 
@@ -9,15 +9,6 @@ export default function FieldAIButton({ type, imageUrl, productName, productDesc
   const [selected, setSelected] = useState(null);
   const [error, setError] = useState(null);
   const ref = useRef(null);
-
-  useEffect(() => {
-    if (!open) return;
-    const handler = (e) => {
-      if (ref.current && !ref.current.contains(e.target)) setOpen(false);
-    };
-    document.addEventListener("mousedown", handler);
-    return () => document.removeEventListener("mousedown", handler);
-  }, [open]);
 
   const generate = async () => {
     if ((type === "title" || type === "short_description") && !imageUrl) {
