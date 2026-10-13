@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
 import { ArrowLeft, Search, Package, Truck, MapPin, Loader2 } from "lucide-react";
 import OrderTrackingTimeline from "@/components/store/OrderTrackingTimeline";
+import { getMyTracking } from "@/lib/myTracking";
 
 export default function TrackOrder() {
   const navigate = useNavigate();
@@ -11,6 +12,7 @@ export default function TrackOrder() {
   const [order, setOrder] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [myNumbers, setMyNumbers] = useState([]);
 
   const lookup = async (query) => {
     if (!query.trim()) return;
@@ -31,6 +33,7 @@ export default function TrackOrder() {
   };
 
   useEffect(() => {
+    setMyNumbers(getMyTracking());
     const orderParam = params.get("order");
     const tn = params.get("tracking");
     const q = tn || orderParam;
@@ -67,6 +70,28 @@ export default function TrackOrder() {
               {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Search className="w-4 h-4" />} Track
             </button>
           </form>
+
+          {myNumbers.length > 0 && (
+            <div className="mt-4">
+              <p className="text-[11px] uppercase tracking-[0.15em] text-[#808080] mb-2">Your orders — tap a number for live updates</p>
+              <div className="flex flex-wrap gap-2">
+                {myNumbers.map((n) => {
+                  const value = n.tracking_number || n.order_number;
+                  return (
+                    <button
+                      key={n.order_number}
+                      type="button"
+                      onClick={() => { setInput(value); lookup(value); }}
+                      className="border border-[#e0e0e0] rounded-lg px-3 py-2 text-left hover:border-[#0066ff] hover:text-[#0066ff] transition-colors"
+                    >
+                      <span className="block text-sm font-semibold text-black">{value}</span>
+                      <span className="block text-[11px] text-[#808080]">Order {n.order_number}</span>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          )}
         </div>
 
         {error && <div className="bg-red-50 border border-red-100 text-red-600 text-sm rounded-lg px-4 py-3">{error}</div>}

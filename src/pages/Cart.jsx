@@ -8,6 +8,7 @@ import { base44 } from "@/api/base44Client";
 import { trackOrderPlaced } from "@/lib/analytics";
 import AddressCheckoutForm from "@/components/checkout/AddressCheckoutForm";
 import ShopProductCard from "@/components/store/ShopProductCard";
+import { saveMyTracking } from "@/lib/myTracking";
 
 export default function Cart() {
   const { items, removeItem, updateQty, subtotal, clear } = useCart();
@@ -70,18 +71,21 @@ export default function Cart() {
       const customer_name = `${form.first_name} ${form.last_name}`.trim();
       const shipping_address = [form.street, form.apt, form.city, form.state, form.country].filter(Boolean).join(", ");
       const orderNumber = `WM-${Date.now().toString().slice(-6)}`;
+      const trackingNumber = `APX-${Date.now().toString(36).toUpperCase()}${Math.random().toString(36).slice(2, 5).toUpperCase()}`;
       const order = await base44.entities.Order.create({
         customer_name,
         customer_email: form.email,
         customer_phone: form.phone,
         shipping_address,
         order_number: orderNumber,
+        tracking_number: trackingNumber,
         items: items.map((i) => ({ product_id: i.product_id, name: i.name, price: i.price, quantity: i.quantity, image: i.image })),
         subtotal,
         shipping,
         total,
         status: "pending",
       });
+      saveMyTracking({ order_number: orderNumber, tracking_number: trackingNumber, email: form.email });
       const origin = window.location.origin;
       const res = await base44.functions.invoke("createCheckoutSession", {
         order_id: order.id,
