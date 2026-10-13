@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
 import { ArrowLeft, Search, Package, Truck, MapPin, Loader2 } from "lucide-react";
 import OrderTrackingTimeline from "@/components/store/OrderTrackingTimeline";
-import { getMyTracking } from "@/lib/myTracking";
+import { getMyTracking, saveMyTracking } from "@/lib/myTracking";
 
 export default function TrackOrder() {
   const navigate = useNavigate();
@@ -25,6 +25,8 @@ export default function TrackOrder() {
         tracking_number: query.trim(),
       });
       setOrder(res.data);
+      saveMyTracking({ order_number: res.data?.order_number, tracking_number: res.data?.tracking_number });
+      setMyNumbers(getMyTracking());
     } catch (err) {
       setError(err?.response?.data?.error || "We couldn't find an order with that number. Please check and try again.");
     } finally {
