@@ -60,6 +60,21 @@ VITE_BASE44_APP_BASE_URL=https://your-app.base44.app
 
 When you use `base44 dev`, the command injects the local Base44 values for you, so `.env.local` is mainly needed for frontend-only workflows.
 
+## Deploy USA Wishlist on Cloudflare Pages
+
+For the existing `apexmarket.pages.dev` project, open Cloudflare → Workers & Pages → apexmarket → Settings → Builds and set:
+
+- Framework preset: React (Vite)
+- Build command: `npm run build`
+- Build output directory: `dist`
+- Root directory: leave blank (the repository root)
+
+Save, then retry the deployment using the latest commit. Do not publish the repository root or the `src` directory: those contain uncompiled JSX and show a blank page in browsers.
+
+`wrangler.jsonc` declares the deployment output directory. Cloudflare sets `CF_PAGES=1` automatically; Vite uses it to include this app's public backend configuration and client-side route fallback. No payment keys or other secrets belong in the frontend configuration. The hosted Base44 backend continues to provide data, authentication, and payments.
+
+To build the same output locally: `CF_PAGES=1 npm run build`.
+
 ## Publish Your Changes
 
 After pushing your changes to git, open the Base44 dashboard and publish the app:
