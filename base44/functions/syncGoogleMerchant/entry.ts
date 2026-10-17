@@ -21,7 +21,7 @@ export default async function(req: Request): Promise<Response> {
     // Load settings
     const settings = await base44.asServiceRole.entities.SiteSetting.list();
     const getSetting = (key) => settings.find((s) => s.key === key)?.value || "";
-    const storeName = getSetting("store_name") || "ApexMarket";
+    const storeName = getSetting("store_name") || "USA Wishlist";
 
     // Fetch published products eligible for Google Shopping
     const products = await base44.asServiceRole.entities.Product.filter({ status: "published" }, "-created_date", 500);

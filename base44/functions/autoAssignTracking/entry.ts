@@ -37,12 +37,12 @@ export default async function (req) {
             to: r.customer_email,
             subject: `Your tracking number for order ${r.order_number || r.id}`,
             body: `<div style="font-family:Inter,Arial,sans-serif;max-width:520px;margin:auto;color:#111;">
-              <h2 style="font-size:20px;margin-bottom:8px;">ApexMarket</h2>
+              <h2 style="font-size:20px;margin-bottom:8px;">USA Wishlist</h2>
               <p>Hi ${r.customer_name || "there"},</p>
               <p>Your order has been assigned a tracking number. Use it to follow your shipment's journey.</p>
               <p style="margin:16px 0;padding:12px;background:#f5f5f5;border-radius:6px;font-size:14px;">Tracking number: <strong>${r.tracking_number}</strong></p>
               <p style="font-size:13px;color:#555;">Track your order here: <a href="${trackUrl}" style="color:#0066ff;">${trackUrl}</a></p>
-              <p style="color:#777;font-size:13px;margin-top:24px;">ApexMarket</p>
+              <p style="color:#777;font-size:13px;margin-top:24px;">USA Wishlist</p>
             </div>`,
           });
         } catch (e) {

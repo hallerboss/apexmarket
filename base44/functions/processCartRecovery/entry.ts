@@ -27,7 +27,7 @@ export default async function(req) {
 
         const html = `<h2>You left items in your cart! 🛒</h2>
           <p>Hi ${order.customer_name || "there"},</p>
-          <p>We noticed you didn't finish your purchase at ApexMarket. Your items are still waiting for you!</p>
+          <p>We noticed you didn't finish your purchase at USA Wishlist. Your items are still waiting for you!</p>
           <h3>Items in your cart:</h3>
           <ul>${itemsList}</ul>
           <p><strong>Total:</strong> $${(order.total || 0).toFixed(2)}</p>
@@ -35,7 +35,7 @@ export default async function(req) {
             <a href="${origin}/cart" style="display:inline-block;background:#2563eb;color:#fff;padding:12px 32px;border-radius:6px;text-decoration:none;font-weight:bold;font-size:14px;">Complete Your Purchase →</a>
           </p>
           <p style="color:#777;font-size:13px;">If you have any questions, we're here to help. Just reply to this email.</p>
-          <p style="color:#777;font-size:13px;">The ApexMarket Team</p>`;
+          <p style="color:#777;font-size:13px;">The USA Wishlist Team</p>`;
 
         await base44.asServiceRole.integrations.Core.SendEmail({
           to: order.customer_email,

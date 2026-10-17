@@ -44,7 +44,7 @@
     "author": {
       "type": "string",
       "title": "Author",
-      "default": "ApexMarket Team"
+      "default": "USA Wishlist Team"
     },
     "seo_title": {
       "type": "string",

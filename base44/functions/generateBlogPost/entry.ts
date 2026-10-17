@@ -11,7 +11,7 @@ export default async function(req: Request): Promise<Response> {
     const topic = body?.topic || '';
     const category = body?.category || 'Buying Guides';
 
-    const prompt = `You are an expert e-commerce content writer for ApexMarket, a premium multi-vendor marketplace.
+    const prompt = `You are an expert e-commerce content writer for USA Wishlist, a premium multi-vendor marketplace.
 ${topic ? `Write about this specific topic: ${topic}` : 'Search the web for currently trending products, popular consumer tech, and shopping trends right now.'}
 
 Category: ${category}
@@ -20,7 +20,7 @@ Write a complete, SEO-optimized blog post article (800-1200 words) that helps sh
 - An engaging introduction that hooks the reader
 - Key product recommendations with specific features and benefits
 - Comparison points and buying considerations (price ranges, what to look for)
-- A conclusion with a call to action to shop at ApexMarket
+- A conclusion with a call to action to shop at USA Wishlist
 
 Format the content in clean HTML using <h2>, <h3>, <p>, <ul>, <li> tags only. Do NOT include <html>, <body>, or <h1> tags — the title is rendered separately.
 

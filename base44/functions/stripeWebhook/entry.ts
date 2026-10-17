@@ -29,7 +29,7 @@ function buildOrderEmail(order) {
     .join("\n");
   const body =
     `Hi ${order.customer_name || "there"},\n\n` +
-    `Thank you for your order at ApexMarket! Your payment has been confirmed and we're now preparing your items for shipment.\n\n` +
+    `Thank you for your order at USA Wishlist! Your payment has been confirmed and we're now preparing your items for shipment.\n\n` +
     `Order Number: ${order.order_number || "--"}\n` +
     `Subtotal: $${(order.subtotal || 0).toFixed(2)}\n` +
     `Shipping: ${order.shipping ? "$" + Number(order.shipping).toFixed(2) : "Free"}\n` +
@@ -38,10 +38,10 @@ function buildOrderEmail(order) {
     `Items:\n${items}\n\n` +
     `We'll send you another email with tracking once your order ships. If you have any questions, just reply to this email.\n\n` +
     `Thank you for shopping with us!\n` +
-    `The ApexMarket Team`;
+    `The USA Wishlist Team`;
   const headers = [
     "To: " + order.customer_email,
-    "Subject: Your ApexMarket order is confirmed",
+    "Subject: Your USA Wishlist order is confirmed",
     "MIME-Version: 1.0",
     "Content-Type: text/plain; charset=utf-8",
     "Content-Transfer-Encoding: base64",
@@ -120,17 +120,17 @@ export default async function (req) {
             const customerEmail = email || order.customer_email;
             if (customerEmail) {
               try {
-                const customerHtml = `<h2>Thank you for your order at ApexMarket!</h2>
+                const customerHtml = `<h2>Thank you for your order at USA Wishlist!</h2>
                   <p>Hi ${order.customer_name || "there"},</p>
                   <p>Your payment has been confirmed and we're preparing your items for shipment.</p>
                   <p><strong>Order Number:</strong> ${order.order_number || "—"}</p>
                   <p><strong>Total:</strong> $${(order.total || 0).toFixed(2)}</p>
                   <h3>Items:</h3><pre>${itemsList}</pre>
                   <p>We'll send you tracking information once your order ships.</p>
-                  <p>Thank you for shopping with us!<br>The ApexMarket Team</p>`;
+                  <p>Thank you for shopping with us!<br>The USA Wishlist Team</p>`;
                 await base44.asServiceRole.integrations.Core.SendEmail({
                   to: customerEmail,
-                  subject: "Your ApexMarket order is confirmed",
+                  subject: "Your USA Wishlist order is confirmed",
                   html: customerHtml,
                 });
               } catch (custErr) {

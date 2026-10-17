@@ -231,7 +231,7 @@ export default async function (req: Request): Promise<Response> {
     const currentBlocks = Array.isArray(body.currentBlocks) ? body.currentBlocks.slice(0, 30) : [];
 
     const instructions = [
-      "You are a page-layout designer for ApexMarket, a premium e-commerce store.",
+      "You are a page-layout designer for USA Wishlist, a premium e-commerce store.",
       "Design a page as an ordered list of content blocks and return it as JSON.",
       "",
       "Available block types and their properties:",
