@@ -1,4 +1,4 @@
-// Self-contained static HTML snapshot of the ApexMarket storefront.
+// Self-contained static HTML snapshot of the USA Wishlist storefront.
 // Visual reproduction only — no live backend, cart, checkout or admin.
 export function getStaticSiteHtml() {
   return `<!DOCTYPE html>
@@ -6,7 +6,7 @@ export function getStaticSiteHtml() {
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>ApexMarket — Premium Marketplace</title>
+<title>USA Wishlist — Premium Marketplace</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
@@ -76,7 +76,7 @@ export function getStaticSiteHtml() {
 <header>
   <div class="wrap">
     <div class="top">
-      <a class="logo" href="#"><span>w</span>wolmart</a>
+      <a class="logo" href="#"><span>U</span>USA Wishlist</a>
       <div class="search"><input placeholder="Search products…" /></div>
       <div class="actions">
         <a href="#">Profile</a>
@@ -145,7 +145,7 @@ export function getStaticSiteHtml() {
       <div><h4>Support</h4><a href="#">Track Order</a><a href="#">My Orders</a><a href="#">Returns</a><a href="#">FAQ</a></div>
       <div><h4>Legal</h4><a href="#">Privacy Policy</a><a href="#">Terms of Service</a><a href="#">Admin Panel</a></div>
     </div>
-    <div class="foot-bottom">© 2026 ApexMarket. All rights reserved.</div>
+    <div class="foot-bottom">© 2026 USA Wishlist. All rights reserved.</div>
   </div>
 </footer>
 </body>

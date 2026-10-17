@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Mail, Phone, MapPin, Send } from "lucide-react";
+import { Globe, Phone, MapPin, Send } from "lucide-react";
 import { base44 } from "@/api/base44Client";
 
 export default function Contact() {
@@ -26,7 +26,7 @@ export default function Contact() {
   };
 
   const info = [
-    { icon: Mail, label: "Email", value: "hello@wolmart.studio", href: "mailto:hello@wolmart.studio" },
+    { icon: Globe, label: "Website", value: "usawishlist.com", href: "https://usawishlist.com" },
     { icon: Phone, label: "Phone", value: "+1 (555) 028-2024", href: "tel:+15550282024" },
     { icon: MapPin, label: "Office", value: "221 Market Street, Suite 400, San Francisco, CA 94103" },
   ];

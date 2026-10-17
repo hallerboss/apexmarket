@@ -54,8 +54,8 @@ export default function StoreLayout() {
         {/* top row */}
         <div className="container-bleed px-5 lg:px-10 flex items-center justify-between gap-4 h-16 lg:h-20">
           <Link to="/" className="flex items-center gap-1.5 sm:gap-2 shrink-0">
-            <span className="w-6 h-6 sm:w-7 sm:h-7 rounded-md bg-accent text-white flex items-center justify-center font-bold text-sm">w</span>
-            <span className="text-xl sm:text-2xl font-semibold tracking-tight">wolmart</span>
+            <span className="w-6 h-6 sm:w-7 sm:h-7 rounded-md bg-accent text-white flex items-center justify-center font-bold text-sm" aria-hidden="true">U</span>
+            <span className="text-xl sm:text-2xl font-semibold tracking-tight">USA Wishlist</span>
           </Link>
 
           <div className="hidden sm:flex flex-1 justify-center px-4">

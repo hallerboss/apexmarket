@@ -38,12 +38,12 @@ export default async function (req) {
     const orderHtml = order_number ? `<p style="color:#555;font-size:13px;">Order: <strong>${order_number}</strong></p>` : "";
     const html = `
       <div style="font-family:Inter,Arial,sans-serif;max-width:520px;margin:auto;color:#111;">
-        <h2 style="font-size:20px;margin-bottom:8px;">Wolmart</h2>
+        <h2 style="font-size:20px;margin-bottom:8px;">USA Wishlist</h2>
         <p>${greeting}</p>
         <p style="font-size:16px;font-weight:600;">${t.line}</p>
         ${orderHtml}
         ${trackingHtml}
-        <p style="color:#777;font-size:13px;margin-top:24px;">Wolmart — ApexMarket</p>
+        <p style="color:#777;font-size:13px;margin-top:24px;">USA Wishlist</p>
       </div>`;
     await base44.asServiceRole.integrations.Core.SendEmail({
       to: email,

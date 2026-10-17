@@ -9,7 +9,7 @@ const CATEGORIES = ["Product Updates", "Buying Guides", "News", "Reviews", "Tips
 
 const emptyPost = {
   title: "", slug: "", content: "", excerpt: "", featured_image: "",
-  category: "Buying Guides", tags: [], author: "ApexMarket Team",
+  category: "Buying Guides", tags: [], author: "USA Wishlist Team",
   seo_title: "", meta_description: "", status: "draft",
 };
 

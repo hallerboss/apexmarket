@@ -7,7 +7,7 @@ export default function StoreFooter() {
       <div className="container-bleed px-5 lg:px-10 py-16 lg:py-24">
         <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-12 gap-8 lg:gap-12">
           <div className="col-span-2 lg:col-span-4">
-            <h2 className="display-text text-3xl mb-4">WOLMART</h2>
+            <h2 className="display-text text-3xl mb-4">USA Wishlist</h2>
             <p className="serif-text text-muted-foreground max-w-xs leading-relaxed">
               A high-fidelity retail ecosystem. Curated discovery, frictionless commerce.
             </p>
@@ -48,7 +48,7 @@ export default function StoreFooter() {
           </div>
         </div>
         <div className="border-t hairline mt-16 pt-8 flex flex-col md:flex-row justify-between gap-4 text-[11px] uppercase tracking-[0.15em] text-muted-foreground">
-          <p>© 2024 Wolmart. All rights reserved.</p>
+          <p>© {new Date().getFullYear()} USA Wishlist. All rights reserved.</p>
           <div className="flex gap-6">
             <Link to="/page/privacy" className="hover:text-foreground">Privacy</Link>
             <Link to="/page/terms" className="hover:text-foreground">Terms</Link>

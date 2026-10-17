@@ -32,7 +32,7 @@ export default function AdminLayout() {
       <header className="sticky top-0 z-40 bg-white border-b border-black/10">
         <div className="px-4 lg:px-8 h-16 flex items-center gap-4">
           <div className="flex items-center gap-3 shrink-0">
-            <Link to="/admin" className="display-text text-xl text-black">WOLMART</Link>
+            <Link to="/admin" className="display-text text-xl text-black">USA Wishlist</Link>
             <span className="text-[10px] uppercase tracking-[0.2em] text-black/40 hidden xl:block">Command Center</span>
           </div>
 

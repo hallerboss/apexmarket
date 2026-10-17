@@ -4,8 +4,8 @@ import { Save, ShoppingBag, DollarSign, CheckCircle2, Link2, Loader2, RefreshCw,
 
 export default function AdminSettings() {
   const [settings, setSettings] = useState({
-    store_name: "Wolmart",
-    store_email: "hello@wolmart.studio",
+    store_name: "USA Wishlist",
+    store_email: "",
     store_phone: "+1 (555) 028-2024",
     currency: "USD",
     free_shipping_threshold: "50",
