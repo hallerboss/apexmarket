@@ -1,0 +1,78 @@
+# GitHub Pages deploy workflow.
+#
+# Base44's GitHub app is not allowed to write files inside .github/workflows/,
+# so this file is delivered here instead. To activate it, create the file
+# .github/workflows/deploy-pages.yml in the repository (github.com →
+# Add file → Create new file, type that path, then paste this whole file).
+#
+# Once it exists, every push to main rebuilds and republishes the site, so any
+# change made in the app goes live automatically.
+
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      # The app talks to its Base44 backend, so the build needs the app id and
+      # backend origin. Both values are public (they ship inside the built
+      # bundle), so they can live here. Change them only if the app changes.
+      - name: Configure Base44 backend
+        run: |
+          cat > .env <<'EOF'
+          VITE_BASE44_APP_ID=6a8447d4dfbc61d89c33872d
+          VITE_BASE44_APP_BASE_URL=https://apexmarket-app.base44.app
+          EOF
+
+      - name: Build
+        run: npm run build
+
+      - name: Prepare site files
+        run: |
+          # Client-side routes (e.g. /shop, /product/123) need a fallback page.
+          cp dist/index.html dist/404.html
+          # Keep the custom domain on every deploy.
+          if [ -f CNAME ]; then cp CNAME dist/CNAME; fi
+          touch dist/.nojekyll
+
+      - name: Upload site
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
