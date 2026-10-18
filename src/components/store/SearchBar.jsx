@@ -14,12 +14,11 @@ export default function SearchBar({ autoFocus = false }) {
   const fileRef = useRef(null);
   const containerRef = useRef(null);
   const debounceRef = useRef(null);
-  const cacheRef = useRef(null);
 
   useEffect(() => {
     if (debounceRef.current) clearTimeout(debounceRef.current);
-    const term = q.toLowerCase().trim();
-    if (term.length < 2) {
+    const term = q.trim();
+    if (!term) {
       setResults([]);
       setSearching(false);
       return;
@@ -27,26 +26,27 @@ export default function SearchBar({ autoFocus = false }) {
     setSearching(true);
     debounceRef.current = setTimeout(async () => {
       try {
-        let products = cacheRef.current;
-        if (!products) {
-          products = await base44.entities.Product.list("-created_date", 300);
-          cacheRef.current = products;
-        }
-        const filtered = products
-          .filter((p) =>
-            p.name?.toLowerCase().includes(term) ||
-            p.category?.toLowerCase().includes(term) ||
-            p.brand?.toLowerCase().includes(term) ||
-            (p.tags || []).some((t) => t.toLowerCase().includes(term))
-          )
-          .slice(0, 6);
-        setResults(filtered);
+        const page = await base44.entities.Product.filter(
+          {
+            $or: [
+              { name: { $regex: term, $options: "i" } },
+              { category: { $regex: term, $options: "i" } },
+              { brand: { $regex: term, $options: "i" } },
+            ],
+          },
+          {
+            limit: 6,
+            sort: "-created_date",
+            fields: ["name", "category", "brand", "price", "sale_price", "images"],
+          }
+        );
+        setResults(page.items || []);
       } catch {
         setResults([]);
       } finally {
         setSearching(false);
       }
-    }, 250);
+    }, 180);
     return () => { if (debounceRef.current) clearTimeout(debounceRef.current); };
   }, [q]);
 
@@ -127,7 +127,7 @@ export default function SearchBar({ autoFocus = false }) {
         </div>
 
         {/* Live results dropdown */}
-        {showResults && q.trim().length >= 2 && (
+        {showResults && q.trim().length >= 1 && (
           <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-[#e5e7eb] rounded-md shadow-xl z-50 max-h-[70vh] overflow-y-auto">
             {results.length === 0 && !searching ? (
               <div className="px-4 py-6 text-center text-sm text-muted-foreground">
