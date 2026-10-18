@@ -27,7 +27,7 @@ export default async function(req: Request): Promise<Response> {
     const products = await base44.asServiceRole.entities.Product.filter({ status: "published" }, "-created_date", 500);
     const eligible = products.filter((p) => p.google_shopping !== false);
 
-    const baseUrl = "https://apexmarket-app.base44.app";
+    const baseUrl = "https://usa-wishlist.base44.app";
 
     const items = eligible.map((p) => {
       const price = (p.sale_price || p.price || 0).toFixed(2);

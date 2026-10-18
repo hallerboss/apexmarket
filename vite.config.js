@@ -10,7 +10,7 @@ export default defineConfig(({ mode }) => ({
   base: '/',
   define: mode === 'github-pages' || isCloudflareBuild ? {
     'import.meta.env.VITE_BASE44_APP_ID': JSON.stringify('6a8447d4dfbc61d89c33872d'),
-    'import.meta.env.VITE_BASE44_APP_BASE_URL': JSON.stringify('https://apexmarket-app.base44.app'),
+    'import.meta.env.VITE_BASE44_APP_BASE_URL': JSON.stringify('https://usa-wishlist.base44.app'),
     'import.meta.env.VITE_BASE44_SERVER_URL': JSON.stringify('https://base44.app'),
   } : {},
   plugins: [

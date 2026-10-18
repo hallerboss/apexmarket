@@ -32,7 +32,7 @@ export default async function (req) {
       if (!r.customer_email) continue;
       waitUntil((async () => {
         try {
-          const trackUrl = `https://apexmarket-app.base44.app/track?tracking=${encodeURIComponent(r.tracking_number)}`;
+          const trackUrl = `https://usa-wishlist.base44.app/track?tracking=${encodeURIComponent(r.tracking_number)}`;
           await base44.asServiceRole.integrations.Core.SendEmail({
             to: r.customer_email,
             subject: `Your tracking number for order ${r.order_number || r.id}`,

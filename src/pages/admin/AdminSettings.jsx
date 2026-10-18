@@ -42,7 +42,7 @@ export default function AdminSettings() {
   const isAdsenseConnected = !!getSetting("adsense_publisher_id");
   const isGaConnected = !!getSetting("ga_measurement_id");
   const lastSync = getSetting("merchant_last_sync");
-  const feedUrl = "https://apexmarket-app.base44.app/functions/syncGoogleMerchant";
+  const feedUrl = "https://usa-wishlist.base44.app/functions/syncGoogleMerchant";
 
   const saveSetting = async (key, value) => {
     const existing = siteSettings.find((s) => s.key === key);

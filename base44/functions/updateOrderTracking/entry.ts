@@ -49,7 +49,7 @@ export default async function (req) {
     // Email the customer their tracking number when it is first assigned
     if (tracking_number && !existing.tracking_number && order.customer_email) {
       try {
-        const trackUrl = `https://apexmarket-app.base44.app/track?tracking=${encodeURIComponent(tracking_number)}`;
+        const trackUrl = `https://usa-wishlist.base44.app/track?tracking=${encodeURIComponent(tracking_number)}`;
         await base44.asServiceRole.integrations.Core.SendEmail({
           to: order.customer_email,
           subject: `Your tracking number for order ${order.order_number || order_id}`,

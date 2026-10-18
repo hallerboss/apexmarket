@@ -64,7 +64,7 @@ export default function AdminPayments() {
         </div>
         <div className="border border-[#e5e7eb] bg-white p-5">
           <div className="flex items-center gap-2 mb-2"><Webhook className="w-4 h-4 text-green-600" /><span className="text-[11px] uppercase tracking-[0.15em] font-semibold text-black/50">Webhook</span></div>
-          <p className="text-[11px] font-mono break-all text-black/60">apexmarket-app.base44.app/functions/stripeWebhook</p>
+          <p className="text-[11px] font-mono break-all text-black/60">usa-wishlist.base44.app/functions/stripeWebhook</p>
           <p className="text-xs text-green-600 mt-1 font-medium">Endpoint registered & active.</p>
         </div>
       </div>
@@ -164,8 +164,8 @@ export default function AdminPayments() {
           <div>
             <label className="admin-label">Webhook Endpoint URL</label>
             <div className="flex gap-2">
-              <input readOnly value="https://apexmarket-app.base44.app/functions/stripeWebhook" className="admin-input font-mono text-xs" />
-              <button type="button" onClick={() => { navigator.clipboard?.writeText("https://apexmarket-app.base44.app/functions/stripeWebhook"); setCopied(true); setTimeout(() => setCopied(false), 2000); }} className="border border-[#e5e7eb] px-4 py-2.5 text-xs font-semibold uppercase tracking-[0.15em] hover:bg-[#fafafa] whitespace-nowrap flex items-center gap-1.5">
+              <input readOnly value="https://usa-wishlist.base44.app/functions/stripeWebhook" className="admin-input font-mono text-xs" />
+              <button type="button" onClick={() => { navigator.clipboard?.writeText("https://usa-wishlist.base44.app/functions/stripeWebhook"); setCopied(true); setTimeout(() => setCopied(false), 2000); }} className="border border-[#e5e7eb] px-4 py-2.5 text-xs font-semibold uppercase tracking-[0.15em] hover:bg-[#fafafa] whitespace-nowrap flex items-center gap-1.5">
                 {copied ? <><CheckCircle2 className="w-4 h-4 text-green-600" /> Copied</> : <><Copy className="w-4 h-4" /> Copy</>}
               </button>
             </div>

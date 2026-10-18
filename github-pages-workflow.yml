@@ -50,7 +50,7 @@ jobs:
         run: |
           cat > .env <<'EOF'
           VITE_BASE44_APP_ID=6a8447d4dfbc61d89c33872d
-          VITE_BASE44_APP_BASE_URL=https://apexmarket-app.base44.app
+          VITE_BASE44_APP_BASE_URL=https://usa-wishlist.base44.app
           VITE_BASE44_SERVER_URL=https://base44.app
           EOF
 

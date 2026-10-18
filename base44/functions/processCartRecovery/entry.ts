@@ -3,7 +3,7 @@ import { createClientFromRequest } from 'npm:@base44/sdk@0.8.44';
 export default async function(req) {
   try {
     const base44 = createClientFromRequest(req);
-    const origin = req.headers.get("origin") || "https://apexmarket-app.base44.app";
+    const origin = req.headers.get("origin") || "https://usa-wishlist.base44.app";
 
     // Find pending orders with email that haven't had recovery sent
     const pendingOrders = await base44.asServiceRole.entities.Order.filter(
