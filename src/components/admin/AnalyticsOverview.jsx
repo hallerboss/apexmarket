@@ -1,75 +1,125 @@
 import { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
-import { BarChart3, Users, Eye, TrendingUp, Loader2, AlertCircle } from "lucide-react";
+import { BarChart3, Users, Eye, TrendingUp, Loader2, AlertCircle, Package, MousePointerClick } from "lucide-react";
+
+const RANGES = [
+  { key: "today", label: "Today" },
+  { key: "week", label: "7 Days" },
+  { key: "month", label: "30 Days" },
+  { key: "year", label: "12 Months" },
+];
+
+const errText = (e, fallback) => e?.response?.data?.error || e?.message || fallback;
 
 export default function AnalyticsOverview() {
-  const [data, setData] = useState(null);
+  const [traffic, setTraffic] = useState(null);
+  const [trafficError, setTrafficError] = useState(null);
+  const [ga, setGa] = useState(null);
+  const [gaError, setGaError] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
 
-  const load = async () => {
-    setLoading(true);
-    setError(null);
-    try {
-      const res = await base44.functions.invoke("getAnalyticsOverview", {});
-      setData(res.data || res);
-    } catch (err) {
-      setError(err?.response?.data?.error || err?.message || "Unable to load analytics");
-    } finally {
+  useEffect(() => {
+    (async () => {
+      const [t, g] = await Promise.allSettled([
+        base44.functions.invoke("getTrafficStats", {}),
+        base44.functions.invoke("getAnalyticsOverview", {}),
+      ]);
+      if (t.status === "fulfilled") setTraffic(t.value.data || t.value);
+      else setTrafficError(errText(t.reason, "Unable to load traffic"));
+      if (g.status === "fulfilled") setGa(g.value.data || g.value);
+      else setGaError(errText(g.reason, "Unable to load analytics"));
       setLoading(false);
-    }
-  };
-
-  useEffect(() => { load(); }, []);
+    })();
+  }, []);
 
   return (
     <div className="bg-white border border-[#e5e7eb]">
-      <div className="px-6 py-4 border-b border-[#eef0f2] flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <BarChart3 className="w-4 h-4 text-[#f9ab00]" />
-          <h3 className="text-sm font-semibold text-black">Google Analytics</h3>
-          <span className="text-[10px] text-black/40">Last 30 days</span>
-        </div>
-        {data?.property && (
-          <span className="text-[10px] text-black/40 truncate max-w-[180px]">{data.property}</span>
-        )}
+      <div className="px-6 py-4 border-b border-[#eef0f2] flex items-center gap-2">
+        <MousePointerClick className="w-4 h-4 text-accent" />
+        <h3 className="text-sm font-semibold text-black">Traffic</h3>
+        <span className="text-[10px] text-black/40">Live visitor counts from your store</span>
       </div>
 
       {loading ? (
         <div className="p-8 flex items-center justify-center">
           <Loader2 className="w-5 h-5 animate-spin text-accent" />
         </div>
-      ) : error ? (
-        <div className="p-6 flex items-start gap-2 text-sm text-black/60">
-          <AlertCircle className="w-4 h-4 text-amber-500 shrink-0 mt-0.5" />
-          <div>
-            <p className="font-medium text-black">Analytics not available</p>
-            <p className="text-xs text-black/50 mt-1">{error}</p>
-          </div>
-        </div>
       ) : (
-        <div className="p-5 space-y-5">
-          <div className="grid grid-cols-3 gap-3">
-            <Stat icon={Users} label="Visitors" value={data?.visitors ?? 0} />
-            <Stat icon={Eye} label="Sessions" value={data?.sessions ?? 0} />
-            <Stat icon={TrendingUp} label="Page Views" value={data?.pageViews ?? 0} />
-          </div>
-          <div>
-            <p className="text-[10px] font-semibold uppercase tracking-wide text-black/50 mb-2">
-              Top Products by Interest
-            </p>
-            {data?.topProducts?.length ? (
-              <div className="space-y-2">
-                {data.topProducts.map((p, i) => (
-                  <div key={i} className="flex items-center gap-3">
-                    <span className="text-[11px] text-black/40 w-4">{i + 1}</span>
-                    <span className="text-sm text-black truncate flex-1">{p.name}</span>
-                    <span className="text-xs font-semibold text-black/70">{p.views} views</span>
-                  </div>
-                ))}
+        <div className="p-5 space-y-6">
+          {trafficError ? (
+            <div className="flex items-start gap-2 text-sm text-black/60">
+              <AlertCircle className="w-4 h-4 text-amber-500 shrink-0 mt-0.5" />
+              <div>
+                <p className="font-medium text-black">Visitor counts not available</p>
+                <p className="text-xs text-black/50 mt-1">{trafficError}</p>
+              </div>
+            </div>
+          ) : (
+            <>
+              <div>
+                <p className="text-[10px] font-semibold uppercase tracking-wide text-black/50 mb-2">Visitors by Period</p>
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                  {RANGES.map((r) => (
+                    <div key={r.key} className="border border-[#eef0f2] p-3">
+                      <p className="text-xl font-bold text-black">{Number(traffic?.visitorsByRange?.[r.key] ?? 0).toLocaleString()}</p>
+                      <p className="text-[10px] uppercase tracking-wide text-black/50">{r.label}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div>
+                <p className="text-[10px] font-semibold uppercase tracking-wide text-black/50 mb-2">Product Visitors by Period</p>
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                  {RANGES.map((r) => (
+                    <div key={r.key} className="border border-[#eef0f2] p-3">
+                      <p className="text-xl font-bold text-black">{Number(traffic?.productViewsByRange?.[r.key] ?? 0).toLocaleString()}</p>
+                      <p className="text-[10px] uppercase tracking-wide text-black/50">{r.label}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </>
+          )}
+
+          <div className="border-t border-[#eef0f2] pt-5">
+            <div className="flex items-center gap-2 mb-3">
+              <BarChart3 className="w-4 h-4 text-[#f9ab00]" />
+              <p className="text-[10px] font-semibold uppercase tracking-wide text-black/50">Google Analytics — last 30 days</p>
+            </div>
+            {gaError ? (
+              <div className="flex items-start gap-2 text-sm text-black/60">
+                <AlertCircle className="w-4 h-4 text-amber-500 shrink-0 mt-0.5" />
+                <div>
+                  <p className="font-medium text-black">Analytics not available</p>
+                  <p className="text-xs text-black/50 mt-1">{gaError}</p>
+                </div>
               </div>
             ) : (
-              <p className="text-xs text-black/40">No product views recorded yet.</p>
+              <>
+                <div className="grid grid-cols-3 gap-3">
+                  <Stat icon={Users} label="Visitors" value={ga?.visitors ?? 0} />
+                  <Stat icon={Eye} label="Sessions" value={ga?.sessions ?? 0} />
+                  <Stat icon={TrendingUp} label="Page Views" value={ga?.pageViews ?? 0} />
+                </div>
+                <div className="mt-5">
+                  <p className="text-[10px] font-semibold uppercase tracking-wide text-black/50 mb-2">Top Products by Interest</p>
+                  {ga?.topProducts?.length ? (
+                    <div className="space-y-2">
+                      {ga.topProducts.map((p, i) => (
+                        <div key={i} className="flex items-center gap-3">
+                          <span className="text-[11px] text-black/40 w-4">{i + 1}</span>
+                          <Package className="w-3.5 h-3.5 text-black/30 shrink-0" />
+                          <span className="text-sm text-black truncate flex-1">{p.name}</span>
+                          <span className="text-xs font-semibold text-black/70">{p.views} views</span>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <p className="text-xs text-black/40">No product views recorded yet.</p>
+                  )}
+                </div>
+              </>
             )}
           </div>
         </div>

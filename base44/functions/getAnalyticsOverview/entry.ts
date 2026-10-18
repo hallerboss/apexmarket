@@ -14,7 +14,7 @@ export default async function(req: Request): Promise<Response> {
     // Resolve the first GA4 property in the connected account
     const adminRes = await fetch(
       'https://analyticsadmin.googleapis.com/v1beta/accountSummaries?pageSize=200',
-      { headers: { Authorization: `Bearer ${accessToken}` } }
+      { headers: { Authorization: `Bearer ${accessToken}` }, signal: AbortSignal.timeout(10000) }
     );
     if (!adminRes.ok) {
       const e = await adminRes.json().catch(() => ({}));
@@ -22,13 +22,15 @@ export default async function(req: Request): Promise<Response> {
     }
     const adminData = await adminRes.json();
     const propertySummary = (adminData.accountSummaries || [])
-      .flatMap((a) => a.propertySummaries || [])
-      .find((p) => p.property && p.property.startsWith('properties/'));
+      .flatMap((a: any) => a.propertySummaries || [])
+      .find((p: any) => p.property && p.property.startsWith('properties/'));
     if (!propertySummary) {
       return Response.json({ error: 'No GA4 properties found in your Google Analytics account' }, { status: 400 });
     }
     const propertyResource = propertySummary.property;
     const propertyId = propertyResource.replace('properties/', '');
+
+    const num = (v: any) => parseInt(v?.value || '0', 10) || 0;
 
     const today = new Date();
     const end = today.toISOString().slice(0, 10);
@@ -41,6 +43,7 @@ export default async function(req: Request): Promise<Response> {
     const totalsRes = await fetch(dataApi, {
       method: 'POST',
       headers,
+      signal: AbortSignal.timeout(10000),
       body: JSON.stringify({
         dateRanges: [{ startDate: start, endDate: end }],
         metrics: [
@@ -51,16 +54,16 @@ export default async function(req: Request): Promise<Response> {
       }),
     });
     const totalsData = totalsRes.ok ? await totalsRes.json() : {};
-    const totalsRow = totalsData?.rows?.[0]?.metricValues || {};
-    const num = (v) => parseInt(v?.value || '0', 10) || 0;
-    const visitors = num(totalsRow.activeUsers);
-    const sessions = num(totalsRow.sessions);
-    const pageViews = num(totalsRow.screenPageViews);
+    const totalsRow = totalsData?.rows?.[0]?.metricValues || [];
+    const visitors = num(totalsRow[0]);
+    const sessions = num(totalsRow[1]);
+    const pageViews = num(totalsRow[2]);
 
     // Top product pages by views
     const productsRes = await fetch(dataApi, {
       method: 'POST',
       headers,
+      signal: AbortSignal.timeout(10000),
       body: JSON.stringify({
         dateRanges: [{ startDate: start, endDate: end }],
         metrics: [{ name: 'screenPageViews' }],

@@ -1,0 +1,39 @@
+{
+  "name": "Visitor",
+  "type": "object",
+  "properties": {
+    "visitor_id": {
+      "type": "string",
+      "title": "Visitor ID"
+    },
+    "last_seen": {
+      "type": "string",
+      "title": "Last Seen"
+    }
+  },
+  "required": [
+    "visitor_id"
+  ],
+  "rls": {
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "read": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

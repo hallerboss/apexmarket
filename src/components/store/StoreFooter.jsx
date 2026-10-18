@@ -52,7 +52,6 @@ export default function StoreFooter() {
           <div className="flex gap-6">
             <Link to="/page/privacy" className="hover:text-foreground">Privacy</Link>
             <Link to="/page/terms" className="hover:text-foreground">Terms</Link>
-            <Link to="/admin" className="hover:text-foreground">Admin</Link>
           </div>
         </div>
       </div>

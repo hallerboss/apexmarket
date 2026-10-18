@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from "react";
-import { useNavigate, Link } from "react-router-dom";
-import { Search, Camera, LayoutDashboard, Loader2, X } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { Search, Camera, Loader2, X } from "lucide-react";
 import { base44 } from "@/api/base44Client";
 import { Image } from "@/components/ui/image";
 
@@ -182,12 +182,6 @@ export default function SearchBar({ autoFocus = false }) {
       >
         Search
       </button>
-      <Link
-        to="/admin"
-        className="h-9 sm:h-10 px-2.5 sm:px-4 flex items-center gap-1.5 text-sm font-semibold text-accent border border-accent rounded-md hover:bg-accent hover:text-white transition-colors whitespace-nowrap"
-      >
-        <LayoutDashboard className="w-4 h-4" /> <span className="hidden sm:inline">Admin</span>
-      </Link>
     </div>
   );
 }

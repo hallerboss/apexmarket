@@ -1,15 +1,14 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
-import { User as UserIcon, Mail, Camera, Package } from "lucide-react";
+import { useCart } from "@/lib/cartContext";
+import { User as UserIcon, Mail, Camera, Package, ShoppingCart, Star, Heart } from "lucide-react";
+import ProfileOrders from "@/components/profile/ProfileOrders";
+import ProfileCart from "@/components/profile/ProfileCart";
+import ProfileReviews from "@/components/profile/ProfileReviews";
+import ProfileSavedItems from "@/components/profile/ProfileSavedItems";
 
-const statusColor = (s) => ({
-  pending: "bg-yellow-100 text-yellow-700",
-  processing: "bg-blue-100 text-blue-700",
-  shipped: "bg-purple-100 text-purple-700",
-  delivered: "bg-green-100 text-green-700",
-  cancelled: "bg-red-100 text-red-700",
-}[s] || "bg-muted text-muted-foreground");
+const asList = (p) => (Array.isArray(p) ? p : p?.items || []);
 
 export default function Profile() {
   const [user, setUser] = useState(null);
@@ -17,8 +16,11 @@ export default function Profile() {
   const [name, setName] = useState("");
   const [photo, setPhoto] = useState("");
   const [orders, setOrders] = useState([]);
+  const [reviews, setReviews] = useState([]);
+  const [tab, setTab] = useState("orders");
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
+  const { count: cartCount } = useCart();
 
   useEffect(() => {
     (async () => {
@@ -28,8 +30,16 @@ export default function Profile() {
         setUser(me);
         setName(me.full_name || "");
         setPhoto(me.photo || "");
-        const list = await base44.entities.Order.filter({ customer_email: me.email }, "-created_date", 50).catch(() => []);
-        setOrders(list);
+        const [ord, rev] = await Promise.all([
+          base44.entities.Order
+            .filter({ customer_email: me.email }, { sort: "-created_date", limit: 50 })
+            .then(asList).catch(() => []),
+          base44.entities.Review
+            .filter({ email: me.email }, { sort: "-created_date", limit: 50 })
+            .then(asList).catch(() => []),
+        ]);
+        setOrders(ord);
+        setReviews(rev);
       } catch (e) {
         setUser(null);
       } finally {
@@ -82,6 +92,13 @@ export default function Profile() {
     );
   }
 
+  const tabs = [
+    { id: "orders", label: "Orders", icon: Package, count: orders.length },
+    { id: "cart", label: "Cart", icon: ShoppingCart, count: cartCount },
+    { id: "reviews", label: "Reviews", icon: Star, count: reviews.length },
+    { id: "saved", label: "Saved Items", icon: Heart },
+  ];
+
   return (
     <div className="container-bleed px-5 lg:px-10 py-12 lg:py-16">
       <h1 className="display-text text-4xl lg:text-5xl mb-10">My Profile</h1>
@@ -117,33 +134,27 @@ export default function Profile() {
           </div>
         </div>
 
-        {/* Order history */}
+        {/* Account activity */}
         <div className="lg:col-span-2">
-          <h3 className="text-[11px] uppercase tracking-[0.2em] font-semibold mb-6 flex items-center gap-2"><Package className="w-4 h-4" /> Previous Orders ({orders.length})</h3>
-          {orders.length === 0 ? (
-            <div className="border hairline p-10 text-center">
-              <p className="serif-text text-muted-foreground mb-4">You have no orders yet.</p>
-              <Link to="/shop" className="btn-mono-solid">Start Shopping</Link>
-            </div>
-          ) : (
-            <div className="space-y-4">
-              {orders.map((o) => (
-                <div key={o.id} className="border hairline p-5">
-                  <div className="flex items-start justify-between gap-3 mb-3">
-                    <div>
-                      <p className="font-semibold">{o.order_number}</p>
-                      <p className="text-xs text-muted-foreground">{new Date(o.created_date).toLocaleDateString()} · {o.items?.length || 0} item(s)</p>
-                    </div>
-                    <span className={`text-[10px] uppercase tracking-wide px-2 py-1 rounded ${statusColor(o.status)}`}>{o.status}</span>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <span className="text-lg font-bold">${(o.total || 0).toFixed(2)}</span>
-                    <Link to={`/track?order=${o.order_number}`} className="text-sm text-accent hover:underline">Track →</Link>
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
+          <div className="flex gap-1 overflow-x-auto border-b hairline mb-6">
+            {tabs.map((t) => (
+              <button
+                key={t.id}
+                onClick={() => setTab(t.id)}
+                className={`flex items-center gap-2 px-4 py-3 text-[11px] uppercase tracking-[0.15em] font-semibold whitespace-nowrap border-b-2 -mb-px transition-colors ${
+                  tab === t.id ? "border-accent text-foreground" : "border-transparent text-muted-foreground hover:text-foreground"
+                }`}
+              >
+                <t.icon className="w-3.5 h-3.5" />
+                {t.label}{typeof t.count === "number" ? ` (${t.count})` : ""}
+              </button>
+            ))}
+          </div>
+
+          {tab === "orders" && <ProfileOrders orders={orders} />}
+          {tab === "cart" && <ProfileCart />}
+          {tab === "reviews" && <ProfileReviews reviews={reviews} />}
+          {tab === "saved" && <ProfileSavedItems />}
         </div>
       </div>
     </div>

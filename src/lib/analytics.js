@@ -3,6 +3,24 @@ import { base44 } from "@/api/base44Client";
 // Google Analytics 4 event + Base44 built-in analytics.
 // GA only loads when a real Measurement ID is set in index.html (window.GA_MEASUREMENT_ID).
 
+const PRODUCT_PATH = /\/product\/([^/?#]+)/;
+
+// Stable per-browser id so the admin dashboard can count unique visitors.
+function visitorId() {
+  try {
+    let id = localStorage.getItem("visitor_id");
+    if (!id) {
+      id = typeof crypto !== "undefined" && crypto.randomUUID
+        ? crypto.randomUUID()
+        : `v_${Date.now()}_${Math.random().toString(36).slice(2)}`;
+      localStorage.setItem("visitor_id", id);
+    }
+    return id;
+  } catch {
+    return "anonymous";
+  }
+}
+
 export function trackProductView(product) {
   if (!product) return;
   const price = product.sale_price || product.price;
@@ -41,6 +59,14 @@ export function trackPageView(path) {
       referrer: typeof document !== "undefined" ? document.referrer || null : null,
     },
   });
+  const match = path.match(PRODUCT_PATH);
+  base44.functions
+    .invoke("recordPageView", {
+      path,
+      visitor_id: visitorId(),
+      ...(match ? { product_id: match[1] } : {}),
+    })
+    .catch(() => {});
 }
 
 export function trackAddToCart(product, quantity = 1) {
