@@ -10,6 +10,7 @@ import SearchBar from "@/components/store/SearchBar";
 import CategoryNav from "@/components/store/CategoryNav";
 import { base44 } from "@/api/base44Client";
 import CurrencySwitcher from "@/components/store/CurrencySwitcher";
+import AuthButtons from "@/components/store/AuthButtons";
 import GoogleAnalyticsLoader from "@/components/GoogleAnalyticsLoader";
 import { Image } from "@/components/ui/image";
 
@@ -101,6 +102,7 @@ export default function StoreLayout() {
                 </span>
               )}
             </Link>
+            <AuthButtons />
             <button onClick={() => setMenuOpen(true)} className="md:hidden p-1" aria-label="Menu">
               <Menu className="w-5 h-5" />
             </button>
@@ -147,6 +149,7 @@ export default function StoreLayout() {
                   <Link to="/profile" onClick={() => setMenuOpen(false)} className="flex items-center gap-3 px-5 py-4 text-base text-white border-b border-white/10 hover:bg-white/5">
                     <User className="w-4 h-4 text-[#3b82f6]" /> My Profile
                   </Link>
+                  <AuthButtons variant="drawer" />
                   <Link to="/track" onClick={() => setMenuOpen(false)} className="flex items-center gap-3 px-5 py-4 text-base text-white border-b border-white/10 hover:bg-white/5">
                     <MapPin className="w-4 h-4 text-[#3b82f6]" /> Track Order
                   </Link>
