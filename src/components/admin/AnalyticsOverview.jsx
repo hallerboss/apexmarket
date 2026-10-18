@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
 import { BarChart3, Users, Eye, TrendingUp, Loader2, AlertCircle, Package, MousePointerClick } from "lucide-react";
+import TrafficChart from "@/components/admin/TrafficChart";
 
 const RANGES = [
   { key: "today", label: "Today" },
@@ -78,6 +79,11 @@ export default function AnalyticsOverview() {
                     </div>
                   ))}
                 </div>
+              </div>
+
+              <div className="border-t border-[#eef0f2] pt-5 space-y-6">
+                <TrafficChart title="Visitors Over Time" series={traffic?.visitorsSeries} color="#2563eb" />
+                <TrafficChart title="Product Visitors Over Time" series={traffic?.productVisitorsSeries} color="#f9ab00" />
               </div>
             </>
           )}

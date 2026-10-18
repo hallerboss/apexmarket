@@ -100,12 +100,12 @@ export default function Profile() {
   ];
 
   return (
-    <div className="container-bleed px-5 lg:px-10 py-12 lg:py-16">
-      <h1 className="display-text text-4xl lg:text-5xl mb-10">My Profile</h1>
-      <div className="grid lg:grid-cols-3 gap-10 lg:gap-14">
+    <div className="container-bleed px-4 sm:px-5 lg:px-10 py-8 sm:py-12 lg:py-16">
+      <h1 className="display-text text-3xl sm:text-4xl lg:text-5xl mb-6 sm:mb-10">My Profile</h1>
+      <div className="grid lg:grid-cols-3 gap-8 lg:gap-14">
         {/* Account card */}
         <div className="lg:col-span-1">
-          <div className="border hairline p-6 text-center">
+          <div className="border hairline p-5 sm:p-6 text-center">
             <div className="relative w-24 h-24 mx-auto mb-4">
               {photo ? (
                 <img src={photo} alt={user.full_name} className="w-24 h-24 rounded-full object-cover" />
@@ -125,10 +125,10 @@ export default function Profile() {
             {user.role === "admin" && <Link to="/admin" className="btn-mono-outline mt-5 w-full">Admin Panel</Link>}
           </div>
 
-          <div className="border hairline p-6 mt-6">
+          <div className="border hairline p-5 sm:p-6 mt-6">
             <h3 className="text-[11px] uppercase tracking-[0.2em] font-semibold mb-4">Edit Details</h3>
             <label className="block text-xs text-muted-foreground mb-1">Username / Full Name</label>
-            <input value={name} onChange={(e) => setName(e.target.value)} className="w-full border hairline px-3 py-2.5 text-sm bg-transparent focus:border-accent outline-none mb-4" />
+            <input value={name} onChange={(e) => setName(e.target.value)} className="w-full border hairline px-3 py-2.5 text-base sm:text-sm bg-transparent focus:border-accent outline-none mb-4" />
             <button onClick={saveName} disabled={saving} className="btn-mono-solid w-full disabled:opacity-50">{saving ? "Saving…" : "Save Name"}</button>
             <p className="text-xs text-muted-foreground mt-4 leading-relaxed">To change your password, use the <Link to="/forgot-password" className="text-accent underline">forgot password</Link> flow — a reset link is emailed to you.</p>
           </div>
@@ -136,16 +136,16 @@ export default function Profile() {
 
         {/* Account activity */}
         <div className="lg:col-span-2">
-          <div className="flex gap-1 overflow-x-auto border-b hairline mb-6">
+          <div className="grid grid-cols-2 gap-2 sm:flex sm:gap-1 sm:overflow-x-auto sm:border-b sm:border-[#e5e7eb] mb-6">
             {tabs.map((t) => (
               <button
                 key={t.id}
                 onClick={() => setTab(t.id)}
-                className={`flex items-center gap-2 px-4 py-3 text-[11px] uppercase tracking-[0.15em] font-semibold whitespace-nowrap border-b-2 -mb-px transition-colors ${
+                className={`flex items-center justify-center sm:justify-start gap-2 px-3 sm:px-4 py-2.5 sm:py-3 text-[11px] uppercase tracking-[0.12em] font-semibold whitespace-nowrap border-b-2 -mb-px transition-colors ${
                   tab === t.id ? "border-accent text-foreground" : "border-transparent text-muted-foreground hover:text-foreground"
                 }`}
               >
-                <t.icon className="w-3.5 h-3.5" />
+                <t.icon className="w-3.5 h-3.5 shrink-0" />
                 {t.label}{typeof t.count === "number" ? ` (${t.count})` : ""}
               </button>
             ))}

@@ -42,7 +42,36 @@ export default async function(req: Request): Promise<Response> {
       productViewsByRange[k] = productCounts[i];
     });
 
-    return Response.json({ visitorsByRange, productViewsByRange });
+    // Daily series for the last 30 days (unique visitors and unique product visitors)
+    let visitorsSeries: { date: string; count: number }[] = [];
+    let productVisitorsSeries: { date: string; count: number }[] = [];
+    try {
+      const dateBucket = { field: 'created_date', unit: 'day' as const };
+
+      const all = await base44.asServiceRole.entities.PageView.aggregate({
+        query: { created_date: { $gte: starts.month } },
+        dateBucket,
+        countDistinct: 'visitor_id',
+      });
+      visitorsSeries = (all.rows || []).map((r: any) => ({
+        date: r.created_date,
+        count: r.count_distinct_visitor_id || 0,
+      }));
+
+      const prod = await base44.asServiceRole.entities.PageView.aggregate({
+        query: { product_id: { $ne: null }, created_date: { $gte: starts.month } },
+        dateBucket,
+        countDistinct: 'visitor_id',
+      });
+      productVisitorsSeries = (prod.rows || []).map((r: any) => ({
+        date: r.created_date,
+        count: r.count_distinct_visitor_id || 0,
+      }));
+    } catch (_) {
+      // Series unavailable — the range tiles still render
+    }
+
+    return Response.json({ visitorsByRange, productViewsByRange, visitorsSeries, productVisitorsSeries });
   } catch (error) {
     return Response.json({ error: error.message }, { status: 500 });
   }
