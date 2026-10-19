@@ -83,7 +83,7 @@ export const BLOCK_DEFAULTS = {
 
   list: {
     title: "",
-    items: ["Free worldwide shipping", "30-day easy returns", "Dedicated support team"],
+    items: ["Free worldwide shipping", "10-day easy returns", "Dedicated support team"],
     fontFamily: "body",
     fontSize: "md",
     textColor: "",
@@ -238,7 +238,7 @@ export const BLOCK_DEFAULTS = {
     items: [
       { title: "Description", text: "Tell shoppers what makes this collection special." },
       { title: "Shipping", text: "Orders ship within 24 hours, worldwide." },
-      { title: "Returns", text: "30-day easy returns on every item." },
+      { title: "Returns", text: "10-day easy returns on every item." },
     ],
     align: "left",
     pad: "lg",

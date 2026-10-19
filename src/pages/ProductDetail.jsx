@@ -200,7 +200,7 @@ export default function ProductDetail() {
           <div className="grid grid-cols-3 gap-2 sm:gap-4 border-t hairline pt-6 lg:pt-8 mb-10">
             {[
               { icon: Truck, label: "Free Shipping", sub: "Over $50" },
-              { icon: RotateCcw, label: "30-Day Returns", sub: "No questions" },
+              { icon: RotateCcw, label: "10-Day Returns", sub: "No questions" },
               { icon: Shield, label: "2-Year Warranty", sub: "Full coverage" },
             ].map((t) => (
               <div key={t.label} className="text-center">

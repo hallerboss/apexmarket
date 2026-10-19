@@ -33,7 +33,7 @@ const FAQ_DATA = [
     questions: [
       {
         q: "What is your return policy?",
-        a: "We offer a 30-day return policy on all unused items in their original packaging. If you're not completely satisfied with your purchase, you can return it for a full refund or exchange within 30 days of delivery.",
+        a: "We offer a 10-day return policy on all unused items in their original packaging. If you're not completely satisfied with your purchase, you can return it for a full refund or exchange within 10 days of delivery.",
       },
       {
         q: "How do I start a return?",
@@ -49,7 +49,7 @@ const FAQ_DATA = [
       },
       {
         q: "Can I exchange an item instead of returning it?",
-        a: "Yes! Exchanges are free within 30 days. Contact us with your order number and the item you'd like instead, and we'll arrange the exchange with no additional shipping fees.",
+        a: "Yes! Exchanges are free within 10 days. Contact us with your order number and the item you'd like instead, and we'll arrange the exchange with no additional shipping fees.",
       },
     ],
   },
