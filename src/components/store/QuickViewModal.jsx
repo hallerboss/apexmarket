@@ -4,6 +4,7 @@ import { Image } from "@/components/ui/image";
 import { Star, Minus, Plus, ShoppingBag, X } from "lucide-react";
 import { useCart } from "@/lib/cartContext";
 import { useCurrency } from "@/lib/currencyContext";
+import { cleanHtml } from "@/lib/cleanHtml";
 
 export default function QuickViewModal({ product, onClose }) {
   const { addItem } = useCart();
@@ -70,7 +71,12 @@ export default function QuickViewModal({ product, onClose }) {
               <span className="text-2xl font-bold">{formatPrice(product.price)}</span>
             )}
           </div>
-          {product.short_description && <p className="serif-text text-muted-foreground leading-relaxed mb-6">{product.short_description}</p>}
+          {product.short_description && (
+            <div
+              className="serif-text text-muted-foreground leading-relaxed mb-6 break-words [&_ul]:list-disc [&_ul]:pl-5 [&_ol]:list-decimal [&_ol]:pl-5"
+              dangerouslySetInnerHTML={{ __html: cleanHtml(product.short_description) }}
+            />
+          )}
 
           {product.variants?.map((v) => (
             <div key={v.name} className="mb-5">

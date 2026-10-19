@@ -8,16 +8,21 @@ export default function FieldAIButton({ type, imageUrl, productName, productDesc
   const [options, setOptions] = useState([]);
   const [selected, setSelected] = useState(null);
   const [error, setError] = useState(null);
+  const [notice, setNotice] = useState(null);
   const ref = useRef(null);
 
   const generate = async () => {
     if ((type === "title" || type === "short_description") && !imageUrl) {
-      alert("Upload a product image first, then use AI.");
+      setOpen(true);
+      setNotice("Upload a product image first, then use AI.");
+      setOptions([]);
+      setError(null);
       return;
     }
     setOpen(true);
     setLoading(true);
     setOptions([]);
+    setNotice(null);
     setError(null);
     try {
       const res = await base44.functions.invoke("generateProductField", {
@@ -79,6 +84,8 @@ export default function FieldAIButton({ type, imageUrl, productName, productDesc
             </div>
           ) : error ? (
             <div className="p-4 text-xs text-red-600 text-center">{error}</div>
+          ) : notice ? (
+            <div className="p-4 text-xs text-amber-600 text-center">{notice}</div>
           ) : options.length === 0 ? (
             <div className="p-4 text-xs text-black/40 text-center">No options generated.</div>
           ) : (

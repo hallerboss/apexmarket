@@ -249,7 +249,7 @@ export default function AdminProducts() {
   if (editing) {
     return (
       <div className="max-w-4xl">
-        <div className="flex items-center justify-between mb-8">
+        <div className="flex flex-wrap items-center justify-between gap-3 mb-8">
           <h2 className="display-text text-2xl text-white">{editing.id ? "Edit Product" : "New Product"}</h2>
           <button onClick={() => { setEditing(null); setSearchParams({}); }} className="text-white hover:text-accent flex items-center gap-1.5 text-sm"><X className="w-4 h-4" /> Cancel</button>
         </div>
@@ -284,13 +284,13 @@ export default function AdminProducts() {
             </div>
 
             <div>
-              <div className="flex items-center justify-between mb-2">
+              <div className="flex flex-wrap items-center justify-between gap-2 mb-2">
                 <label className="text-[11px] font-semibold uppercase tracking-[0.15em] text-muted-foreground">Title Product</label>
                 <FieldAIButton type="title" imageUrl={editing.images?.[0]} productName={editing.name} onSelect={(val) => setEditing({ ...editing, name: val })} label="AI Titles" />
               </div>
               <input required value={editing.name} onChange={(e) => setEditing({ ...editing, name: e.target.value })} className="admin-input" />
             </div>
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <label className="admin-label">Price ($)</label>
                 <input type="number" step="0.01" required value={editing.price} onChange={(e) => setEditing({ ...editing, price: parseFloat(e.target.value) || 0 })} className="admin-input" />
@@ -300,7 +300,7 @@ export default function AdminProducts() {
                 <input type="number" step="0.01" value={editing.sale_price} onChange={(e) => setEditing({ ...editing, sale_price: parseFloat(e.target.value) || 0 })} className="admin-input" />
               </div>
             </div>
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <label className="admin-label">Category</label>
                 <select value={editing.category} onChange={(e) => setEditing({ ...editing, category: e.target.value })} className="admin-input">
@@ -323,7 +323,7 @@ export default function AdminProducts() {
                 <input value={editing.brand || ""} onChange={(e) => setEditing({ ...editing, brand: e.target.value })} className="admin-input" />
               </div>
             </div>
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <label className="admin-label">SKU</label>
                 <input value={editing.sku || ""} onChange={(e) => setEditing({ ...editing, sku: e.target.value })} className="admin-input" />
@@ -334,14 +334,14 @@ export default function AdminProducts() {
               </div>
             </div>
             <div>
-              <div className="flex items-center justify-between mb-2">
+              <div className="flex flex-wrap items-center justify-between gap-2 mb-2">
                 <label className="text-[11px] font-semibold uppercase tracking-[0.15em] text-muted-foreground">Short Description</label>
                 <FieldAIButton type="short_description" imageUrl={editing.images?.[0]} onSelect={(val) => setEditing({ ...editing, short_description: val })} label="AI Features" />
               </div>
               <RichTextEditor value={editing.short_description || ""} onChange={(html) => setEditing({ ...editing, short_description: html })} minHeight={140} title="Product short description" placeholder="One-line summary shown under the product title…" />
             </div>
             <div>
-              <div className="flex items-center justify-between mb-2">
+              <div className="flex flex-wrap items-center justify-between gap-2 mb-2">
                 <label className="text-[11px] font-semibold uppercase tracking-[0.15em] text-muted-foreground">Full Description</label>
                 <FieldAIButton type="description" imageUrl={editing.images?.[0]} productName={editing.name} onSelect={(val) => setEditing({ ...editing, description: val })} label="AI Description" />
               </div>
@@ -353,21 +353,21 @@ export default function AdminProducts() {
               <h4 className="text-[11px] uppercase tracking-[0.2em] font-semibold text-white mb-4">Google Search / SEO</h4>
               <div className="space-y-4">
                 <div>
-                  <div className="flex items-center justify-between mb-2">
+                  <div className="flex flex-wrap items-center justify-between gap-2 mb-2">
                     <label className="text-[11px] font-semibold uppercase tracking-[0.15em] text-muted-foreground">SEO Title</label>
                     <FieldAIButton type="seo_title" productName={editing.name} onSelect={(val) => setEditing({ ...editing, seo_title: val })} label="AI SEO Title" />
                   </div>
                   <input value={editing.seo_title || ""} onChange={(e) => setEditing({ ...editing, seo_title: e.target.value })} className="admin-input" placeholder="Title for Google search results" />
                 </div>
                 <div>
-                  <div className="flex items-center justify-between mb-2">
+                  <div className="flex flex-wrap items-center justify-between gap-2 mb-2">
                     <label className="text-[11px] font-semibold uppercase tracking-[0.15em] text-muted-foreground">Meta Description</label>
                     <FieldAIButton type="meta_description" productName={editing.name} productDescription={editing.description} onSelect={(val) => setEditing({ ...editing, meta_description: val })} label="AI Meta" />
                   </div>
                   <textarea rows={2} value={editing.meta_description || ""} onChange={(e) => setEditing({ ...editing, meta_description: e.target.value })} className="admin-input resize-none" placeholder="Short description shown in search results" />
                 </div>
                 <div>
-                  <div className="flex items-center justify-between mb-2">
+                  <div className="flex flex-wrap items-center justify-between gap-2 mb-2">
                     <label className="text-[11px] font-semibold uppercase tracking-[0.15em] text-muted-foreground">Focus Keywords (comma separated)</label>
                     <FieldAIButton type="focus_keywords" productName={editing.name} productDescription={editing.description} onSelect={(val) => setEditing({ ...editing, focus_keywords: val.split(",").map((t) => t.trim()).filter(Boolean) })} label="AI Keywords" />
                   </div>
@@ -393,7 +393,7 @@ export default function AdminProducts() {
                   const opts = (v.options || []).filter(Boolean);
                   return (
                     <div key={i} className="border border-white/10 p-4">
-                      <div className="flex items-center gap-3 mb-3">
+                      <div className="flex flex-col sm:flex-row sm:items-center gap-3 mb-3">
                         <select
                           value={PREDEFINED_ATTRIBUTES.includes(v.name) ? v.name : "__custom__"}
                           onChange={(e) => {
@@ -405,7 +405,7 @@ export default function AdminProducts() {
                               if (AUTO_OPTIONS[val]) setVariantOptions(i, [...AUTO_OPTIONS[val]]);
                             }
                           }}
-                          className="admin-input w-44 shrink-0"
+                          className="admin-input w-full sm:w-44 shrink-0"
                         >
                           <option value="">Quick select…</option>
                           {PREDEFINED_ATTRIBUTES.map((a) => <option key={a} value={a}>{a}</option>)}
@@ -449,7 +449,7 @@ export default function AdminProducts() {
               <div className="space-y-3">
                 {(editing.shipping_options || []).length === 0 && <p className="text-sm text-white">No shipping destinations set.</p>}
                 {(editing.shipping_options || []).map((s, i) => (
-                  <div key={i} className="flex gap-3">
+                  <div key={i} className="flex flex-col sm:flex-row gap-3">
                     <select value={s.country} onChange={(e) => setShipping(i, "country", e.target.value)} className="admin-input flex-1">
                       <option value="">Country…</option>
                       {COUNTRIES.map((c) => <option key={c} value={c}>{c}</option>)}
@@ -458,7 +458,7 @@ export default function AdminProducts() {
                       <option value="">Courier…</option>
                       {COURIERS.map((c) => <option key={c} value={c}>{c}</option>)}
                     </select>
-                    <button type="button" onClick={() => removeShipping(i)} className="text-white hover:text-red-400 px-2"><X className="w-4 h-4" /></button>
+                    <button type="button" onClick={() => removeShipping(i)} className="text-white hover:text-red-400 px-2 self-end sm:self-auto"><X className="w-4 h-4" /></button>
                   </div>
                 ))}
               </div>
