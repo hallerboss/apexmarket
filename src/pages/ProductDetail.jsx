@@ -10,7 +10,6 @@ import { useCompare } from "@/lib/compareContext";
 import WishlistToggle from "@/components/store/WishlistToggle";
 import { trackProductView } from "@/lib/analytics";
 import ProductCard from "@/components/store/ProductCard";
-import FrequentlyBoughtTogether from "@/components/store/FrequentlyBoughtTogether";
 import CustomerReviews from "@/components/store/CustomerReviews";
 import ProductVariantSelector from "@/components/store/ProductVariantSelector";
 
@@ -84,18 +83,18 @@ export default function ProductDetail() {
   return (
     <div className="pb-24">
       {/* Breadcrumb */}
-      <div className="container-bleed px-5 lg:px-10 py-5 border-b hairline">
-        <nav className="text-[11px] uppercase tracking-[0.15em] text-muted-foreground flex gap-2">
-          <Link to="/" className="hover:text-foreground">Home</Link>
-          <span>/</span>
-          <Link to="/shop" className="hover:text-foreground">Shop</Link>
-          <span>/</span>
-          <span className="text-foreground">{product.name}</span>
+      <div className="container-bleed px-4 sm:px-5 lg:px-10 py-4 lg:py-5 border-b hairline">
+        <nav className="text-[11px] uppercase tracking-[0.15em] text-muted-foreground flex gap-2 min-w-0">
+          <Link to="/" className="hover:text-foreground shrink-0">Home</Link>
+          <span className="shrink-0">/</span>
+          <Link to="/shop" className="hover:text-foreground shrink-0">Shop</Link>
+          <span className="shrink-0">/</span>
+          <span className="text-foreground truncate">{product.name}</span>
         </nav>
       </div>
 
       {/* PDP main — sticky media stack + floating info */}
-      <div className="container-bleed px-5 lg:px-10 py-10 lg:py-16 grid lg:grid-cols-2 gap-10 lg:gap-16">
+      <div className="container-bleed px-4 sm:px-5 lg:px-10 py-8 lg:py-16 grid lg:grid-cols-2 gap-8 lg:gap-16">
         {/* Media stack */}
         <div className="flex flex-col-reverse lg:flex-row gap-4 lg:sticky lg:top-24 lg:self-start lg:max-h-[80vh]">
           {images.length > 1 && (
@@ -115,7 +114,7 @@ export default function ProductDetail() {
         {/* Info module */}
         <div className="lg:py-4">
           {product.brand && <p className="text-[11px] uppercase tracking-[0.25em] text-accent font-semibold mb-3">{product.brand}</p>}
-          <h1 className="display-text text-4xl lg:text-5xl mb-4">{product.name}</h1>
+          <h1 className="display-text text-3xl sm:text-4xl lg:text-5xl mb-4">{product.name}</h1>
           {product.rating > 0 && (
             <div className="flex items-center gap-2 mb-6">
               <div className="flex">
@@ -197,7 +196,7 @@ export default function ProductDetail() {
           </div>
 
           {/* Trust badges */}
-          <div className="grid grid-cols-3 gap-4 border-t hairline pt-8 mb-10">
+          <div className="grid grid-cols-3 gap-2 sm:gap-4 border-t hairline pt-6 lg:pt-8 mb-10">
             {[
               { icon: Truck, label: "Free Shipping", sub: "Over $50" },
               { icon: RotateCcw, label: "30-Day Returns", sub: "No questions" },
@@ -236,17 +235,14 @@ export default function ProductDetail() {
         </div>
       </div>
 
-      {/* Frequently Bought Together */}
-      <FrequentlyBoughtTogether product={product} />
-
       {/* Customer Reviews — full width */}
-      <section className="container-bleed px-5 lg:px-10 py-10 lg:py-16 border-t hairline">
+      <section className="container-bleed px-4 sm:px-5 lg:px-10 py-8 lg:py-16 border-t hairline">
         <CustomerReviews productId={product.id} productName={product.name} rating={product.rating} />
       </section>
 
       {/* Related */}
       {related.length > 0 && (
-        <section className="container-bleed px-5 lg:px-10 py-16 lg:py-24 border-t hairline">
+        <section className="container-bleed px-4 sm:px-5 lg:px-10 py-12 lg:py-24 border-t hairline">
           <h2 className="display-text text-3xl lg:text-4xl mb-10">Related Objects</h2>
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-8">
             {related.map((p, i) => <ProductCard key={p.id} product={p} index={i} />)}
@@ -257,7 +253,7 @@ export default function ProductDetail() {
       {/* Floating buy bar */}
       {showBuyBar && (
         <div className="fixed bottom-0 left-0 right-0 lg:left-16 z-40 bg-foreground text-background border-t border-white/10 animate-[fadeInUp_0.4s_ease]">
-          <div className="container-bleed px-5 lg:px-10 py-4 flex items-center justify-between gap-4">
+          <div className="container-bleed px-4 sm:px-5 lg:px-10 py-3 lg:py-4 flex items-center justify-between gap-3 lg:gap-4">
             <div className="flex items-center gap-4 min-w-0">
               {images[0] && <Image src={images[0]} alt="" className="w-12 h-12 object-cover shrink-0" fittingType="fill" />}
               <div className="min-w-0">

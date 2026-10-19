@@ -91,9 +91,9 @@ export default function CustomerReviews({ productId, productName, rating }) {
   const inputCls = "w-full border hairline px-4 py-2.5 text-sm bg-transparent focus:border-accent outline-none";
 
   return (
-    <div className="border hairline bg-card p-6 lg:p-10">
-      <h3 className="text-lg font-bold mb-6">Customer reviews</h3>
-      <div className="grid md:grid-cols-[240px_1fr] gap-8 lg:gap-14">
+    <div className="border hairline bg-card p-4 sm:p-6 lg:p-10">
+      <h3 className="text-lg font-bold mb-5 lg:mb-6">Customer reviews</h3>
+      <div className="grid md:grid-cols-[240px_1fr] gap-6 md:gap-8 lg:gap-14">
         {/* Left column — summary */}
         <div>
           <div className="flex items-center gap-2 mb-1">
@@ -111,17 +111,17 @@ export default function CustomerReviews({ productId, productName, rating }) {
               const pct = total ? Math.round((counts[n] / total) * 100) : 0;
               return (
                 <div key={n} className="flex items-center gap-2">
-                  <span className="text-sm text-accent w-10">{n} star</span>
-                  <div className="flex-1 h-4 bg-secondary overflow-hidden">
+                  <span className="text-xs sm:text-sm text-accent w-11 shrink-0">{n} star</span>
+                  <div className="flex-1 h-3.5 sm:h-4 bg-secondary overflow-hidden">
                     <div className="h-full bg-[#ff9f43] transition-all" style={{ width: `${pct}%` }} />
                   </div>
-                  <span className="text-sm text-muted-foreground w-9 text-right">{pct}%</span>
+                  <span className="text-xs sm:text-sm text-muted-foreground w-9 shrink-0 text-right">{pct}%</span>
                 </div>
               );
             })}
           </div>
 
-          <button onClick={() => setShowHow((s) => !s)} className="flex items-center gap-1 text-sm text-accent mb-6">
+          <button onClick={() => setShowHow((s) => !s)} className="flex items-start gap-1 text-left text-sm text-accent mb-6">
             How customer reviews and ratings work <ChevronDown className={`w-4 h-4 transition-transform ${showHow ? "rotate-180" : ""}`} />
           </button>
           {showHow && (
