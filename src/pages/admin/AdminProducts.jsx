@@ -272,11 +272,11 @@ export default function AdminProducts() {
                   <input type="file" accept="image/*" className="hidden" onChange={(e) => e.target.files[0] && uploadImage(e.target.files[0])} />
                 </label>
               </div>
-              <div className="flex flex-wrap gap-2">
-                <button type="button" onClick={analyzeImage} disabled={analyzing} className="border border-accent text-accent px-4 py-2.5 text-xs font-semibold uppercase tracking-[0.15em] flex items-center gap-2 hover:bg-accent hover:text-white disabled:opacity-50 transition-colors">
+              <div className="flex flex-col sm:flex-row gap-2">
+                <button type="button" onClick={analyzeImage} disabled={analyzing} className="w-full sm:w-auto justify-center border border-accent text-accent px-4 py-2.5 text-xs font-semibold uppercase tracking-[0.15em] flex items-center gap-2 hover:bg-accent hover:text-white disabled:opacity-50 transition-colors">
                   <Sparkles className="w-4 h-4" /> {analyzing ? "Analyzing…" : "AI Analyze Image"}
                 </button>
-                <button type="button" onClick={() => setShowAgent(true)} className="border border-foreground/30 text-foreground px-4 py-2.5 text-xs font-semibold uppercase tracking-[0.15em] flex items-center gap-2 hover:bg-foreground hover:text-white transition-colors">
+                <button type="button" onClick={() => setShowAgent(true)} className="w-full sm:w-auto justify-center border border-foreground/30 text-foreground px-4 py-2.5 text-xs font-semibold uppercase tracking-[0.15em] flex items-center gap-2 hover:bg-foreground hover:text-white transition-colors">
                   <Sparkles className="w-4 h-4" /> Ask AI Assistant (Free)
                 </button>
               </div>
@@ -288,7 +288,7 @@ export default function AdminProducts() {
                 <label className="text-[11px] font-semibold uppercase tracking-[0.15em] text-muted-foreground">Title Product</label>
                 <FieldAIButton type="title" imageUrl={editing.images?.[0]} productName={editing.name} onSelect={(val) => setEditing({ ...editing, name: val })} label="AI Titles" />
               </div>
-              <input required value={editing.name} onChange={(e) => setEditing({ ...editing, name: e.target.value })} className="admin-input" />
+              <input required value={editing.name || ""} onChange={(e) => setEditing({ ...editing, name: e.target.value })} className="admin-input" />
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
