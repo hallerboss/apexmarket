@@ -18,7 +18,7 @@ export default function ShopProductCard({ product }) {
 
   return (
     <div className="group relative bg-white border border-[#eee] rounded-md p-3 flex flex-col transition-shadow hover:shadow-md">
-      <Link to={`/product/${product.id}`} className="relative block aspect-square bg-[#f7f7f7] rounded-md overflow-hidden mb-3">
+      <Link to={`/product/${product.id}`} className="relative block aspect-[4/5] bg-[#f7f7f7] rounded-md overflow-hidden mb-3">
         {product.images?.[0] ? (
           <Image src={product.images[0]} alt={product.name} className="w-full h-full" fittingType="fit" />
         ) : (

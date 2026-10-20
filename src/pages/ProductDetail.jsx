@@ -12,6 +12,7 @@ import { trackProductView } from "@/lib/analytics";
 import ProductCard from "@/components/store/ProductCard";
 import CustomerReviews from "@/components/store/CustomerReviews";
 import ProductVariantSelector from "@/components/store/ProductVariantSelector";
+import ProductImageZoom from "@/components/store/ProductImageZoom";
 import { cleanHtml } from "@/lib/cleanHtml";
 
 export default function ProductDetail() {
@@ -20,6 +21,7 @@ export default function ProductDetail() {
   const [related, setRelated] = useState([]);
   const [loading, setLoading] = useState(true);
   const [activeImg, setActiveImg] = useState(0);
+  const [variantPreview, setVariantPreview] = useState(null);
   const [qty, setQty] = useState(1);
   const [selectedVariants, setSelectedVariants] = useState({});
   const [showBuyBar, setShowBuyBar] = useState(false);
@@ -64,8 +66,7 @@ export default function ProductDetail() {
 
   const hasSale = product.sale_price && product.sale_price < product.price;
   const baseImages = product.images?.length ? product.images : [];
-  const variantImgs = (product.variant_images || []).map((v) => v.image).filter(Boolean);
-  const images = [...baseImages, ...variantImgs];
+  const mainImage = variantPreview || baseImages[activeImg];
   const variantImageFor = (variant, option) =>
     (product.variant_images || []).find((v) => v.variant === variant && v.option === option)?.image;
 
@@ -98,18 +99,16 @@ export default function ProductDetail() {
       <div className="container-bleed px-4 sm:px-5 lg:px-10 py-8 lg:py-16 grid lg:grid-cols-2 gap-8 lg:gap-16">
         {/* Media stack */}
         <div className="flex flex-col-reverse lg:flex-row gap-4 lg:sticky lg:top-24 lg:self-start lg:max-h-[80vh]">
-          {images.length > 1 && (
+          {baseImages.length > 1 && (
             <div className="flex lg:flex-col gap-3 overflow-x-auto lg:overflow-y-auto">
-              {images.map((img, i) => (
-                <button key={i} onClick={() => setActiveImg(i)} className={`w-16 h-20 lg:w-20 lg:h-24 shrink-0 overflow-hidden border-2 transition-colors ${activeImg === i ? "border-foreground" : "border-transparent opacity-60"}`}>
+              {baseImages.map((img, i) => (
+                <button key={i} onClick={() => { setActiveImg(i); setVariantPreview(null); }} className={`w-16 h-20 lg:w-20 lg:h-24 shrink-0 overflow-hidden border-2 transition-colors ${!variantPreview && activeImg === i ? "border-foreground" : "border-transparent opacity-60"}`}>
                   <Image src={img} alt="" className="w-full h-full object-cover" fittingType="fill" />
                 </button>
               ))}
             </div>
           )}
-          <div className="flex-1 aspect-[3/4] overflow-hidden bg-secondary">
-            {images[activeImg] && <Image src={images[activeImg]} alt={product.name} className="w-full h-full object-cover" fittingType="fill" />}
-          </div>
+          <ProductImageZoom src={mainImage} alt={product.name} className="flex-1 w-full max-w-[600px] aspect-[4/5]" />
         </div>
 
         {/* Info module */}
@@ -161,10 +160,7 @@ export default function ProductDetail() {
             selected={selectedVariants}
             onSelect={(name, opt) => setSelectedVariants((s) => ({ ...s, [name]: opt }))}
             variantImageFor={variantImageFor}
-            onImageSelect={(imgUrl) => {
-              const idx = images.indexOf(imgUrl);
-              if (idx >= 0) setActiveImg(idx);
-            }}
+            onImageSelect={(imgUrl) => setVariantPreview(imgUrl)}
           />
           {product.variants?.length > 0 && !allVariantsSelected && (
             <p className="text-xs text-amber-600 mb-4">Please select all options above before adding to cart.</p>
@@ -256,7 +252,7 @@ export default function ProductDetail() {
         <div className="fixed bottom-0 left-0 right-0 lg:left-16 z-40 bg-foreground text-background border-t border-white/10 animate-[fadeInUp_0.4s_ease]">
           <div className="container-bleed px-4 sm:px-5 lg:px-10 py-3 lg:py-4 flex items-center justify-between gap-3 lg:gap-4">
             <div className="flex items-center gap-4 min-w-0">
-              {images[0] && <Image src={images[0]} alt="" className="w-12 h-12 object-cover shrink-0" fittingType="fill" />}
+              {baseImages[0] && <Image src={baseImages[0]} alt="" className="w-12 h-12 object-cover shrink-0" fittingType="fill" />}
               <div className="min-w-0">
                 <p className="text-sm font-semibold truncate">{product.name}</p>
                 <p className="text-xs text-background/60">{formatPrice(product.sale_price || product.price)}</p>

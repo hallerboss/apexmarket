@@ -142,7 +142,7 @@ export default function AdminProducts() {
   const uploadImage = async (file) => {
     setUploading(true);
     const { file_url } = await base44.integrations.Core.UploadFile({ file });
-    setEditing((e) => ({ ...e, images: [...(e.images || []), file_url] }));
+    setEditing((e) => ({ ...e, images: [...new Set([...(e.images || []), file_url])] }));
     setUploading(false);
   };
   const removeImage = (idx) => setEditing((e) => ({ ...e, images: e.images.filter((_, i) => i !== idx) }));
@@ -280,7 +280,7 @@ export default function AdminProducts() {
                   <Sparkles className="w-4 h-4" /> Ask AI Assistant (Free)
                 </button>
               </div>
-              <p className="text-[10px] text-white mt-2">Upload high-quality studio images, then use AI to auto-generate descriptions, features & SEO.</p>
+              <p className="text-[10px] text-white mt-2">Recommended image size: 600 × 750 px (4:5). Upload high-quality studio images, then use AI to auto-generate descriptions, features & SEO.</p>
             </div>
 
             <div>

@@ -26,7 +26,7 @@ export default function ProductCard({ product, index = 0, compareMode = false })
 
   return (
     <div className="group relative bg-white border border-[#eeeeee] rounded-md overflow-hidden flex flex-col transition-shadow hover:shadow-md">
-      <Link to={`/product/${product.id}`} className="relative block bg-white aspect-square overflow-hidden">
+      <Link to={`/product/${product.id}`} className="relative block bg-white aspect-[4/5] overflow-hidden">
         {product.images?.[0] ? (
           <Image src={product.images[0]} alt={product.name} className="w-full h-full" fittingType="fit" />
         ) : (
