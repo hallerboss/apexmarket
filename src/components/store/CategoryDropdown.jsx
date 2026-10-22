@@ -1,14 +1,10 @@
 import { useState, useEffect } from "react";
 import { List, ChevronDown } from "lucide-react";
-import { base44 } from "@/api/base44Client";
+import { useCategories } from "@/hooks/useCategories";
 
 export default function CategoryDropdown({ value, onSelect, label = "All Categories" }) {
   const [open, setOpen] = useState(false);
-  const [cats, setCats] = useState([]);
-
-  useEffect(() => {
-    base44.entities.Category.list().then(setCats).catch(() => {});
-  }, []);
+  const { categories: cats } = useCategories();
 
   const choose = (c) => {
     setOpen(false);

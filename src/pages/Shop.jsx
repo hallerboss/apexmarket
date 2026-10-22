@@ -7,6 +7,7 @@ import { Slider } from "@/components/ui/slider";
 import ShopProductCard from "@/components/store/ShopProductCard";
 import AdSenseAd from "@/components/store/AdSenseAd";
 import { categoryAncestors, categoryWithDescendants } from "@/lib/categoryTree";
+import { useCategories } from "@/hooks/useCategories";
 
 const sortOptions = [
   { value: "newest", label: "Default sorting" },
@@ -25,7 +26,7 @@ const colorFor = (n) => colorMap[String(n).toLowerCase()] || "#9ca3af";
 export default function Shop() {
   const [searchParams, setSearchParams] = useSearchParams();
   const [products, setProducts] = useState([]);
-  const [cats, setCats] = useState([]);
+  const { categories: cats } = useCategories();
   const [loading, setLoading] = useState(true);
   const [showFilters, setShowFilters] = useState(false);
   const [priceApplied, setPriceApplied] = useState([0, 500]);
@@ -44,12 +45,8 @@ export default function Shop() {
 
   useEffect(() => {
     setLoading(true);
-    Promise.all([
-      base44.entities.Product.list("-created_date", 200),
-      base44.entities.Category.list("order", 100),
-    ]).then(([p, c]) => {
+    base44.entities.Product.list("-created_date", 200).then((p) => {
       setProducts(p);
-      setCats(c);
       setLoading(false);
     });
   }, []);

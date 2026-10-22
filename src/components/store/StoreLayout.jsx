@@ -10,6 +10,7 @@ import SearchBar from "@/components/store/SearchBar";
 import CategoryNav from "@/components/store/CategoryNav";
 import MobileCategoryTree from "@/components/store/MobileCategoryTree";
 import { base44 } from "@/api/base44Client";
+import { useCategories } from "@/hooks/useCategories";
 import CurrencySwitcher from "@/components/store/CurrencySwitcher";
 import AuthButtons from "@/components/store/AuthButtons";
 import GoogleAnalyticsLoader from "@/components/GoogleAnalyticsLoader";
@@ -32,7 +33,7 @@ export default function StoreLayout() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [menuTab, setMenuTab] = useState("main");
-  const [categories, setCategories] = useState([]);
+  const { categories } = useCategories(50);
   const [navSearch, setNavSearch] = useState("");
   const { count } = useCart();
   const { count: wishlistCount } = useWishlist();
@@ -47,10 +48,6 @@ export default function StoreLayout() {
   useEffect(() => {
     trackPageView(location.pathname + location.search);
   }, [location.pathname, location.search]);
-
-  useEffect(() => {
-    base44.entities.Category.list("order", 50).then(setCategories).catch(() => {});
-  }, []);
 
   return (
     <div className="min-h-screen bg-background">

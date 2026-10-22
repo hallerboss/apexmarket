@@ -1,6 +1,8 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useSearchParams } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
+import { useCategories } from "@/hooks/useCategories";
+import { buildCategoryTree } from "@/lib/categoryTree";
 import { Image as ImageIcon, Upload, X, Plus, Pencil, Trash2, Search, Sparkles, Link2 } from "lucide-react";
 import RichTextEditor from "@/components/admin/RichTextEditor";
 import ProductAgentChat from "@/components/admin/ProductAgentChat";
@@ -46,7 +48,7 @@ const emptyProduct = {
 export default function AdminProducts() {
   const [searchParams, setSearchParams] = useSearchParams();
   const [products, setProducts] = useState([]);
-  const [categories, setCategories] = useState([]);
+  const { categories } = useCategories();
   const [loading, setLoading] = useState(true);
   const [editing, setEditing] = useState(null);
   const [search, setSearch] = useState("");
@@ -69,7 +71,6 @@ export default function AdminProducts() {
 
   useEffect(() => {
     load();
-    base44.entities.Category.list("order", 100).then(setCategories).catch(() => {});
     if (isNew) setEditing({ ...emptyProduct });
   }, []);
 
@@ -80,8 +81,17 @@ export default function AdminProducts() {
   const filtered = products.filter((p) => p.name.toLowerCase().includes(search.toLowerCase()));
 
   // Hierarchical categories: top-level + children grouped by parent
-  const tops = categories.filter((c) => !c.parent).sort((a, b) => (a.order || 0) - (b.order || 0));
-  const childrenOf = (name) => categories.filter((c) => c.parent === name);
+  // Every category, nested to any depth, listed with its full path.
+  const categoryOptions = useMemo(() => {
+    const out = [];
+    const walk = (nodes, prefix) => nodes.forEach((n) => {
+      const path = [...prefix, n.name];
+      out.push({ name: n.name, depth: prefix.length, path });
+      walk(n.children, path);
+    });
+    walk(buildCategoryTree(categories), []);
+    return out;
+  }, [categories]);
 
   const startEdit = (p) => {
     setEditing({
@@ -310,17 +320,9 @@ export default function AdminProducts() {
                 <label className="admin-label">Category</label>
                 <select value={editing.category} onChange={(e) => setEditing({ ...editing, category: e.target.value })} className="admin-input">
                   <option value="">— Select category —</option>
-                  {tops.map((c) => {
-                    const kids = childrenOf(c.name);
-                    return kids.length ? (
-                      <optgroup key={c.id} label={c.name}>
-                        <option value={c.name}>{c.name}</option>
-                        {kids.map((k) => <option key={k.id} value={k.name}>{c.name} › {k.name}</option>)}
-                      </optgroup>
-                    ) : (
-                      <option key={c.id} value={c.name}>{c.name}</option>
-                    );
-                  })}
+                  {categoryOptions.map((o) => (
+                    <option key={o.name} value={o.name}>{"— ".repeat(o.depth)}{o.path.join(" / ")}</option>
+                  ))}
                 </select>
               </div>
               <div>
@@ -571,9 +573,9 @@ export default function AdminProducts() {
               <label className="flex items-center gap-2 text-sm"><input type="checkbox" checked={bulkEdit.applyCategory} onChange={(e) => setBulkEdit({ ...bulkEdit, applyCategory: e.target.checked })} className="accent-accent w-4 h-4" /> Category</label>
               <select disabled={!bulkEdit.applyCategory} value={bulkEdit.category} onChange={(e) => setBulkEdit({ ...bulkEdit, category: e.target.value })} className="admin-input disabled:opacity-40">
                 <option value="">— Select category —</option>
-                {tops.map((c) => { const kids = childrenOf(c.name); return kids.length ? (
-                  <optgroup key={c.id} label={c.name}><option value={c.name}>{c.name}</option>{kids.map((k) => <option key={k.id} value={k.name}>{c.name} › {k.name}</option>)}</optgroup>
-                ) : <option key={c.id} value={c.name}>{c.name}</option>; })}
+                {categoryOptions.map((o) => (
+                  <option key={o.name} value={o.name}>{"— ".repeat(o.depth)}{o.path.join(" / ")}</option>
+                ))}
               </select>
             </div>
             <div className="space-y-2">

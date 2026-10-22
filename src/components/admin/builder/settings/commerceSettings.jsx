@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Field, SelectField, ItemsEditor } from "@/components/admin/builder/BuilderFields";
 import { base44 } from "@/api/base44Client";
+import { useCategories } from "@/hooks/useCategories";
 
 const COLUMN_OPTIONS = [
   { label: "2 columns", value: "2" },
@@ -9,10 +10,7 @@ const COLUMN_OPTIONS = [
 ];
 
 function Products({ block, set }) {
-  const [categories, setCategories] = useState([]);
-  useEffect(() => {
-    base44.entities.Category.list("order", 100).then(setCategories).catch(() => {});
-  }, []);
+  const { categories } = useCategories();
 
   return (
     <>

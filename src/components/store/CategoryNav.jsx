@@ -3,8 +3,8 @@ import { Link } from "react-router-dom";
 import { ChevronDown, MapPin, History, Package } from "lucide-react";
 import AllCategoriesMenu from "@/components/store/AllCategoriesMenu";
 import CategoryNavDropdown from "@/components/store/CategoryNavDropdown";
-import { base44 } from "@/api/base44Client";
 import { buildCategoryTree } from "@/lib/categoryTree";
+import { useCategories } from "@/hooks/useCategories";
 
 const links = [
   { label: "Home", path: "/" },
@@ -17,11 +17,7 @@ const links = [
 ];
 
 export default function CategoryNav() {
-  const [cats, setCats] = useState([]);
-
-  useEffect(() => {
-    base44.entities.Category.list("order", 100).then(setCats).catch(() => {});
-  }, []);
+  const { categories: cats } = useCategories();
 
   const dropdowns = buildCategoryTree(cats).filter((c) => c.children.length > 0);
 

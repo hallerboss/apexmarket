@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { List, ChevronDown, ChevronRight, ArrowRight } from "lucide-react";
 import { base44 } from "@/api/base44Client";
 import { buildCategoryTree } from "@/lib/categoryTree";
+import { useCategories } from "@/hooks/useCategories";
 
 const MEGA = [
   {
@@ -190,12 +191,11 @@ function SubcategoryNode({ node, onSelect, depth = 0, indent = true }) {
 export default function AllCategoriesMenu() {
   const [open, setOpen] = useState(false);
   const [active, setActive] = useState(0);
-  const [cats, setCats] = useState([]);
+  const { categories: cats } = useCategories();
   const [banners, setBanners] = useState([]);
   const navigate = useNavigate();
 
   useEffect(() => {
-    base44.entities.Category.list("order", 100).then(setCats).catch(() => {});
     base44.entities.Banner.filter({ active: true }).then(setBanners).catch(() => {});
   }, []);
 
