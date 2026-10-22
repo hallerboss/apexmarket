@@ -4,6 +4,7 @@ import { base44 } from "@/api/base44Client";
 import { Package, ShoppingCart, Star, FolderTree, TrendingUp, DollarSign, Clock, AlertTriangle } from "lucide-react";
 import LowStockAlerts from "@/components/admin/LowStockAlerts";
 import AnalyticsOverview from "@/components/admin/AnalyticsOverview";
+import ExportOrdersButton from "@/components/admin/ExportOrdersButton";
 
 export default function AdminDashboard() {
   const [stats, setStats] = useState({ products: 0, orders: 0, reviews: 0, pendingReviews: 0, categories: 0, revenue: 0, pendingOrders: 0, lowStock: 0 });
@@ -54,9 +55,12 @@ export default function AdminDashboard() {
 
   return (
     <div className="space-y-8">
-      <div>
-        <h2 className="display-text text-3xl">Dashboard</h2>
-        <p className="text-sm text-black/50 mt-1">High-velocity overview of your retail ecosystem.</p>
+      <div className="flex flex-wrap items-center justify-between gap-4">
+        <div>
+          <h2 className="display-text text-3xl">Dashboard</h2>
+          <p className="text-sm text-black/50 mt-1">High-velocity overview of your retail ecosystem.</p>
+        </div>
+        <ExportOrdersButton />
       </div>
 
       {/* Stat grid — 2-column white cards */}
