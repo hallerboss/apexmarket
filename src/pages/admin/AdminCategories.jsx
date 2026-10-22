@@ -1,8 +1,34 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { base44 } from "@/api/base44Client";
 import { Plus, Pencil, Trash2, X, Upload } from "lucide-react";
+import { buildCategoryTree, categoryDescendants } from "@/lib/categoryTree";
 
 const empty = { name: "", slug: "", description: "", image: "", parent: "", order: 0 };
+
+const INDENT = { 0: "pl-5", 1: "pl-11", 2: "pl-16", 3: "pl-20" };
+
+function CategoryRow({ node, depth, onEdit, onDelete }) {
+  return (
+    <>
+      <div className={`py-4 pr-5 flex items-center gap-4 hover:bg-white/[0.02] ${INDENT[depth] || "pl-20"}`}>
+        <div className="w-12 h-12 bg-white/5 shrink-0 overflow-hidden">
+          {node.image ? <img src={node.image} alt="" className="w-full h-full object-cover" /> : null}
+        </div>
+        <div className="flex-1">
+          <p className="text-sm font-medium text-white">{node.name}</p>
+          <p className="text-xs text-white/40">{node.parent ? `Under ${node.parent}` : "Top level"} · Order {node.order}</p>
+        </div>
+        <div className="flex gap-1">
+          <button onClick={() => onEdit(node)} className="p-2 text-white/50 hover:text-accent"><Pencil className="w-4 h-4" /></button>
+          <button onClick={() => onDelete(node)} className="p-2 text-white/50 hover:text-red-400"><Trash2 className="w-4 h-4" /></button>
+        </div>
+      </div>
+      {node.children.map((child) => (
+        <CategoryRow key={child.id} node={child} depth={depth + 1} onEdit={onEdit} onDelete={onDelete} />
+      ))}
+    </>
+  );
+}
 
 export default function AdminCategories() {
   const [cats, setCats] = useState([]);
@@ -15,6 +41,33 @@ export default function AdminCategories() {
     base44.entities.Category.list("order", 100).then((d) => { setCats(d); setLoading(false); });
   };
   useEffect(() => { load(); }, []);
+
+  const tree = useMemo(() => buildCategoryTree(cats), [cats]);
+
+  const parentOptions = useMemo(() => {
+    const excluded = new Set();
+    if (editing?.id) {
+      const find = (nodes) => {
+        for (const n of nodes) {
+          if (n.id === editing.id) {
+            excluded.add(n.name);
+            categoryDescendants(n).forEach((d) => excluded.add(d.name));
+            return true;
+          }
+          if (find(n.children)) return true;
+        }
+        return false;
+      };
+      find(tree);
+    }
+    const out = [];
+    const walk = (nodes, depth) => nodes.forEach((n) => {
+      if (!excluded.has(n.name)) out.push({ name: n.name, depth });
+      walk(n.children, depth + 1);
+    });
+    walk(tree, 0);
+    return out;
+  }, [tree, editing?.id]);
 
   const closeForm = () => { setEditing(null); setChildren([]); };
 
@@ -62,7 +115,16 @@ export default function AdminCategories() {
           </div>
           <div className="grid md:grid-cols-2 gap-4">
             <div><label className="admin-label">Name</label><input required value={editing.name} onChange={(e) => setEditing({ ...editing, name: e.target.value })} className="admin-input" /></div>
-            <div><label className="admin-label">Parent (optional)</label><input value={editing.parent} onChange={(e) => setEditing({ ...editing, parent: e.target.value })} className="admin-input" /></div>
+            <div>
+              <label className="admin-label">Parent (optional)</label>
+              <select value={editing.parent || ""} onChange={(e) => setEditing({ ...editing, parent: e.target.value })} className="admin-input">
+                <option value="">— Top level —</option>
+                {parentOptions.map((o) => (
+                  <option key={o.name} value={o.name}>{"— ".repeat(o.depth)}{o.name}</option>
+                ))}
+              </select>
+              <p className="text-[11px] text-white/40 mt-2">Pick any category — including a subcategory — to nest this one deeper.</p>
+            </div>
           </div>
 
           {!editing.id && (
@@ -120,20 +182,14 @@ export default function AdminCategories() {
           <div className="p-12 text-center text-white/30 text-sm">No categories yet.</div>
         ) : (
           <div className="divide-y divide-white/5">
-            {cats.map((c) => (
-              <div key={c.id} className="px-5 py-4 flex items-center gap-4 hover:bg-white/[0.02]">
-                <div className="w-12 h-12 bg-white/5 shrink-0 overflow-hidden">
-                  {c.image ? <img src={c.image} alt="" className="w-full h-full object-cover" /> : null}
-                </div>
-                <div className="flex-1">
-                  <p className="text-sm font-medium text-white">{c.name}</p>
-                  <p className="text-xs text-white/40">{c.parent ? `Under ${c.parent}` : "Top level"} · Order {c.order}</p>
-                </div>
-                <div className="flex gap-1">
-                  <button onClick={() => { setEditing({ ...c }); setChildren([]); }} className="p-2 text-white/50 hover:text-accent"><Pencil className="w-4 h-4" /></button>
-                  <button onClick={() => { if (confirm("Delete?")) base44.entities.Category.delete(c.id).then(load); }} className="p-2 text-white/50 hover:text-red-400"><Trash2 className="w-4 h-4" /></button>
-                </div>
-              </div>
+            {tree.map((node) => (
+              <CategoryRow
+                key={node.id}
+                node={node}
+                depth={0}
+                onEdit={(c) => { setEditing({ ...c }); setChildren([]); }}
+                onDelete={(c) => { if (confirm("Delete?")) base44.entities.Category.delete(c.id).then(load); }}
+              />
             ))}
           </div>
         )}
