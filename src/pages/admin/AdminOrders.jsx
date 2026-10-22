@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
 import { Eye, X, Trash2 } from "lucide-react";
+import ExportOrdersButton from "@/components/admin/ExportOrdersButton";
 import { TRACKING_STAGES, stageLabel } from "@/lib/orderTracking";
 
 const statuses = ["pending", "processing", "shipped", "delivered", "cancelled"];
@@ -153,9 +154,12 @@ export default function AdminOrders() {
 
   return (
     <div>
-      <div className="mb-8">
-        <h2 className="display-text text-2xl text-white">Orders</h2>
-        <p className="text-sm text-white/40 mt-1">{orders.length} total orders</p>
+      <div className="mb-8 flex flex-wrap items-center justify-between gap-4">
+        <div>
+          <h2 className="display-text text-2xl text-white">Orders</h2>
+          <p className="text-sm text-white/40 mt-1">{orders.length} total orders</p>
+        </div>
+        <ExportOrdersButton variant="dark" />
       </div>
       <div className="bg-[#0a0a0a] border border-white/5 overflow-x-auto">
         {loading ? <div className="p-12 text-center text-white/30 text-sm">Loading…</div> : orders.length === 0 ? (

@@ -9,7 +9,7 @@ const HEADERS = [
   "Items", "Subtotal", "Shipping", "Total", "Tracking Number", "Carrier",
 ];
 
-export default function ExportOrdersButton() {
+export default function ExportOrdersButton({ variant = "light" }) {
   const [exporting, setExporting] = useState(false);
 
   const exportCsv = async () => {
@@ -57,7 +57,9 @@ export default function ExportOrdersButton() {
     <button
       onClick={exportCsv}
       disabled={exporting}
-      className="bg-black text-white px-5 py-2.5 text-xs font-semibold uppercase tracking-[0.15em] hover:bg-black/80 disabled:opacity-50 flex items-center gap-2"
+      className={`px-5 py-2.5 text-xs font-semibold uppercase tracking-[0.15em] disabled:opacity-50 flex items-center gap-2 ${
+        variant === "dark" ? "bg-accent text-white hover:bg-accent/90" : "bg-black text-white hover:bg-black/80"
+      }`}
     >
       <Download className="w-4 h-4" /> {exporting ? "Exporting…" : "Export Orders CSV"}
     </button>

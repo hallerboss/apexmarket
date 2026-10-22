@@ -5,6 +5,7 @@ import { Package, ShoppingCart, Star, FolderTree, TrendingUp, DollarSign, Clock,
 import LowStockAlerts from "@/components/admin/LowStockAlerts";
 import AnalyticsOverview from "@/components/admin/AnalyticsOverview";
 import ExportOrdersButton from "@/components/admin/ExportOrdersButton";
+import SearchConsolePanel from "@/components/admin/SearchConsolePanel";
 
 export default function AdminDashboard() {
   const [stats, setStats] = useState({ products: 0, orders: 0, reviews: 0, pendingReviews: 0, categories: 0, revenue: 0, pendingOrders: 0, lowStock: 0 });
@@ -84,6 +85,9 @@ export default function AdminDashboard() {
         <LowStockAlerts products={products} />
         <AnalyticsOverview />
       </div>
+
+      {/* Google Search Console performance */}
+      <SearchConsolePanel />
 
       {/* Recent orders */}
       <div className="bg-[#0a0a0a] border border-white/5">
