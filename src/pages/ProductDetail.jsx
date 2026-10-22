@@ -113,7 +113,6 @@ export default function ProductDetail() {
 
         {/* Info module */}
         <div className="lg:py-4">
-          {product.brand && <p className="text-[11px] uppercase tracking-[0.25em] text-accent font-semibold mb-3">{product.brand}</p>}
           <h1 className="display-text text-3xl sm:text-4xl lg:text-5xl mb-4">{product.name}</h1>
           {product.rating > 0 && (
             <div className="flex items-center gap-2 mb-6">

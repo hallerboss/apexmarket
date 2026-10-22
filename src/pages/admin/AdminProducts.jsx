@@ -36,7 +36,7 @@ const AUTO_OPTIONS = {
 };
 
 const emptyProduct = {
-  name: "", slug: "", description: "", short_description: "", price: 0, sale_price: 0,
+  name: "", slug: "", description: "", short_description: "", price: "", sale_price: "",
   sku: "", category: "", brand: "", images: [], stock: 0, rating: 0, reviews_count: 0,
   featured: false, is_new: false, best_seller: false, top_rated: false, tags: [],
   variants: [], variant_images: [], seo_title: "", meta_description: "", focus_keywords: [],
@@ -100,7 +100,12 @@ export default function AdminProducts() {
 
   const save = (e) => {
     e.preventDefault();
-    const data = { ...editing, slug: editing.slug || editing.name.toLowerCase().replace(/\s+/g, "-") };
+    const data = {
+      ...editing,
+      slug: editing.slug || editing.name.toLowerCase().replace(/\s+/g, "-"),
+      price: parseFloat(editing.price) || 0,
+      sale_price: parseFloat(editing.sale_price) || 0,
+    };
     if (data.id) {
       base44.entities.Product.update(data.id, data).then(() => { load(); setEditing(null); });
     } else {
@@ -158,8 +163,8 @@ export default function AdminProducts() {
         name: d.name || "",
         description: d.description || "",
         short_description: d.short_description || "",
-        price: d.price || 0,
-        sale_price: d.sale_price || 0,
+        price: d.price ?? "",
+        sale_price: d.sale_price ?? "",
         brand: d.brand || "",
         category: d.category || "",
         sku: d.sku || "",
@@ -293,11 +298,11 @@ export default function AdminProducts() {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <label className="admin-label">Price ($)</label>
-                <input type="number" step="0.01" required value={editing.price} onChange={(e) => setEditing({ ...editing, price: parseFloat(e.target.value) || 0 })} className="admin-input" />
+                <input type="number" step="0.01" required value={editing.price ?? ""} onChange={(e) => setEditing({ ...editing, price: e.target.value })} className="admin-input" />
               </div>
               <div>
                 <label className="admin-label">Sale Price ($)</label>
-                <input type="number" step="0.01" value={editing.sale_price} onChange={(e) => setEditing({ ...editing, sale_price: parseFloat(e.target.value) || 0 })} className="admin-input" />
+                <input type="number" step="0.01" value={editing.sale_price ?? ""} onChange={(e) => setEditing({ ...editing, sale_price: e.target.value })} className="admin-input" />
               </div>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">

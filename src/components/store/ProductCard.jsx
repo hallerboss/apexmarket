@@ -57,7 +57,6 @@ export default function ProductCard({ product, index = 0, compareMode = false })
       </Link>
 
       <div className="p-4 flex flex-col gap-3 flex-1">
-        {product.brand && <p className="text-[11px] uppercase tracking-wide text-muted-foreground">{product.brand}</p>}
         <Link to={`/product/${product.id}`}>
           <h3 className="text-sm text-foreground font-normal leading-snug line-clamp-2 hover:text-accent transition-colors min-h-[2.5rem]">
             {product.name}

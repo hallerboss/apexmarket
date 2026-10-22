@@ -8,6 +8,7 @@ export default function AdminCategories() {
   const [cats, setCats] = useState([]);
   const [loading, setLoading] = useState(true);
   const [editing, setEditing] = useState(null);
+  const [children, setChildren] = useState([]);
 
   const load = () => {
     setLoading(true);
@@ -15,11 +16,25 @@ export default function AdminCategories() {
   };
   useEffect(() => { load(); }, []);
 
+  const closeForm = () => { setEditing(null); setChildren([]); };
+
   const save = (e) => {
     e.preventDefault();
     const data = { ...editing, slug: editing.slug || editing.name.toLowerCase().replace(/\s+/g, "-") };
-    if (data.id) base44.entities.Category.update(data.id, data).then(() => { load(); setEditing(null); });
-    else base44.entities.Category.create(data).then(() => { load(); setEditing(null); });
+    const kids = children.map((c) => c.trim()).filter(Boolean);
+    if (data.id) {
+      base44.entities.Category.update(data.id, data).then(() => { load(); closeForm(); });
+    } else {
+      base44.entities.Category.create(data).then(async () => {
+        if (kids.length) {
+          await base44.entities.Category.bulkCreate(
+            kids.map((name) => ({ name, slug: name.toLowerCase().replace(/\s+/g, "-"), parent: data.name, order: 0 }))
+          );
+        }
+        load();
+        closeForm();
+      });
+    }
   };
 
   const uploadImg = async (file) => {
@@ -34,7 +49,7 @@ export default function AdminCategories() {
           <h2 className="display-text text-2xl text-white">Categories</h2>
           <p className="text-sm text-white/40 mt-1">{cats.length} departments</p>
         </div>
-        <button onClick={() => setEditing({ ...empty })} className="bg-accent text-white px-5 py-2.5 text-xs font-semibold uppercase tracking-[0.2em] hover:bg-accent/90 flex items-center gap-2">
+        <button onClick={() => { setEditing({ ...empty }); setChildren([]); }} className="bg-accent text-white px-5 py-2.5 text-xs font-semibold uppercase tracking-[0.2em] hover:bg-accent/90 flex items-center gap-2">
           <Plus className="w-4 h-4" /> Add Category
         </button>
       </div>
@@ -43,12 +58,41 @@ export default function AdminCategories() {
         <form onSubmit={save} className="bg-[#0a0a0a] border border-white/5 p-6 mb-6 space-y-4">
           <div className="flex items-center justify-between">
             <h3 className="text-sm font-semibold">{editing.id ? "Edit Category" : "New Category"}</h3>
-            <button type="button" onClick={() => setEditing(null)} className="text-white/50 hover:text-white"><X className="w-4 h-4" /></button>
+            <button type="button" onClick={closeForm} className="text-white/50 hover:text-white"><X className="w-4 h-4" /></button>
           </div>
           <div className="grid md:grid-cols-2 gap-4">
             <div><label className="admin-label">Name</label><input required value={editing.name} onChange={(e) => setEditing({ ...editing, name: e.target.value })} className="admin-input" /></div>
             <div><label className="admin-label">Parent (optional)</label><input value={editing.parent} onChange={(e) => setEditing({ ...editing, parent: e.target.value })} className="admin-input" /></div>
           </div>
+
+          {!editing.id && (
+            <div>
+              <label className="admin-label">Child Categories (optional)</label>
+              {children.length === 0 ? (
+                <button type="button" onClick={() => setChildren([""])} className="text-xs text-accent hover:underline">+ Add child category</button>
+              ) : (
+                <div className="space-y-2">
+                  {children.map((child, i) => (
+                    <div key={i} className="flex items-center gap-2">
+                      <input
+                        value={child}
+                        onChange={(e) => setChildren(children.map((v, idx) => (idx === i ? e.target.value : v)))}
+                        placeholder="Child category name"
+                        className="admin-input"
+                      />
+                      <button type="button" onClick={() => setChildren(children.filter((_, idx) => idx !== i))} className="p-2 text-white/50 hover:text-red-400 shrink-0" aria-label="Remove child category">
+                        <X className="w-4 h-4" />
+                      </button>
+                    </div>
+                  ))}
+                  {children[children.length - 1]?.trim() && (
+                    <button type="button" onClick={() => setChildren([...children, ""])} className="text-xs text-accent hover:underline">+ Add another child category</button>
+                  )}
+                </div>
+              )}
+              <p className="text-[11px] text-white/40 mt-2">Each child is created under “{editing.name || "this category"}”.</p>
+            </div>
+          )}
           <div><label className="admin-label">Description</label><textarea rows={2} value={editing.description} onChange={(e) => setEditing({ ...editing, description: e.target.value })} className="admin-input resize-none" /></div>
           <div className="grid md:grid-cols-2 gap-4">
             <div>
@@ -86,7 +130,7 @@ export default function AdminCategories() {
                   <p className="text-xs text-white/40">{c.parent ? `Under ${c.parent}` : "Top level"} · Order {c.order}</p>
                 </div>
                 <div className="flex gap-1">
-                  <button onClick={() => setEditing({ ...c })} className="p-2 text-white/50 hover:text-accent"><Pencil className="w-4 h-4" /></button>
+                  <button onClick={() => { setEditing({ ...c }); setChildren([]); }} className="p-2 text-white/50 hover:text-accent"><Pencil className="w-4 h-4" /></button>
                   <button onClick={() => { if (confirm("Delete?")) base44.entities.Category.delete(c.id).then(load); }} className="p-2 text-white/50 hover:text-red-400"><Trash2 className="w-4 h-4" /></button>
                 </div>
               </div>

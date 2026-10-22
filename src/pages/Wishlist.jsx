@@ -56,7 +56,7 @@ export default function Wishlist() {
                 </Link>
                 <div className="flex-1 min-w-0">
                   <Link to={`/product/${p.id}`}><h3 className="text-sm font-medium line-clamp-2 hover:text-accent">{p.name}</h3></Link>
-                  <p className="text-xs text-muted-foreground mt-0.5">{p.brand}{p.brand && p.category ? " · " : ""}{p.category}</p>
+                  <p className="text-xs text-muted-foreground mt-0.5">{p.category}</p>
                   <p className="text-sm font-bold mt-1">{formatPrice(p.sale_price || p.price)}</p>
                 </div>
                 <div className="flex items-center gap-2 shrink-0">

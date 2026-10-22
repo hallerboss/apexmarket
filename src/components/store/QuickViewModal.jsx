@@ -62,12 +62,7 @@ export default function QuickViewModal({ product, onClose }) {
 
         {/* Info */}
         <div className="p-5 sm:p-6 lg:p-8 flex flex-col">
-          <div className="flex justify-between items-start gap-3 mb-3">
-            {product.brand ? (
-              <p className="text-[11px] uppercase tracking-[0.25em] text-accent font-semibold">{product.brand}</p>
-            ) : (
-              <span />
-            )}
+          <div className="flex justify-end mb-3">
             <button onClick={onClose} className="p-1 hover:text-accent -mt-1 shrink-0" aria-label="Close"><X className="w-5 h-5" /></button>
           </div>
           <h2 className="display-text text-2xl lg:text-3xl mb-3">{product.name}</h2>

@@ -96,7 +96,7 @@ export default function Profile() {
     { id: "orders", label: "Orders", icon: Package, count: orders.length },
     { id: "cart", label: "Cart", icon: ShoppingCart, count: cartCount },
     { id: "reviews", label: "Reviews", icon: Star, count: reviews.length },
-    { id: "saved", label: "Saved Items", icon: Heart },
+    { id: "saved", label: "Wishlist", icon: Heart },
   ];
 
   return (
