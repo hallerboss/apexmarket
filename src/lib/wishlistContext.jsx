@@ -1,19 +1,46 @@
-import { createContext, useContext, useState, useEffect } from "react";
+import { createContext, useContext, useState, useEffect, useRef } from "react";
+import { base44 } from "@/api/base44Client";
+import { useAuth } from "@/lib/AuthContext";
 
 const WishlistContext = createContext(null);
+const STORAGE_KEY = "wishlistIds";
+
+const readLocal = () => {
+  try {
+    return JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
+  } catch {
+    return [];
+  }
+};
 
 export function WishlistProvider({ children }) {
-  const [ids, setIds] = useState(() => {
-    try {
-      return JSON.parse(localStorage.getItem("wishlistIds") || "[]");
-    } catch {
-      return [];
-    }
-  });
+  const { user } = useAuth();
+  const [ids, setIds] = useState(readLocal);
+  const loadedFor = useRef(undefined);
 
+  // When a customer signs in, load the wishlist saved on their account
+  // (a guest list is moved into the account on first sign-in).
   useEffect(() => {
-    localStorage.setItem("wishlistIds", JSON.stringify(ids));
-  }, [ids]);
+    const userId = user?.id || null;
+    if (loadedFor.current === userId) return;
+    loadedFor.current = userId;
+    if (!userId) return;
+    const saved = Array.isArray(user.wishlist) ? user.wishlist : [];
+    const guest = readLocal();
+    const next = saved.length ? saved : guest;
+    setIds(next);
+    if (!saved.length && guest.length) {
+      base44.auth.updateMe({ wishlist: guest }).catch(() => {});
+    }
+  }, [user]);
+
+  // Mirror every change to local storage and to the signed-in customer's account.
+  useEffect(() => {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(ids));
+    if (user?.id) {
+      base44.auth.updateMe({ wishlist: ids }).catch(() => {});
+    }
+  }, [ids, user?.id]);
 
   const has = (id) => ids.includes(id);
   const toggle = (id) =>

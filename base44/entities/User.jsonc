@@ -1,4 +1,6 @@
 {
+  "name": "User",
+  "type": "object",
   "properties": {
     "role": {
       "type": "string",
@@ -7,11 +9,17 @@
         "admin",
         "user"
       ]
+    },
+    "wishlist": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "title": "Wishlist",
+      "description": "Product IDs this customer has saved to their wishlist"
     }
   },
   "required": [
     "role"
-  ],
-  "name": "User",
-  "type": "object"
+  ]
 }

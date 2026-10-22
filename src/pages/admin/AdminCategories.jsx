@@ -16,7 +16,22 @@ function CategoryRow({ node, depth, onEdit, onDelete }) {
         </div>
         <div className="flex-1">
           <p className="text-sm font-medium text-white">{node.name}</p>
-          <p className="text-xs text-white/40">{node.parent ? `Under ${node.parent}` : "Top level"} · Order {node.order}</p>
+          <p className="text-xs text-white/40 mt-0.5 flex flex-wrap items-center gap-1">
+            {node.parent ? (
+              <>
+                <span className="text-white/25">/</span>
+                {(node.path || []).map((p, i) => (
+                  <span key={i} className="flex items-center gap-1">
+                    <span className={i === (node.path || []).length - 1 ? "text-white/70" : ""}>{p}</span>
+                    <span className="text-white/25">/</span>
+                  </span>
+                ))}
+              </>
+            ) : (
+              <span>Top level</span>
+            )}
+            <span>· Order {node.order}</span>
+          </p>
         </div>
         <div className="flex gap-1">
           <button onClick={() => onEdit(node)} className="p-2 text-white/50 hover:text-accent"><Pencil className="w-4 h-4" /></button>
@@ -61,13 +76,19 @@ export default function AdminCategories() {
       find(tree);
     }
     const out = [];
-    const walk = (nodes, depth) => nodes.forEach((n) => {
-      if (!excluded.has(n.name)) out.push({ name: n.name, depth });
-      walk(n.children, depth + 1);
+    const walk = (nodes, prefix) => nodes.forEach((n) => {
+      const path = [...prefix, n.name];
+      if (!excluded.has(n.name)) out.push({ name: n.name, depth: prefix.length, path });
+      walk(n.children, path);
     });
-    walk(tree, 0);
+    walk(tree, []);
     return out;
   }, [tree, editing?.id]);
+
+  const parentPath = useMemo(
+    () => parentOptions.find((o) => o.name === editing?.parent)?.path || [],
+    [parentOptions, editing?.parent]
+  );
 
   const closeForm = () => { setEditing(null); setChildren([]); };
 
@@ -120,10 +141,21 @@ export default function AdminCategories() {
               <select value={editing.parent || ""} onChange={(e) => setEditing({ ...editing, parent: e.target.value })} className="admin-input">
                 <option value="">— Top level —</option>
                 {parentOptions.map((o) => (
-                  <option key={o.name} value={o.name}>{"— ".repeat(o.depth)}{o.name}</option>
+                  <option key={o.name} value={o.name}>{"— ".repeat(o.depth)}{o.path.join(" / ")}</option>
                 ))}
               </select>
-              <p className="text-[11px] text-white/40 mt-2">Pick any category — including a subcategory — to nest this one deeper.</p>
+              {parentPath.length > 0 && (
+                <p className="text-[11px] text-white/60 mt-2 flex flex-wrap items-center gap-1">
+                  <span className="text-white/30">/</span>
+                  {parentPath.map((p, i) => (
+                    <span key={i} className="flex items-center gap-1">
+                      <span className={i === parentPath.length - 1 ? "text-accent" : "text-white/60"}>{p}</span>
+                      <span className="text-white/30">/</span>
+                    </span>
+                  ))}
+                </p>
+              )}
+              <p className="text-[11px] text-white/40 mt-2">Pick any category — including a subcategory — to nest this one deeper. The full path is shown for every option.</p>
             </div>
           </div>
 
