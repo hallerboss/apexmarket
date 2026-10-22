@@ -6,6 +6,7 @@ import { Image } from "@/components/ui/image";
 import { Slider } from "@/components/ui/slider";
 import ShopProductCard from "@/components/store/ShopProductCard";
 import AdSenseAd from "@/components/store/AdSenseAd";
+import { categoryAncestors, categoryWithDescendants } from "@/lib/categoryTree";
 
 const sortOptions = [
   { value: "newest", label: "Default sorting" },
@@ -92,10 +93,12 @@ export default function Shop() {
   }, [products]);
 
   const catList = cats.length ? cats.map((c) => c.name) : Object.keys(catCounts);
+  const categoryTrail = useMemo(() => categoryAncestors(cats, activeCategory), [cats, activeCategory]);
+  const categoryBranch = useMemo(() => categoryWithDescendants(cats, activeCategory), [cats, activeCategory]);
 
   const filtered = useMemo(() => {
     let r = [...products];
-    if (activeCategory) r = r.filter((p) => p.category === activeCategory);
+    if (activeCategory) r = r.filter((p) => categoryBranch.includes(p.category));
     if (query) {
       const ql = query.toLowerCase();
       r = r.filter((p) =>
@@ -128,7 +131,7 @@ export default function Shop() {
       default: break;
     }
     return r;
-  }, [products, activeCategory, query, dealsOnly, minPrice, maxPrice, selSizes, selColors, selBrand, sort]);
+  }, [products, categoryBranch, query, dealsOnly, minPrice, maxPrice, selSizes, selColors, selBrand, sort]);
 
   const shown = filtered.slice(0, showCount);
 
@@ -252,8 +255,23 @@ export default function Shop() {
         <div className="border-b border-[#eee] bg-white">
           <div className="container-bleed px-5 lg:px-10 py-3 text-sm text-[#999] flex items-center gap-1.5">
             <Link to="/" className="hover:text-[#0066ff]">Home</Link>
-            <ChevronRight className="w-3.5 h-3.5" />
-            <span className="text-[#333]">{activeCategory || "Shop"}</span>
+            {categoryTrail.length === 0 ? (
+              <>
+                <ChevronRight className="w-3.5 h-3.5" />
+                <span className="text-[#333]">Shop</span>
+              </>
+            ) : (
+              categoryTrail.map((name, i) => (
+                <span key={name} className="flex items-center gap-1.5">
+                  <ChevronRight className="w-3.5 h-3.5" />
+                  {i === categoryTrail.length - 1 ? (
+                    <span className="text-[#333] bg-[#f2f2f2] px-2 py-0.5">{name}</span>
+                  ) : (
+                    <button onClick={() => setParam("category", name)} className="hover:text-[#0066ff]">{name}</button>
+                  )}
+                </span>
+              ))
+            )}
           </div>
         </div>
 

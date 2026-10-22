@@ -1,7 +1,8 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { List, ChevronDown, ChevronRight, ArrowRight } from "lucide-react";
 import { base44 } from "@/api/base44Client";
+import { buildCategoryTree } from "@/lib/categoryTree";
 
 const MEGA = [
   {
@@ -168,6 +169,24 @@ function PromoBlock({ promo, onShop }) {
   );
 }
 
+function SubcategoryNode({ node, onSelect, depth = 0, indent = true }) {
+  const pad = !indent ? "" : depth === 0 ? "pl-7" : depth === 1 ? "pl-10" : "pl-12";
+  return (
+    <div>
+      <button
+        type="button"
+        onClick={() => onSelect(node.name)}
+        className={`w-full text-left text-[13px] py-1.5 pr-3 text-[#555] hover:text-[#0066ff] ${pad}`}
+      >
+        {node.name}
+      </button>
+      {node.children.map((child) => (
+        <SubcategoryNode key={child.id} node={child} onSelect={onSelect} depth={depth + 1} indent={indent} />
+      ))}
+    </div>
+  );
+}
+
 export default function AllCategoriesMenu() {
   const [open, setOpen] = useState(false);
   const [active, setActive] = useState(0);
@@ -181,8 +200,13 @@ export default function AllCategoriesMenu() {
   }, []);
 
   const CURATED = Object.fromEntries(MEGA.map((m) => [m.name, m]));
-  const list = cats.length ? cats.map((c) => c.name) : MEGA.map((m) => m.name);
-  const activeName = list[active] || list[0] || "";
+  const tree = useMemo(() => {
+    const t = buildCategoryTree(cats);
+    return t.length ? t : MEGA.map((m, i) => ({ id: m.name, name: m.name, order: i, children: [] }));
+  }, [cats]);
+  const activeNode = tree[active] || tree[0] || null;
+  const activeName = activeNode?.name || "";
+  const subcategories = activeNode?.children || [];
   const curated = CURATED[activeName];
   const shopUrl = `/shop?category=${encodeURIComponent(activeName)}`;
   const banner = banners.find((b) => b.link === shopUrl);
@@ -210,18 +234,26 @@ export default function AllCategoriesMenu() {
           <div className="absolute left-0 top-12 z-40 flex bg-white border border-[#eee] shadow-xl rounded-md overflow-hidden">
             {/* Sidebar */}
             <div className="w-56 shrink-0 py-2 bg-white max-h-[460px] overflow-y-auto">
-              {list.map((name, i) => (
-                <button
-                  key={name}
-                  onMouseEnter={() => setActive(i)}
-                  onClick={() => go(name)}
-                  className={`w-full flex items-center justify-between px-4 py-2.5 text-sm text-left transition-colors ${
-                    i === active ? "text-[#0066ff] font-medium bg-[#f5f9ff]" : "text-[#333] hover:text-[#0066ff] hover:bg-[#f5f9ff]"
-                  }`}
-                >
-                  <span>{name}</span>
-                  <ChevronRight className="w-3.5 h-3.5 opacity-50" />
-                </button>
+              {tree.map((node, i) => (
+                <div key={node.id}>
+                  <button
+                    onMouseEnter={() => setActive(i)}
+                    onClick={() => go(node.name)}
+                    className={`w-full flex items-center justify-between px-4 py-2.5 text-sm text-left transition-colors ${
+                      i === active ? "text-[#0066ff] font-medium bg-[#f5f9ff]" : "text-[#333] hover:text-[#0066ff] hover:bg-[#f5f9ff]"
+                    }`}
+                  >
+                    <span>{node.name}</span>
+                    <ChevronRight className="w-3.5 h-3.5 opacity-50" />
+                  </button>
+                  {i === active && node.children.length > 0 && (
+                    <div className="pb-1.5 bg-[#f5f9ff]">
+                      {node.children.map((child) => (
+                        <SubcategoryNode key={child.id} node={child} onSelect={go} />
+                      ))}
+                    </div>
+                  )}
+                </div>
               ))}
               <div className="mt-2 pt-2 border-t border-[#eee]">
                 <button
@@ -238,7 +270,18 @@ export default function AllCategoriesMenu() {
 
             {/* Flyout (desktop) */}
             <div className="hidden lg:block w-[660px] p-6 bg-white border-l border-[#eee]">
-              {columns.length > 0 ? (
+              {subcategories.length > 0 ? (
+                <div className="mb-4">
+                  <h4 className="text-xs font-bold uppercase tracking-wide text-[#333] pb-2 mb-3 border-b border-[#e1e1e1]">
+                    {activeName}
+                  </h4>
+                  <div className="grid grid-cols-3 gap-x-6 gap-y-1 max-h-64 overflow-y-auto">
+                    {subcategories.map((child) => (
+                      <SubcategoryNode key={child.id} node={child} onSelect={go} indent={false} />
+                    ))}
+                  </div>
+                </div>
+              ) : columns.length > 0 ? (
                 <div className={`grid gap-8 ${columns.length > 2 ? "grid-cols-4" : "grid-cols-2"}`}>
                   {columns.map((col) => (
                     <div key={col.title}>

@@ -1,6 +1,10 @@
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { ChevronDown, MapPin, History, Package } from "lucide-react";
 import AllCategoriesMenu from "@/components/store/AllCategoriesMenu";
+import CategoryNavDropdown from "@/components/store/CategoryNavDropdown";
+import { base44 } from "@/api/base44Client";
+import { buildCategoryTree } from "@/lib/categoryTree";
 
 const links = [
   { label: "Home", path: "/" },
@@ -13,13 +17,30 @@ const links = [
 ];
 
 export default function CategoryNav() {
+  const [cats, setCats] = useState([]);
+
+  useEffect(() => {
+    base44.entities.Category.list("order", 100).then(setCats).catch(() => {});
+  }, []);
+
+  const dropdowns = buildCategoryTree(cats).filter((c) => c.children.length > 0);
+
   return (
     <div className="bg-[#EFF4FB] border-t border-[#e0e8f2]">
       <div className="container-bleed px-5 lg:px-10 flex items-center justify-between gap-4 h-12">
         <div className="flex items-center gap-6">
           <AllCategoriesMenu />
           <nav className="hidden md:flex items-center gap-5 text-sm text-foreground">
-            {links.map((l) => (
+            {links.slice(0, 2).map((l) => (
+              <Link key={l.label} to={l.path} className="flex items-center gap-1 hover:text-accent transition-colors">
+                {l.label}
+                {l.chevron && <ChevronDown className="w-3.5 h-3.5" />}
+              </Link>
+            ))}
+            {dropdowns.map((c) => (
+              <CategoryNavDropdown key={c.id} category={c} />
+            ))}
+            {links.slice(2).map((l) => (
               <Link key={l.label} to={l.path} className="flex items-center gap-1 hover:text-accent transition-colors">
                 {l.label}
                 {l.chevron && <ChevronDown className="w-3.5 h-3.5" />}

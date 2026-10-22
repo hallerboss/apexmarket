@@ -8,6 +8,7 @@ import { trackPageView } from "@/lib/analytics";
 import StoreFooter from "@/components/store/StoreFooter";
 import SearchBar from "@/components/store/SearchBar";
 import CategoryNav from "@/components/store/CategoryNav";
+import MobileCategoryTree from "@/components/store/MobileCategoryTree";
 import { base44 } from "@/api/base44Client";
 import CurrencySwitcher from "@/components/store/CurrencySwitcher";
 import AuthButtons from "@/components/store/AuthButtons";
@@ -162,11 +163,7 @@ export default function StoreLayout() {
                 </>
               ) : (
                 <>
-                  {categories.map((c) => (
-                    <Link key={c.id} to={`/shop?category=${encodeURIComponent(c.name)}`} onClick={() => setMenuOpen(false)} className="block px-5 py-4 text-base text-white border-b border-white/10 hover:bg-white/5">
-                      {c.name}
-                    </Link>
-                  ))}
+                  <MobileCategoryTree categories={categories} onNavigate={() => setMenuOpen(false)} />
                   <Link to="/shop" onClick={() => setMenuOpen(false)} className="block px-5 py-4 text-base text-white font-semibold">View All Categories</Link>
                 </>
               )}
