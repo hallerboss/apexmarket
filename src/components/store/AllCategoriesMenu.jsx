@@ -178,7 +178,7 @@ function SubcategoryNode({ node, onSelect, depth = 0, indent = true }) {
         onClick={() => onSelect(node.name)}
         className={`w-full text-left text-[13px] py-1.5 pr-3 text-[#555] hover:text-[#0066ff] ${pad}`}
       >
-        {node.name}
+        {node.label || node.name}
       </button>
       {node.children.map((child) => (
         <SubcategoryNode key={child.id} node={child} onSelect={onSelect} depth={depth + 1} indent={indent} />
@@ -246,8 +246,8 @@ export default function AllCategoriesMenu() {
                     <span>{node.name}</span>
                     <ChevronRight className="w-3.5 h-3.5 opacity-50" />
                   </button>
-                  {i === active && node.children.length > 0 && (
-                    <div className="pb-1.5 bg-[#f5f9ff]">
+                  {node.children.length > 0 && (
+                    <div className={`pb-1.5 ${i === active ? "bg-[#f5f9ff]" : ""}`}>
                       {node.children.map((child) => (
                         <SubcategoryNode key={child.id} node={child} onSelect={go} />
                       ))}

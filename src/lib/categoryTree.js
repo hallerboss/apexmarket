@@ -14,7 +14,30 @@ export function buildCategoryTree(cats = []) {
     list.forEach((n) => sortNodes(n.children));
   };
   sortNodes(roots);
+
+  const labelNodes = (list, prefix) => {
+    list.forEach((n) => {
+      const path = [...prefix, n.name];
+      n.path = path;
+      n.label = path.join(" › ");
+      labelNodes(n.children, path);
+    });
+  };
+  labelNodes(roots, []);
+
   return roots;
+}
+
+export function categoryDescendants(node) {
+  const acc = [];
+  const walk = (n) => {
+    n.children.forEach((child) => {
+      acc.push(child);
+      walk(child);
+    });
+  };
+  walk(node);
+  return acc;
 }
 
 export function categoryAncestors(cats = [], name) {
