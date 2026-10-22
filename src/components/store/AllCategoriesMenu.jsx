@@ -239,9 +239,7 @@ export default function AllCategoriesMenu() {
                   <button
                     onMouseEnter={() => setActive(i)}
                     onClick={() => go(node.name)}
-                    className={`w-full flex items-center justify-between px-4 py-2.5 text-sm text-left transition-colors ${
-                      i === active ? "text-[#0066ff] font-medium bg-[#f5f9ff]" : "text-[#333] hover:text-[#0066ff] hover:bg-[#f5f9ff]"
-                    }`}
+                    className="w-full flex items-center justify-between px-4 py-2.5 text-sm text-left transition-colors text-[#333] hover:text-[#0066ff] hover:bg-[#f5f9ff]"
                   >
                     <span>{node.name}</span>
                     <ChevronRight className="w-3.5 h-3.5 opacity-50" />
