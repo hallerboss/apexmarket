@@ -202,7 +202,7 @@ export default function AllCategoriesMenu() {
   };
 
   return (
-    <div className="relative">
+    <div className="relative shrink-0">
       <button
         onClick={() => setOpen(!open)}
         className="h-10 px-4 flex items-center gap-2 bg-[#0066ff] text-white text-sm font-semibold rounded-md hover:bg-[#0058d4] transition-colors"

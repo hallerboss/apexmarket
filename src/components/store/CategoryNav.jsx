@@ -24,11 +24,11 @@ export default function CategoryNav() {
   return (
     <div className="bg-[#EFF4FB] border-t border-[#e0e8f2]">
       <div className="container-bleed px-5 lg:px-10 flex items-center justify-between gap-4 h-12">
-        <div className="flex items-center gap-6">
+        <div className="flex items-center gap-6 min-w-0 flex-1">
           <AllCategoriesMenu />
-          <nav className="hidden md:flex items-center gap-5 text-sm text-foreground">
+          <nav className="hidden md:flex items-center gap-5 text-sm text-foreground min-w-0 overflow-x-auto no-scrollbar whitespace-nowrap">
             {links.slice(0, 2).map((l) => (
-              <Link key={l.label} to={l.path} className="flex items-center gap-1 hover:text-accent transition-colors">
+              <Link key={l.label} to={l.path} className="flex items-center gap-1 shrink-0 hover:text-accent transition-colors">
                 {l.label}
                 {l.chevron && <ChevronDown className="w-3.5 h-3.5" />}
               </Link>
@@ -37,14 +37,14 @@ export default function CategoryNav() {
               <CategoryNavDropdown key={c.id} category={c} />
             ))}
             {links.slice(2).map((l) => (
-              <Link key={l.label} to={l.path} className="flex items-center gap-1 hover:text-accent transition-colors">
+              <Link key={l.label} to={l.path} className="flex items-center gap-1 shrink-0 hover:text-accent transition-colors">
                 {l.label}
                 {l.chevron && <ChevronDown className="w-3.5 h-3.5" />}
               </Link>
             ))}
           </nav>
         </div>
-        <div className="flex items-center gap-4 sm:gap-5 text-sm text-foreground">
+        <div className="flex items-center gap-4 sm:gap-5 text-sm text-foreground shrink-0">
           <Link to="/orders" className="hidden lg:flex items-center gap-2 hover:text-accent transition-colors">
             <span className="w-6 h-6 rounded-full bg-white flex items-center justify-center">
               <Package className="w-3.5 h-3.5 text-accent" />

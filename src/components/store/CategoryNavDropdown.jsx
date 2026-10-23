@@ -27,7 +27,7 @@ export default function CategoryNavDropdown({ category }) {
 
   return (
     <div
-      className="relative"
+      className="relative shrink-0"
       onMouseEnter={() => setOpen(true)}
       onMouseLeave={() => setOpen(false)}
     >

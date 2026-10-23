@@ -78,6 +78,13 @@
     margin-left: auto;
     margin-right: auto;
   }
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
   .display-text {
     font-family: var(--font-display);
     letter-spacing: -0.04em;
