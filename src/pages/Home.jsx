@@ -130,7 +130,7 @@ export default function Home() {
           )}
 
           {/* JUST FOR YOU — full grid */}
-          <section className="container-bleed px-5 lg:px-10 py-16 lg:py-24 border-t hairline">
+          <section className="container-bleed px-5 lg:px-10 border-t hairline pt-6 lg:pt-8 pb-16 lg:pb-24">
             <SectionHeader eyebrow="Personal" title="Just For You" />
             <ProductRow products={products.slice(0, 8)} />
             <div className="text-center mt-12">
