@@ -9,6 +9,8 @@ import { base44 } from "@/api/base44Client";
  */
 export default function GoogleAnalyticsLoader() {
   useEffect(() => {
+    // The site-wide Google tag is already in index.html — never load a second one.
+    if (window.__GA_TAG_LOADED) return;
     base44.entities.SiteSetting.filter({ key: "ga_measurement_id" })
       .then((rows) => {
         const id = rows[0]?.value;
