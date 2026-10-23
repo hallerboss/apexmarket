@@ -86,7 +86,7 @@ export default function Home() {
 
           {/* NEW ARRIVALS */}
           {newArrivals.length > 0 && (
-            <section className="container-bleed px-5 lg:px-10 pt-16 lg:pt-24 pb-8 lg:pb-10">
+            <section className="container-bleed px-5 lg:px-10 pt-16 lg:pt-24 pb-0">
               <SectionHeader eyebrow="Fresh" title="New Arrivals" link="/shop" />
               <ProductRow products={newArrivals.slice(0, 4)} />
             </section>
@@ -99,7 +99,7 @@ export default function Home() {
 
           {/* SEASONAL PICKS */}
           {seasonalPicks.length > 0 && (
-            <section className="container-bleed px-5 lg:px-10 pt-8 lg:pt-10 pb-16 lg:pb-24">
+            <section className="container-bleed px-5 lg:px-10 pt-4 lg:pt-6 pb-16 lg:pb-24">
               <SectionHeader eyebrow="Limited Time" title="Seasonal Picks" link="/shop?deals=1" />
               <ProductRow products={seasonalPicks.slice(0, 4)} />
             </section>
