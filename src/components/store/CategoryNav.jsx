@@ -2,7 +2,6 @@ import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { ChevronDown, MapPin, History, Package } from "lucide-react";
 import AllCategoriesMenu from "@/components/store/AllCategoriesMenu";
-import CategoryNavDropdown from "@/components/store/CategoryNavDropdown";
 import { buildCategoryTree } from "@/lib/categoryTree";
 import { useCategories } from "@/hooks/useCategories";
 
@@ -19,7 +18,7 @@ const links = [
 export default function CategoryNav() {
   const { categories: cats } = useCategories();
 
-  const dropdowns = buildCategoryTree(cats).filter((c) => c.children.length > 0);
+  const mainCategories = buildCategoryTree(cats);
 
   return (
     <div className="bg-[#EFF4FB] border-t border-[#e0e8f2]">
@@ -33,8 +32,10 @@ export default function CategoryNav() {
                 {l.chevron && <ChevronDown className="w-3.5 h-3.5" />}
               </Link>
             ))}
-            {dropdowns.map((c) => (
-              <CategoryNavDropdown key={c.id} category={c} />
+            {mainCategories.map((c) => (
+              <Link key={c.id} to={`/shop?category=${encodeURIComponent(c.name)}`} className="hover:text-accent transition-colors">
+                {c.name}
+              </Link>
             ))}
             {links.slice(2).map((l) => (
               <Link key={l.label} to={l.path} className="flex items-center gap-1 hover:text-accent transition-colors">
