@@ -39,7 +39,7 @@ const AUTO_OPTIONS = {
 
 const emptyProduct = {
   name: "", slug: "", description: "", short_description: "", price: "", sale_price: "",
-  sku: "", category: "", brand: "", images: [], stock: 0, rating: 0, reviews_count: 0,
+  sku: "", category: "", brand: "", images: [], stock: "", rating: 0, reviews_count: 0,
   featured: false, is_new: false, best_seller: false, top_rated: false, tags: [],
   variants: [], variant_images: [], seo_title: "", meta_description: "", focus_keywords: [],
   google_shopping: true, shipping_options: [], status: "published",
@@ -115,6 +115,7 @@ export default function AdminProducts() {
       slug: editing.slug || editing.name.toLowerCase().replace(/\s+/g, "-"),
       price: parseFloat(editing.price) || 0,
       sale_price: parseFloat(editing.sale_price) || 0,
+      stock: parseInt(editing.stock) || 0,
     };
     if (data.id) {
       base44.entities.Product.update(data.id, data).then(() => { load(); setEditing(null); });
@@ -337,7 +338,7 @@ export default function AdminProducts() {
               </div>
               <div>
                 <label className="admin-label">Stock</label>
-                <input type="number" value={editing.stock} onChange={(e) => setEditing({ ...editing, stock: parseInt(e.target.value) || 0 })} className="admin-input" />
+                <input type="number" min="0" placeholder="e.g. 100" value={editing.stock ?? ""} onChange={(e) => setEditing({ ...editing, stock: e.target.value })} className="admin-input" />
               </div>
             </div>
             <div>
