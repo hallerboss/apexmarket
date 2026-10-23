@@ -7,6 +7,7 @@ import { Image as ImageIcon, Upload, X, Plus, Pencil, Trash2, Search, Sparkles, 
 import RichTextEditor from "@/components/admin/RichTextEditor";
 import ProductAgentChat from "@/components/admin/ProductAgentChat";
 import FieldAIButton from "@/components/admin/FieldAIButton";
+import GoogleMerchantSyncButton from "@/components/admin/GoogleMerchantSyncButton";
 
 const COUNTRIES = ["United States", "United Kingdom", "Canada", "Australia", "Germany", "France", "Spain", "Italy", "Netherlands", "Pakistan", "India", "UAE", "Saudi Arabia", "China", "Japan", "Brazil", "Mexico", "South Africa"];
 const COURIERS = ["Cainiao", "DHL Express", "FedEx", "UPS", "USPS", "Royal Mail", "Aramex", "TCS", "DPD", "Local Courier"];
@@ -520,9 +521,12 @@ export default function AdminProducts() {
           <h2 className="display-text text-2xl">Products</h2>
           <p className="text-sm text-black/50 mt-1">{products.length} objects in the archive</p>
         </div>
-        <button onClick={startNew} className="bg-accent text-white px-5 py-2.5 text-xs font-semibold uppercase tracking-[0.2em] hover:bg-accent/90 flex items-center gap-2">
-          <Plus className="w-4 h-4" /> Add Product
-        </button>
+        <div className="flex flex-wrap items-center gap-3">
+          <GoogleMerchantSyncButton />
+          <button onClick={startNew} className="bg-accent text-white px-5 py-2.5 text-xs font-semibold uppercase tracking-[0.2em] hover:bg-accent/90 flex items-center gap-2">
+            <Plus className="w-4 h-4" /> Add Product
+          </button>
+        </div>
       </div>
 
       {/* URL Import */}
