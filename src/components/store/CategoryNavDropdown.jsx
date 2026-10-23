@@ -25,6 +25,17 @@ function DropdownNode({ node }) {
 export default function CategoryNavDropdown({ category }) {
   const [open, setOpen] = useState(false);
 
+  if (category.children.length === 0) {
+    return (
+      <Link
+        to={`/shop?category=${encodeURIComponent(category.name)}`}
+        className="shrink-0 hover:text-accent transition-colors"
+      >
+        {category.name}
+      </Link>
+    );
+  }
+
   return (
     <div
       className="relative shrink-0"

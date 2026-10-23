@@ -119,10 +119,17 @@ export default function AdminProducts() {
       stock: parseInt(editing.stock) || 0,
     };
     if (data.id) {
-      base44.entities.Product.update(data.id, data).then(() => { load(); setEditing(null); });
+      base44.entities.Product.update(data.id, data).then(async () => { await ensureCategory(data.category); load(); setEditing(null); });
     } else {
-      base44.entities.Product.create(data).then(() => { load(); setEditing(null); setSearchParams({}); });
+      base44.entities.Product.create(data).then(async () => { await ensureCategory(data.category); load(); setEditing(null); setSearchParams({}); });
     }
+  };
+
+  // A new product that brings a category the store doesn't have yet creates it,
+  // so it shows up in the storefront menu automatically.
+  const ensureCategory = async (name) => {
+    if (!name || categories.some((c) => c.name === name)) return;
+    await base44.entities.Category.create({ name, slug: name.toLowerCase().replace(/\s+/g, "-"), order: 0 });
   };
 
   const remove = (id) => {

@@ -6,6 +6,7 @@ import LowStockAlerts from "@/components/admin/LowStockAlerts";
 import AnalyticsOverview from "@/components/admin/AnalyticsOverview";
 import ExportOrdersButton from "@/components/admin/ExportOrdersButton";
 import SearchConsolePanel from "@/components/admin/SearchConsolePanel";
+import GoogleMerchantStatus from "@/components/admin/GoogleMerchantStatus";
 
 export default function AdminDashboard() {
   const [stats, setStats] = useState({ products: 0, orders: 0, reviews: 0, pendingReviews: 0, categories: 0, revenue: 0, pendingOrders: 0, lowStock: 0 });
@@ -85,6 +86,9 @@ export default function AdminDashboard() {
         <LowStockAlerts products={products} />
         <AnalyticsOverview />
       </div>
+
+      {/* Google Merchant Center sync status */}
+      <GoogleMerchantStatus />
 
       {/* Google Search Console performance */}
       <SearchConsolePanel />

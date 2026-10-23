@@ -97,7 +97,16 @@ export default function AdminCategories() {
     const data = { ...editing, slug: editing.slug || editing.name.toLowerCase().replace(/\s+/g, "-") };
     const kids = children.map((c) => c.trim()).filter(Boolean);
     if (data.id) {
-      base44.entities.Category.update(data.id, data).then(() => { load(); closeForm(); });
+      const oldName = cats.find((c) => c.id === data.id)?.name;
+      base44.entities.Category.update(data.id, data).then(async () => {
+        // Renaming a category cascades: products and child categories follow the new name.
+        if (oldName && oldName !== data.name) {
+          await base44.entities.Product.updateMany({ category: oldName }, { $set: { category: data.name } });
+          await base44.entities.Category.updateMany({ parent: oldName }, { $set: { parent: data.name } });
+        }
+        load();
+        closeForm();
+      });
     } else {
       base44.entities.Category.create(data).then(async () => {
         if (kids.length) {

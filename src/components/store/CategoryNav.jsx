@@ -19,7 +19,7 @@ const links = [
 export default function CategoryNav() {
   const { categories: cats } = useCategories();
 
-  const dropdowns = buildCategoryTree(cats).filter((c) => c.children.length > 0);
+  const topCategories = buildCategoryTree(cats);
 
   return (
     <div className="bg-[#EFF4FB] border-t border-[#e0e8f2]">
@@ -33,7 +33,7 @@ export default function CategoryNav() {
                 {l.chevron && <ChevronDown className="w-3.5 h-3.5" />}
               </Link>
             ))}
-            {dropdowns.map((c) => (
+            {topCategories.map((c) => (
               <CategoryNavDropdown key={c.id} category={c} />
             ))}
             {links.slice(2).map((l) => (
