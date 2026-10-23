@@ -99,7 +99,7 @@ export default function Home() {
 
           {/* SEASONAL PICKS */}
           {seasonalPicks.length > 0 && (
-            <section className="container-bleed px-5 lg:px-10 pt-4 lg:pt-6 pb-16 lg:pb-24">
+            <section className="container-bleed px-5 lg:px-10 pt-0 -mt-4 pb-16 lg:pb-24">
               <SectionHeader eyebrow="Limited Time" title="Seasonal Picks" link="/shop?deals=1" />
               <ProductRow products={seasonalPicks.slice(0, 4)} />
             </section>
