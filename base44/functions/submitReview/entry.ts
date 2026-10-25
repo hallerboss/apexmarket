@@ -1,15 +1,21 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.44';
 import { recomputeProductRating } from "../../shared/reviews.ts";
 
-const AVATAR_STYLES = [
-  "soft neutral beige background, warm friendly expression, soft natural window light",
-  "muted blue-grey background, calm confident expression",
-  "warm peach background, cheerful smile",
-  "soft lavender background, gentle thoughtful expression",
-  "sunny warm background, bright happy expression",
-  "dark charcoal background, professional composed expression",
-  "terracotta background, relaxed friendly expression",
-  "sage green background, approachable expression"
+const AVATAR_BACKGROUNDS = [
+  "clean soft beige studio backdrop",
+  "blurred modern city street in daylight",
+  "warm wooden cafe interior, softly out of focus",
+  "bright home office with shelves blurred behind",
+  "blurred green park foliage and soft daylight",
+  "soft grey seamless studio backdrop",
+  "sunlit living room with a bright window behind",
+  "blurred coastal boardwalk at golden hour",
+  "muted blue-grey studio backdrop",
+  "blurred bookstore aisle with warm lamps",
+  "soft terracotta wall with a gentle shadow",
+  "blurred rooftop garden at dusk",
+  "blurred farmers market stalls in daylight",
+  "soft sage green studio backdrop"
 ];
 
 const AVATAR_POSES = [
@@ -20,13 +26,30 @@ const AVATAR_POSES = [
   "arms lightly crossed, friendly confident smile",
   "one hand tucking hair behind the ear, laughing softly",
   "leaning slightly forward toward the camera, bright engaged expression",
-  "hands in pockets, casual relaxed stance"
+  "hands in pockets, casual relaxed stance",
+  "one hand raised in a small friendly wave",
+  "seated at a table with forearms resting in front, open smile",
+  "holding a coffee cup with both hands, relaxed expression",
+  "standing with one hand on the hip, easy confident grin"
+];
+
+const AVATAR_FRAMINGS = [
+  "tight head-and-shoulders portrait filling the frame",
+  "head-and-shoulders crop with a little space above the head",
+  "three-quarter view portrait, head and shoulders",
+  "portrait shot from a slightly lower angle looking up",
+  "portrait shot from a slightly higher angle, head and shoulders",
+  "close head-and-shoulders portrait, subject just off center"
 ];
 
 function hashCode(s) {
   let h = 0;
   for (let i = 0; i < s.length; i++) h = (Math.imul(31, h) + s.charCodeAt(i)) | 0;
   return h;
+}
+
+function pick(list, seed) {
+  return list[Math.abs(hashCode(seed)) % list.length];
 }
 
 export default async function (req) {
@@ -46,10 +69,11 @@ export default async function (req) {
     let reviewerAvatar = typeof avatar === "string" ? avatar : "";
     if (!reviewerAvatar) {
       try {
-        const style = AVATAR_STYLES[Math.abs(hashCode(author)) % AVATAR_STYLES.length];
-        const pose = AVATAR_POSES[Math.abs(hashCode(author + "|pose")) % AVATAR_POSES.length];
+        const background = pick(AVATAR_BACKGROUNDS, author + "|bg");
+        const pose = pick(AVATAR_POSES, author + "|pose");
+        const framing = pick(AVATAR_FRAMINGS, author + "|frame");
         const res = await base44.asServiceRole.integrations.Core.GenerateImage({
-          prompt: `Photorealistic headshot photograph of a real, ordinary-looking person named ${author}, ${pose}, head and shoulders visible and filling the frame, natural skin texture and pores, everyday casual clothing, shot on an 85mm lens at f/2, soft natural window light, shallow depth of field, ${style}, authentic candid customer profile photo, sharp focus, high resolution, no text, no illustration, not a painting, not 3d render`,
+          prompt: `Photorealistic headshot photograph of a real, ordinary-looking person named ${author}, ${pose}, ${framing}, ${background}, natural skin texture and pores, everyday casual clothing, shot on an 85mm lens at f/2, soft natural light, shallow depth of field, authentic candid customer profile photo, sharp focus, high resolution, no text, no illustration, not a painting, not 3d render`,
         });
         reviewerAvatar = res?.url || "";
       } catch (e) {
