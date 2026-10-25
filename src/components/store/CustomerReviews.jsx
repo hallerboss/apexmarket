@@ -22,6 +22,8 @@ export default function CustomerReviews({ productId, productName, rating }) {
   const [form, setForm] = useState({ author: "", email: "", rating: 5, title: "", comment: "" });
   const [media, setMedia] = useState([]);
   const [uploading, setUploading] = useState(false);
+  const [avatar, setAvatar] = useState("");
+  const [uploadingAvatar, setUploadingAvatar] = useState(false);
   const [showHow, setShowHow] = useState(false);
   const galleryRef = useRef(null);
 
@@ -45,6 +47,19 @@ export default function CustomerReviews({ productId, productName, rating }) {
     }
   };
 
+  const uploadAvatar = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setUploadingAvatar(true);
+    try {
+      const uploaded = await base44.integrations.Core.UploadPublicFile({ file });
+      setAvatar(uploaded.file_url);
+    } finally {
+      setUploadingAvatar(false);
+      e.target.value = "";
+    }
+  };
+
   const submit = async (e) => {
     e.preventDefault();
     try {
@@ -57,11 +72,13 @@ export default function CustomerReviews({ productId, productName, rating }) {
         title: form.title,
         comment: form.comment,
         media,
+        avatar,
       });
       await load();
       setSubmitted(true);
       setForm({ author: "", email: "", rating: 5, title: "", comment: "" });
       setMedia([]);
+      setAvatar("");
     } catch (err) {
       alert(err?.response?.data?.error || err?.message || "Failed to submit review");
     }
@@ -236,6 +253,24 @@ export default function CustomerReviews({ productId, productName, rating }) {
                         <button type="button" onClick={() => setMedia((c) => c.filter((_, i) => i !== mi))} className="absolute top-0 right-0 bg-foreground text-background w-5 h-5 flex items-center justify-center text-[10px]">×</button>
                       </div>
                     ))}
+                  </div>
+                </div>
+                <div>
+                  <p className="text-[11px] uppercase tracking-[0.2em] font-semibold mb-2">Your Photo (optional)</p>
+                  <div className="flex items-center gap-3 flex-wrap">
+                    {avatar ? (
+                      <div className="relative w-14 h-14 rounded-full overflow-hidden bg-secondary">
+                        <img src={avatar} alt="" className="w-full h-full object-cover" />
+                        <button type="button" onClick={() => setAvatar("")} className="absolute top-0 right-0 bg-foreground text-background w-5 h-5 flex items-center justify-center text-[10px]">×</button>
+                      </div>
+                    ) : (
+                      <label className="text-sm border hairline px-4 py-2.5 cursor-pointer hover:border-accent inline-flex items-center gap-2">
+                        <ImagePlus className="w-4 h-4" /> Upload photo
+                        <input type="file" accept="image/*" onChange={uploadAvatar} className="hidden" disabled={uploadingAvatar} />
+                      </label>
+                    )}
+                    {uploadingAvatar && <span className="text-sm text-muted-foreground">Uploading…</span>}
+                    <span className="text-xs text-muted-foreground">Shown beside your review. Leave it empty to show just your initial.</span>
                   </div>
                 </div>
                 <button type="submit" className="btn-mono-solid">Submit Review</button>
