@@ -2,12 +2,12 @@ import { createClientFromRequest } from 'npm:@base44/sdk@0.8.44';
 import { recomputeProductRating } from "../../shared/reviews.ts";
 
 const AVATAR_STYLES = [
-  "soft pastel mint background, warm friendly expression, soft studio lighting",
-  "deep blue gradient background, calm confident expression",
+  "soft neutral beige background, warm friendly expression, soft natural window light",
+  "muted blue-grey background, calm confident expression",
   "warm peach background, cheerful smile",
-  "lavender background, gentle thoughtful expression",
-  "sunny yellow background, bright happy expression",
-  "charcoal background, professional composed expression",
+  "soft lavender background, gentle thoughtful expression",
+  "sunny warm background, bright happy expression",
+  "dark charcoal background, professional composed expression",
   "terracotta background, relaxed friendly expression",
   "sage green background, approachable expression"
 ];
@@ -36,7 +36,7 @@ export default async function (req) {
     try {
       const style = AVATAR_STYLES[Math.abs(hashCode(author)) % AVATAR_STYLES.length];
       const res = await base44.asServiceRole.integrations.Core.GenerateImage({
-        prompt: `Circular avatar portrait of a friendly person named ${author}, head and shoulders centered, minimalist illustrated style, ${style}, high quality, suitable as a small profile picture`,
+        prompt: `Photorealistic headshot photograph of a real, ordinary-looking person named ${author}, head and shoulders centered and filling the frame, natural skin texture and pores, relaxed friendly expression looking at the camera, everyday casual clothing, shot on an 85mm lens at f/2, soft natural window light, shallow depth of field, ${style}, authentic candid customer profile photo, sharp focus, high resolution, no text, no illustration, not a painting, not 3d render`,
       });
       avatar = res?.url || "";
     } catch (e) {
