@@ -7,6 +7,8 @@ import SectionHeader from "@/components/store/SectionHeader";
 import HeroCarousel from "@/components/store/HeroCarousel";
 
 const FASHION_BANNER = "https://media.base44.com/images/public/6a8447d4dfbc61d89c33872d/c1a582fac_generated_6bd4c4e4.png";
+const STATIONERY_BANNER = "https://media.base44.com/images/public/6a8447d4dfbc61d89c33872d/c85c82201_generated_image.png";
+const OFFICE_SUPPLIES_LINK = "/shop?category=Office%20Supplies";
 
 export default function Home() {
   const [products, setProducts] = useState([]);
@@ -42,9 +44,9 @@ export default function Home() {
         <div className="container-bleed px-5 lg:px-10 flex items-center justify-between gap-8">
           <div className="flex items-center gap-4">
             <span className="bg-accent text-white text-[10px] font-bold uppercase tracking-widest px-3 py-1.5">Hot Deal</span>
-            <p className="serif-text text-base lg:text-lg">Cina Bluetooth Speaker — The Seller of the Month</p>
+            <p className="serif-text text-base lg:text-lg">Office Supplies &amp; Stationery — The Seller of the Month</p>
           </div>
-          <Link to="/shop?deals=1" className="text-[11px] uppercase tracking-[0.2em] font-semibold hover:text-accent whitespace-nowrap hidden sm:block">Buy Now →</Link>
+          <Link to={OFFICE_SUPPLIES_LINK} className="text-[11px] uppercase tracking-[0.2em] font-semibold hover:text-accent whitespace-nowrap hidden sm:block">Buy Now →</Link>
         </div>
       </section>
 
@@ -73,11 +75,13 @@ export default function Home() {
                 </div>
               </div>
               <div className="relative aspect-[16/10] lg:aspect-[16/9] overflow-hidden bg-foreground group">
+                <Image src={STATIONERY_BANNER} alt="Office supplies and stationery" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" fittingType="fill" />
+                <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/55 to-black/20" />
                 <div className="absolute inset-0 flex flex-col justify-center p-8 lg:p-12">
                   <p className="text-[11px] uppercase tracking-[0.25em] text-accent mb-4">The Seller of Month</p>
-                  <h3 className="display-text text-3xl lg:text-5xl text-background">Cina Bluetooth Speaker</h3>
-                  <p className="serif-text text-background/60 mt-3 max-w-xs">Sound as sculpture. Engineered for presence.</p>
-                  <Link to="/shop" className="btn-mono-outline mt-6 self-start border-background text-background hover:bg-background hover:text-foreground">Shop Now</Link>
+                  <h3 className="display-text text-3xl lg:text-5xl text-background">Office Supplies &amp; Stationery</h3>
+                  <p className="serif-text text-background/70 mt-3 max-w-xs">Refined essentials for the modern desk.</p>
+                  <Link to={OFFICE_SUPPLIES_LINK} className="btn-mono-outline mt-6 self-start border-background text-background hover:bg-background hover:text-foreground">Shop Now</Link>
                 </div>
               </div>
             </div>
