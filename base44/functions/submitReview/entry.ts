@@ -12,6 +12,17 @@ const AVATAR_STYLES = [
   "sage green background, approachable expression"
 ];
 
+const AVATAR_POSES = [
+  "arms relaxed at their sides, shoulders squared to the camera",
+  "head tilted slightly, soft genuine smile",
+  "chin resting lightly on one hand, warm gaze",
+  "body turned slightly away, looking back over the shoulder at the camera",
+  "arms lightly crossed, friendly confident smile",
+  "one hand tucking hair behind the ear, laughing softly",
+  "leaning slightly forward toward the camera, bright engaged expression",
+  "hands in pockets, casual relaxed stance"
+];
+
 function hashCode(s) {
   let h = 0;
   for (let i = 0; i < s.length; i++) h = (Math.imul(31, h) + s.charCodeAt(i)) | 0;
@@ -35,8 +46,9 @@ export default async function (req) {
     let avatar = "";
     try {
       const style = AVATAR_STYLES[Math.abs(hashCode(author)) % AVATAR_STYLES.length];
+      const pose = AVATAR_POSES[Math.abs(hashCode(author + "|pose")) % AVATAR_POSES.length];
       const res = await base44.asServiceRole.integrations.Core.GenerateImage({
-        prompt: `Photorealistic headshot photograph of a real, ordinary-looking person named ${author}, head and shoulders centered and filling the frame, natural skin texture and pores, relaxed friendly expression looking at the camera, everyday casual clothing, shot on an 85mm lens at f/2, soft natural window light, shallow depth of field, ${style}, authentic candid customer profile photo, sharp focus, high resolution, no text, no illustration, not a painting, not 3d render`,
+        prompt: `Photorealistic headshot photograph of a real, ordinary-looking person named ${author}, ${pose}, head and shoulders visible and filling the frame, natural skin texture and pores, everyday casual clothing, shot on an 85mm lens at f/2, soft natural window light, shallow depth of field, ${style}, authentic candid customer profile photo, sharp focus, high resolution, no text, no illustration, not a painting, not 3d render`,
       });
       avatar = res?.url || "";
     } catch (e) {
