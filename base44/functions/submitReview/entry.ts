@@ -1,9 +1,36 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.44';
 import { recomputeProductRating } from "../../shared/reviews.ts";
 
+// Diverse cast of ordinary-looking people: every review gets a different person.
+const AVATAR_PEOPLE = [
+  "a Black man in his 30s with short cropped hair and a close beard",
+  "a Black woman with natural curly hair and a warm smile",
+  "a Black woman with long braided hair",
+  "a young Black man with a high fade haircut",
+  "a Black man in his 50s with greying short hair and glasses",
+  "an East Asian (Chinese) woman with straight shoulder-length black hair",
+  "an East Asian (Chinese) man with short black hair and glasses",
+  "a young Chinese woman with a blunt bob haircut",
+  "a Chinese man in his 40s with neatly combed black hair",
+  "a young Chinese woman with long black hair and a light fringe",
+  "a South Asian woman with long dark wavy hair",
+  "a South Asian man with dark hair and a short beard",
+  "a white man with light brown hair and a light beard",
+  "a white woman with blonde hair in a low ponytail",
+  "a Latino man with wavy dark hair",
+  "a Latina woman with dark curly hair",
+  "a Middle Eastern woman with dark hair and olive skin",
+  "a Southeast Asian woman with long straight black hair",
+  "a Pacific Islander man with dark hair and a friendly grin",
+  "an older white woman with short grey hair and glasses"
+];
+
+// Locations: studio plus everyday places, outdoors and indoors.
 const AVATAR_BACKGROUNDS = [
   "clean soft beige studio backdrop",
-  "blurred modern city street in daylight",
+  "sunny sandy beach with ocean waves softly blurred behind",
+  "blurred busy city street with storefronts in daylight",
+  "mountain overlook with hazy peaks blurred behind",
   "warm wooden cafe interior, softly out of focus",
   "bright home office with shelves blurred behind",
   "blurred green park foliage and soft daylight",
@@ -15,7 +42,11 @@ const AVATAR_BACKGROUNDS = [
   "soft terracotta wall with a gentle shadow",
   "blurred rooftop garden at dusk",
   "blurred farmers market stalls in daylight",
-  "soft sage green studio backdrop"
+  "quiet forest trail with tall trees blurred behind",
+  "desert landscape with warm sand dunes blurred behind",
+  "blurred subway platform with warm lights",
+  "snowy mountain village softly blurred behind",
+  "blurred city park bench and trees in autumn"
 ];
 
 const AVATAR_POSES = [
@@ -48,8 +79,14 @@ function hashCode(s) {
   return h;
 }
 
-function pick(list, seed) {
-  return list[Math.abs(hashCode(seed)) % list.length];
+// Rotates through every pool so consecutive reviews never repeat a look.
+function buildAvatarPrompt(author, rotation) {
+  const base = Math.abs(hashCode(author)) + rotation;
+  const person = AVATAR_PEOPLE[base % AVATAR_PEOPLE.length];
+  const background = AVATAR_BACKGROUNDS[(base * 3 + 1) % AVATAR_BACKGROUNDS.length];
+  const pose = AVATAR_POSES[(base * 5 + 2) % AVATAR_POSES.length];
+  const framing = AVATAR_FRAMINGS[(base * 7 + 3) % AVATAR_FRAMINGS.length];
+  return `Photorealistic candid headshot photograph of ${person}, an ordinary real person, a completely unique individual with a face unlike any other, posing as a customer named ${author}, ${pose}, ${framing}, ${background}, natural skin texture and pores, everyday casual clothing, shot on an 85mm lens at f/2, soft natural light, shallow depth of field, authentic customer profile photo, sharp focus, high resolution, no text, no illustration, not a painting, not 3d render`;
 }
 
 export default async function (req) {
@@ -69,11 +106,16 @@ export default async function (req) {
     let reviewerAvatar = typeof avatar === "string" ? avatar : "";
     if (!reviewerAvatar) {
       try {
-        const background = pick(AVATAR_BACKGROUNDS, author + "|bg");
-        const pose = pick(AVATAR_POSES, author + "|pose");
-        const framing = pick(AVATAR_FRAMINGS, author + "|frame");
+        // Rotate through the pools based on how many reviews already exist,
+        // so each new review shows a different person and setting.
+        let existingCount = 0;
+        try {
+          existingCount = await base44.asServiceRole.entities.Review.count({});
+        } catch (e) {
+          existingCount = 0;
+        }
         const res = await base44.asServiceRole.integrations.Core.GenerateImage({
-          prompt: `Photorealistic headshot photograph of a real, ordinary-looking person named ${author}, ${pose}, ${framing}, ${background}, natural skin texture and pores, everyday casual clothing, shot on an 85mm lens at f/2, soft natural light, shallow depth of field, authentic candid customer profile photo, sharp focus, high resolution, no text, no illustration, not a painting, not 3d render`,
+          prompt: buildAvatarPrompt(author, existingCount),
         });
         reviewerAvatar = res?.url || "";
       } catch (e) {
