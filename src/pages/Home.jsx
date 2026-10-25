@@ -74,14 +74,14 @@ export default function Home() {
                   <Link to={promoBanner?.link || "/shop"} className="btn-mono-solid mt-6 self-start">{promoBanner?.cta_text || "Shop Now"}</Link>
                 </div>
               </div>
-              <div className="relative aspect-[16/10] lg:aspect-[16/9] overflow-hidden bg-foreground group">
+              <div className="relative aspect-[16/10] lg:aspect-[16/9] overflow-hidden bg-background group">
                 <Image src={STATIONERY_BANNER} alt="Office supplies and stationery" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" fittingType="fill" />
-                <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/55 to-black/20" />
+                <div className="absolute inset-0 bg-gradient-to-r from-white via-white/85 to-white/40" />
                 <div className="absolute inset-0 flex flex-col justify-center p-8 lg:p-12">
                   <p className="text-[11px] uppercase tracking-[0.25em] text-accent mb-4">The Seller of Month</p>
-                  <h3 className="display-text text-3xl lg:text-5xl text-background">Office Supplies &amp; Stationery</h3>
-                  <p className="serif-text text-background/70 mt-3 max-w-xs">Refined essentials for the modern desk.</p>
-                  <Link to={OFFICE_SUPPLIES_LINK} className="btn-mono-outline mt-6 self-start border-background text-background hover:bg-background hover:text-foreground">Shop Now</Link>
+                  <h3 className="display-text text-3xl lg:text-5xl text-foreground">Office Supplies &amp; Stationery</h3>
+                  <p className="serif-text text-foreground/70 mt-3 max-w-xs">Refined essentials for the modern desk.</p>
+                  <Link to={OFFICE_SUPPLIES_LINK} className="btn-mono-outline mt-6 self-start border-foreground text-foreground hover:bg-foreground hover:text-background">Shop Now</Link>
                 </div>
               </div>
             </div>
