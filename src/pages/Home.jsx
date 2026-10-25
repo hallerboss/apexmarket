@@ -7,7 +7,7 @@ import SectionHeader from "@/components/store/SectionHeader";
 import HeroCarousel from "@/components/store/HeroCarousel";
 
 const FASHION_BANNER = "https://media.base44.com/images/public/6a8447d4dfbc61d89c33872d/c1a582fac_generated_6bd4c4e4.png";
-const STATIONERY_BANNER = "https://media.base44.com/images/public/6a8447d4dfbc61d89c33872d/c85c82201_generated_image.png";
+const STATIONERY_BANNER = "https://media.base44.com/images/public/6a8447d4dfbc61d89c33872d/642e35876_images28.jpeg";
 const OFFICE_SUPPLIES_LINK = "/shop?category=Office%20Supplies";
 
 export default function Home() {
