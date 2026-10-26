@@ -34,6 +34,13 @@ export default function CustomerReviews({ productId, productName, rating }) {
 
   useEffect(() => { load(); }, [productId]);
 
+  // Signed-in customers who already have a profile photo use it on their reviews.
+  useEffect(() => {
+    base44.auth.me()
+      .then((me) => { if (me?.photo) setAvatar((cur) => cur || me.photo); })
+      .catch(() => {});
+  }, []);
+
   const uploadMedia = async (e) => {
     const files = Array.from(e.target.files || []);
     if (!files.length) return;
@@ -270,7 +277,9 @@ export default function CustomerReviews({ productId, productName, rating }) {
                       </label>
                     )}
                     {uploadingAvatar && <span className="text-sm text-muted-foreground">Uploading…</span>}
-                    <span className="text-xs text-muted-foreground">Shown beside your review. Leave it empty to show just your initial.</span>
+                    <span className="text-xs text-muted-foreground">
+                      Your account profile photo is used automatically. If you don't have one, we'll create a photo for your review.
+                    </span>
                   </div>
                 </div>
                 <button type="submit" className="btn-mono-solid">Submit Review</button>

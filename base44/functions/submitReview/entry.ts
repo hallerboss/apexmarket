@@ -102,8 +102,17 @@ export default async function (req) {
       return Response.json({ error: "Invalid rating" }, { status: 400 });
     }
 
-    // Reviewer's own photo when supplied, otherwise a photorealistic AI headshot
+    // Reviewer's own photo when supplied, otherwise their account profile photo,
+    // and only if neither exists, a photorealistic AI headshot.
     let reviewerAvatar = typeof avatar === "string" ? avatar : "";
+    if (!reviewerAvatar) {
+      try {
+        const me = await base44.auth.me();
+        reviewerAvatar = me?.photo || "";
+      } catch (e) {
+        reviewerAvatar = "";
+      }
+    }
     if (!reviewerAvatar) {
       try {
         // Rotate through the pools based on how many reviews already exist,
