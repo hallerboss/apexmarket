@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { LogIn, Mail, Lock, Loader2 } from "lucide-react";
 import AuthLayout from "@/components/AuthLayout";
+import GuestAccess from "@/components/auth/GuestAccess";
 import { safeReturnTo } from "@/lib/authReturnTo";
 
 export default function Login() {
@@ -48,6 +49,8 @@ export default function Login() {
         </>
       }
     >
+      <GuestAccess returnTo={returnTo} />
+
       {error && (
         <div className="mb-4 p-3 rounded-lg bg-destructive/10 text-destructive text-sm">
           {error}

@@ -1,6 +1,7 @@
 import { createContext, useContext, useState, useEffect, useRef } from "react";
 import { base44 } from "@/api/base44Client";
 import { useAuth } from "@/lib/AuthContext";
+import { getGuestProfile } from "@/lib/guestProfile";
 
 const WishlistContext = createContext(null);
 const STORAGE_KEY = "wishlistIds";
@@ -34,11 +35,33 @@ export function WishlistProvider({ children }) {
     }
   }, [user]);
 
-  // Mirror every change to local storage and to the signed-in customer's account.
+  // Guests who picked a username keep their wishlist saved under that profile.
+  useEffect(() => {
+    if (user?.id) return;
+    const guest = getGuestProfile();
+    if (!guest?.username_key) return;
+    let cancelled = false;
+    base44.entities.GuestProfile.filter({ username_key: guest.username_key })
+      .then((rows) => {
+        if (!cancelled && rows[0] && Array.isArray(rows[0].wishlist)) setIds(rows[0].wishlist);
+      })
+      .catch(() => {});
+    return () => {
+      cancelled = true;
+    };
+  }, [user?.id]);
+
+  // Mirror every change to local storage and to the signed-in customer's account
+  // (or to the guest profile when browsing without an account).
   useEffect(() => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(ids));
     if (user?.id) {
       base44.auth.updateMe({ wishlist: ids }).catch(() => {});
+      return;
+    }
+    const guest = getGuestProfile();
+    if (guest?.id) {
+      base44.entities.GuestProfile.update(guest.id, { wishlist: ids }).catch(() => {});
     }
   }, [ids, user?.id]);
 
