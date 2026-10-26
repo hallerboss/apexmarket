@@ -23,6 +23,7 @@ export default function CustomerReviews({ productId, productName, rating }) {
   const [media, setMedia] = useState([]);
   const [uploading, setUploading] = useState(false);
   const [avatar, setAvatar] = useState("");
+  const [user, setUser] = useState(null);
   const [uploadingAvatar, setUploadingAvatar] = useState(false);
   const [showHow, setShowHow] = useState(false);
   const galleryRef = useRef(null);
@@ -37,9 +38,21 @@ export default function CustomerReviews({ productId, productName, rating }) {
   // Signed-in customers who already have a profile photo use it on their reviews.
   useEffect(() => {
     base44.auth.me()
-      .then((me) => { if (me?.photo) setAvatar((cur) => cur || me.photo); })
+      .then((me) => {
+        setUser(me || null);
+        if (me?.photo) setAvatar((cur) => cur || me.photo);
+        if (me) {
+          setForm((f) => ({ ...f, author: f.author || me.full_name || "", email: f.email || me.email || "" }));
+        }
+      })
       .catch(() => {});
   }, []);
+
+  // The account profile photo wins over the stored review avatar for that customer's own reviews.
+  const photoFor = (r) => {
+    const mine = user?.photo && (r.created_by_id === user.id || (r.email && user.email && r.email === user.email));
+    return mine ? user.photo : r.avatar;
+  };
 
   const uploadMedia = async (e) => {
     const files = Array.from(e.target.files || []);
@@ -292,8 +305,8 @@ export default function CustomerReviews({ productId, productName, rating }) {
             {shown.map((r) => (
               <div key={r.id} className="border-b hairline pb-6">
                 <div className="flex items-center gap-3 mb-2">
-                  {r.avatar ? (
-                    <img src={r.avatar} alt={r.author} className="w-10 h-10 rounded-full object-cover shrink-0" />
+                  {photoFor(r) ? (
+                    <img src={photoFor(r)} alt={r.author} className="w-10 h-10 rounded-full object-cover shrink-0" />
                   ) : (
                     <div className="w-10 h-10 rounded-full bg-secondary flex items-center justify-center text-sm font-semibold shrink-0">{(r.author || "?")[0]?.toUpperCase()}</div>
                   )}

@@ -17,6 +17,11 @@
       },
       "title": "Wishlist",
       "description": "Product IDs this customer has saved to their wishlist"
+    },
+    "photo": {
+      "type": "string",
+      "title": "Profile Photo",
+      "description": "Profile picture URL used across the app, including customer reviews"
     }
   },
   "required": [
