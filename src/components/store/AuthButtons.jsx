@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
 import { LogIn, LogOut } from "lucide-react";
 import { base44 } from "@/api/base44Client";
+
+const LOGIN_URL = "https://www.usawishlist.com/login";
 
 export default function AuthButtons({ variant = "header" }) {
   const [authed, setAuthed] = useState(null);
@@ -23,9 +24,9 @@ export default function AuthButtons({ variant = "header" }) {
         <LogOut className="w-4 h-4 text-[#3b82f6]" /> Sign Out
       </button>
     ) : (
-      <Link to="/login" className={rowClass}>
+      <a href={LOGIN_URL} className={rowClass}>
         <LogIn className="w-4 h-4 text-[#3b82f6]" /> Sign In
-      </Link>
+      </a>
     );
   }
 
@@ -38,9 +39,9 @@ export default function AuthButtons({ variant = "header" }) {
       <span className="hidden sm:inline">Sign Out</span>
     </button>
   ) : (
-    <Link to="/login" className={headerClass} aria-label="Sign in">
+    <a href={LOGIN_URL} className={headerClass} aria-label="Sign in">
       <LogIn className="w-4 h-4" />
       <span className="hidden sm:inline">Sign In</span>
-    </Link>
+    </a>
   );
 }
