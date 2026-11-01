@@ -203,7 +203,7 @@ export default function StoreLayout() {
         </div>
       )}
       <MobileTabBar />
-      <CompareBar />
+      {!location.pathname.startsWith("/product") && <CompareBar />}
     </div>
   );
 }

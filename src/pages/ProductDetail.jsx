@@ -2,11 +2,10 @@ import { useState, useEffect } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
 import { Image } from "@/components/ui/image";
-import { Star, Minus, Plus, ShoppingBag, Truck, RotateCcw, Shield, Zap, GitCompare } from "lucide-react";
+import { Star, Minus, Plus, ShoppingBag, Truck, RotateCcw, Shield, Zap } from "lucide-react";
 import { useCart } from "@/lib/cartContext";
 import { useCurrency } from "@/lib/currencyContext";
 import { useWishlist } from "@/lib/wishlistContext";
-import { useCompare } from "@/lib/compareContext";
 import WishlistToggle from "@/components/store/WishlistToggle";
 import { trackProductView } from "@/lib/analytics";
 import ProductCard from "@/components/store/ProductCard";
@@ -27,7 +26,6 @@ export default function ProductDetail() {
   const [showBuyBar, setShowBuyBar] = useState(false);
   const { addItem } = useCart();
   const { formatPrice } = useCurrency();
-  const { has: hasCompare, toggle: toggleCompare } = useCompare();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -179,15 +177,9 @@ export default function ProductDetail() {
             <p className="text-xs text-amber-600 mb-4">Please select all options above before adding to cart.</p>
           )}
 
-          {/* Wishlist + Compare */}
+          {/* Wishlist */}
           <div className="flex items-center gap-3 mb-6">
             <WishlistToggle productId={product.id} className="w-12 h-12 border hairline hover:border-red-400" />
-            <button
-              onClick={() => toggleCompare(product.id)}
-              className={`btn-mono border px-5 ${hasCompare(product.id) ? "border-accent bg-accent text-white" : "border-foreground text-foreground hover:bg-foreground hover:text-background"}`}
-            >
-              <GitCompare className="w-4 h-4" /> {hasCompare(product.id) ? "In Compare" : "Compare"}
-            </button>
           </div>
 
           {/* Qty + Add */}
