@@ -57,6 +57,9 @@ export function ThemeProvider({ children }) {
   const [theme, setTheme] = useState(null);
 
   useEffect(() => {
+    // Ensure the storefront stays on the light (white) theme — removes any
+    // leftover .dark class so the default white background is used.
+    document.documentElement.classList.remove("dark");
     base44.entities.SiteSetting.list()
       .then((settings) => {
         const row = settings.find((s) => s.key === "theme");
