@@ -111,12 +111,25 @@ export default function AdminProducts() {
 
   const save = (e) => {
     e.preventDefault();
+    const variant_images = (editing.variant_images || [])
+      .filter((vi) => {
+        const v = (editing.variants || []).find((x) => x.name === vi.variant);
+        return v && (v.options || []).includes(vi.option);
+      })
+      .map((vi) => ({
+        variant: vi.variant,
+        option: vi.option,
+        ...(vi.image ? { image: vi.image } : {}),
+        ...(vi.price !== "" && vi.price != null ? { price: parseFloat(vi.price) || 0 } : {}),
+        ...(vi.stock !== "" && vi.stock != null ? { stock: parseInt(vi.stock) || 0 } : {}),
+      }));
     const data = {
       ...editing,
       slug: editing.slug || editing.name.toLowerCase().replace(/\s+/g, "-"),
       price: parseFloat(editing.price) || 0,
       sale_price: parseFloat(editing.sale_price) || 0,
       stock: parseInt(editing.stock) || 0,
+      variant_images,
     };
     if (data.id) {
       base44.entities.Product.update(data.id, data).then(async () => { await ensureCategory(data.category); load(); setEditing(null); });
@@ -245,8 +258,9 @@ export default function AdminProducts() {
     setVUploading(`${variant}-${option}`);
     const { file_url } = await base44.integrations.Core.UploadFile({ file });
     setEditing((e) => {
+      const existing = (e.variant_images || []).find((v) => v.variant === variant && v.option === option) || {};
       const rest = (e.variant_images || []).filter((v) => !(v.variant === variant && v.option === option));
-      return { ...e, variant_images: [...rest, { variant, option, image: file_url }] };
+      return { ...e, variant_images: [...rest, { ...existing, variant, option, image: file_url }] };
     });
     setVUploading(null);
   };
@@ -269,6 +283,14 @@ export default function AdminProducts() {
 
   const variantImageFor = (variant, option) =>
     (editing.variant_images || []).find((v) => v.variant === variant && v.option === option)?.image;
+  const variantMetaFor = (variant, option) =>
+    (editing.variant_images || []).find((v) => v.variant === variant && v.option === option) || {};
+  const setVariantMeta = (variant, option, field, value) =>
+    setEditing((e) => {
+      const existing = (e.variant_images || []).find((v) => v.variant === variant && v.option === option) || {};
+      const rest = (e.variant_images || []).filter((v) => !(v.variant === variant && v.option === option));
+      return { ...e, variant_images: [...rest, { ...existing, variant, option, [field]: value }] };
+    });
 
   if (editing) {
     return (
@@ -435,16 +457,21 @@ export default function AdminProducts() {
                         <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
                           {opts.map((opt) => {
                             const img = variantImageFor(v.name, opt);
+                            const meta = variantMetaFor(v.name, opt);
                             const loading = vUploading === `${v.name}-${opt}`;
                             return (
-                              <div key={opt} className="border border-white/10 p-2 text-center">
-                                <p className="text-xs text-white mb-2">{opt}</p>
+                              <div key={opt} className="border border-white/10 p-2">
+                                <p className="text-xs text-white mb-2 text-center">{opt}</p>
                                 <label className="block aspect-square bg-white/5 overflow-hidden cursor-pointer flex items-center justify-center">
                                   {loading ? <div className="w-5 h-5 border-2 border-white/20 border-t-accent rounded-full animate-spin" /> :
                                    img ? <img src={img} alt={opt} className="w-full h-full object-cover" /> :
                                    <><Upload className="w-4 h-4 text-white" /><input type="file" accept="image/*" className="hidden" onChange={(e) => e.target.files[0] && uploadVariantImage(v.name, opt, e.target.files[0])} /></>}
                                 </label>
-                                {img && <p className="text-[10px] text-green-400 mt-1">Image set</p>}
+                                {img && <p className="text-[10px] text-green-400 mt-1 text-center">Image set</p>}
+                                <div className="mt-2 space-y-1.5">
+                                  <input type="number" step="0.01" min="0" placeholder="Price" value={meta.price ?? ""} onChange={(e) => setVariantMeta(v.name, opt, "price", e.target.value)} className="admin-input h-8 text-xs" />
+                                  <input type="number" min="0" placeholder="Stock" value={meta.stock ?? ""} onChange={(e) => setVariantMeta(v.name, opt, "stock", e.target.value)} className="admin-input h-8 text-xs" />
+                                </div>
                               </div>
                             );
                           })}
