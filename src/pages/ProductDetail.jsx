@@ -71,6 +71,18 @@ export default function ProductDetail() {
     (product.variant_images || []).find((v) => v.variant === variant && v.option === option)?.image;
 
   const allVariantsSelected = (product.variants || []).every((v) => selectedVariants[v.name]);
+  // When an attribute option is selected, use that option's stored price
+  // (admin sets price per variant option). Falls back to the product price.
+  const selectedVariantEntry = (() => {
+    for (const v of product.variants || []) {
+      const opt = selectedVariants[v.name];
+      if (!opt) continue;
+      const entry = (product.variant_images || []).find((e) => e.variant === v.name && e.option === opt);
+      if (entry && entry.price != null && entry.price !== "") return entry;
+    }
+    return null;
+  })();
+  const variantPrice = selectedVariantEntry?.price != null ? Number(selectedVariantEntry.price) : null;
   const variantStr = () => Object.values(selectedVariants).join(", ") || null;
   const handleAdd = () => {
     if (product.variants?.length && !allVariantsSelected) return;
@@ -128,7 +140,9 @@ export default function ProductDetail() {
             <p className="text-sm text-muted-foreground mb-6">Sales: ({product.total_sales})</p>
           )}
           <div className="flex items-baseline gap-3 mb-6">
-            {hasSale ? (
+            {variantPrice != null ? (
+              <span className="text-3xl font-bold">{formatPrice(variantPrice)}</span>
+            ) : hasSale ? (
               <>
                 <span className="text-3xl font-bold text-accent">{formatPrice(product.sale_price)}</span>
                 <span className="text-lg text-muted-foreground line-through">{formatPrice(product.price)}</span>
@@ -254,7 +268,7 @@ export default function ProductDetail() {
               {baseImages[0] && <Image src={baseImages[0]} alt="" className="w-12 h-12 object-cover shrink-0" fittingType="fill" />}
               <div className="min-w-0">
                 <p className="text-sm font-semibold truncate">{product.name}</p>
-                <p className="text-xs text-background/60">{formatPrice(product.sale_price || product.price)}</p>
+                <p className="text-xs text-background/60">{formatPrice(variantPrice != null ? variantPrice : (product.sale_price || product.price))}</p>
               </div>
             </div>
             <button onClick={handleAdd} disabled={product.stock <= 0} className="btn-mono bg-accent text-white hover:bg-white hover:text-foreground shrink-0 disabled:opacity-50 disabled:cursor-not-allowed">
