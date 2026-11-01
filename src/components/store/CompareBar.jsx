@@ -20,7 +20,7 @@ export default function CompareBar() {
 
   return (
     <>
-      <div className="fixed bottom-0 left-0 right-0 z-40 bg-foreground text-background border-t border-white/10">
+      <div className="fixed bottom-14 md:bottom-0 left-0 right-0 z-40 bg-foreground text-background border-t border-white/10 pb-safe">
         <div className="container-bleed px-5 lg:px-10 py-3 flex items-center gap-4">
           <span className="text-[11px] uppercase tracking-[0.2em] font-semibold hidden sm:block whitespace-nowrap">
             Compare ({count}/{max})

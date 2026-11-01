@@ -274,8 +274,8 @@ export default function Shop() {
 
         {/* Page header */}
         <div className="border-b border-[#eee]">
-          <div className="container-bleed px-5 lg:px-10 py-8 lg:py-12">
-            <h1 className="display-text text-3xl lg:text-5xl text-[#333]">{activeCategory || "All Products"}</h1>
+          <div className="container-bleed px-5 lg:px-10 py-6 sm:py-8 lg:py-12">
+            <h1 className="display-text text-2xl sm:text-3xl lg:text-5xl text-[#333]">{activeCategory || "All Products"}</h1>
             <p className="text-sm text-[#666] mt-2">{filtered.length} products in the collection.</p>
           </div>
         </div>
@@ -300,12 +300,12 @@ export default function Shop() {
                     <option key={o.value} value={o.value}>{o.label}</option>
                   ))}
                 </select>
-                <select value={showCount} onChange={(e) => setParam("show", e.target.value)} className="bg-white border border-[#eee] rounded-md px-3 py-2 text-sm text-[#333] outline-none focus:border-[#0066ff]">
+                <select value={showCount} onChange={(e) => setParam("show", e.target.value)} className="hidden sm:block bg-white border border-[#eee] rounded-md px-3 py-2 text-sm text-[#333] outline-none focus:border-[#0066ff]">
                   {showOptions.map((n) => (
                     <option key={n} value={n}>Show {n}</option>
                   ))}
                 </select>
-                <div className="flex items-center border border-[#eee] rounded-md overflow-hidden">
+                <div className="hidden sm:flex items-center border border-[#eee] rounded-md overflow-hidden">
                   <button onClick={() => setParam("view", "grid")} className={`p-2 ${view === "grid" ? "bg-[#0066ff] text-white" : "text-[#666] hover:text-[#0066ff]"}`} aria-label="Grid view">
                     <LayoutGrid className="w-4 h-4" />
                   </button>

@@ -73,6 +73,26 @@ export function ThemeProvider({ children }) {
       .catch(() => {});
   }, []);
 
+  // Auto dark mode on mobile-class devices that request it (Android webview /
+  // mobile browser with dark system theme). Desktop stays light so existing
+  // light-themed pages are unchanged.
+  useEffect(() => {
+    if (typeof window === "undefined" || !window.matchMedia) return;
+    const darkMQ = window.matchMedia("(prefers-color-scheme: dark)");
+    const mobileMQ = window.matchMedia("(max-width: 1024px)");
+    const apply = () => {
+      document.documentElement.classList.toggle("dark", darkMQ.matches && mobileMQ.matches);
+    };
+    apply();
+    const onChange = () => apply();
+    darkMQ.addEventListener?.("change", onChange);
+    mobileMQ.addEventListener?.("change", onChange);
+    return () => {
+      darkMQ.removeEventListener?.("change", onChange);
+      mobileMQ.removeEventListener?.("change", onChange);
+    };
+  }, []);
+
   const applyTheme = useCallback((t) => {
     setTheme(t);
     applyTokens(t);

@@ -58,6 +58,9 @@
   * {
     @apply border-border;
   }
+  html, body {
+    overscroll-behavior-y: none;
+  }
   body {
     @apply bg-background text-foreground font-body antialiased;
     font-feature-settings: "ss01", "cv01";
@@ -157,3 +160,12 @@
   from { opacity: 0; transform: translateY(20px); }
   to { opacity: 1; transform: translateY(0); }
 }
+
+/* Native-app feel: no text selection on tappables, no iOS callout, notch-aware bars */
+button, nav, [role="tab"], [data-no-select] {
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+}
+.pt-safe { padding-top: env(safe-area-inset-top); }
+.pb-safe { padding-bottom: env(safe-area-inset-bottom); }

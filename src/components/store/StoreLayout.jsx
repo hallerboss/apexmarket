@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react";
 import { Link, Outlet, useLocation, useNavigate } from "react-router-dom";
-import { Search, ShoppingBag, Menu, X, Phone, Scale, MapPin, Package, User, Heart } from "lucide-react";
+import { Search, ShoppingBag, Menu, X, Phone, Scale, MapPin, Package, User, Heart, ChevronLeft } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import MobileTabBar from "@/components/store/MobileTabBar";
 import { useCart } from "@/lib/cartContext";
 import { useWishlist } from "@/lib/wishlistContext";
 import CompareBar from "@/components/store/CompareBar";
@@ -21,9 +23,10 @@ const LOGO_URL = "https://media.base44.com/images/public/6a8447d4dfbc61d89c33872
 const navLinks = [
   { label: "Home", path: "/" },
   { label: "Shop", path: "/shop" },
-  { label: "Electronics", path: "/shop?category=Electronics" },
-  { label: "Fashion", path: "/shop?category=Fashion" },
-  { label: "Furniture", path: "/shop?category=Furniture" },
+  { label: "Apparel & Accessories", path: "/shop?category=Apparel%20%26%20Accessories" },
+  { label: "Baby & Toddler", path: "/shop?category=Baby%20%26%20Toddler" },
+  { label: "Office Supplies", path: "/shop?category=Office%20Supplies" },
+  { label: "Sporting Goods", path: "/shop?category=Sporting%20Goods" },
   { label: "About", path: "/about" },
   { label: "Contact", path: "/contact" },
   { label: "FAQ", path: "/faq" },
@@ -52,13 +55,20 @@ export default function StoreLayout() {
   return (
     <div className="min-h-screen bg-background">
       <GoogleAnalyticsLoader />
-      <header className="sticky top-0 z-30 bg-white border-b border-[#eeeeee]">
+      <header className="sticky top-0 z-30 bg-white border-b border-[#eeeeee] pt-safe">
         {/* top row */}
         <div className="container-bleed px-5 lg:px-10 flex items-center justify-between gap-4 h-16 lg:h-20">
-          <Link to="/" className="flex items-center gap-1.5 sm:gap-2 shrink-0">
-            <Image src={LOGO_URL} alt="USA Wishlist" fittingType="fit" className="w-6 h-6 sm:w-7 sm:h-7 rounded-md overflow-hidden shrink-0" />
-            <span className="text-xl sm:text-2xl font-semibold tracking-tight">USA Wishlist</span>
-          </Link>
+          <div className="flex items-center gap-1 shrink-0">
+            {location.pathname !== "/" && (
+              <button onClick={() => navigate(-1)} className="md:hidden p-1 -ml-1 shrink-0" aria-label="Back">
+                <ChevronLeft className="w-5 h-5" />
+              </button>
+            )}
+            <Link to="/" className="flex items-center gap-1.5 sm:gap-2">
+              <Image src={LOGO_URL} alt="USA Wishlist" fittingType="fit" className="w-6 h-6 sm:w-7 sm:h-7 rounded-md overflow-hidden shrink-0" />
+              <span className="text-xl sm:text-2xl font-semibold tracking-tight">USA Wishlist</span>
+            </Link>
+          </div>
 
           <div className="hidden sm:flex flex-1 justify-center px-4">
             <SearchBar />
@@ -111,11 +121,22 @@ export default function StoreLayout() {
 
       </header>
 
-      <main>
-        <Outlet />
+      <main className="pb-14 md:pb-0">
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={location.pathname}
+            initial={{ opacity: 0, x: 16 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -16 }}
+            transition={{ duration: 0.2, ease: "easeOut" }}
+          >
+            <Outlet />
+          </motion.div>
+        </AnimatePresence>
       </main>
 
       <StoreFooter />
+      <div className="h-14 md:hidden" aria-hidden="true" />
 
       {/* Mobile menu drawer */}
       {menuOpen && (
@@ -181,6 +202,7 @@ export default function StoreLayout() {
           </div>
         </div>
       )}
+      <MobileTabBar />
       <CompareBar />
     </div>
   );

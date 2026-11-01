@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
 import { useCart } from "@/lib/cartContext";
-import { User as UserIcon, Mail, Camera, Package, ShoppingCart, Star, Heart } from "lucide-react";
+import { User as UserIcon, Mail, Camera, Package, ShoppingCart, Star, Heart, AlertTriangle } from "lucide-react";
 import ProfileOrders from "@/components/profile/ProfileOrders";
 import ProfileCart from "@/components/profile/ProfileCart";
 import ProfileReviews from "@/components/profile/ProfileReviews";
@@ -20,6 +20,8 @@ export default function Profile() {
   const [tab, setTab] = useState("orders");
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
+  const [deleteText, setDeleteText] = useState("");
+  const [deleting, setDeleting] = useState(false);
   const { count: cartCount } = useCart();
 
   useEffect(() => {
@@ -73,6 +75,29 @@ export default function Profile() {
       alert(err?.message || "Upload failed");
     } finally {
       setUploading(false);
+    }
+  };
+
+  const requestDeletion = async () => {
+    if (deleteText.trim().toUpperCase() !== "DELETE") {
+      alert('Please type "DELETE" to confirm your account deletion request.');
+      return;
+    }
+    if (!window.confirm("Submit an account deletion request? Our team will process it within 48 hours and you will be signed out.")) return;
+    setDeleting(true);
+    try {
+      await base44.functions.invoke("sendContactInquiry", {
+        name: user.full_name || user.email,
+        email: user.email,
+        subject: "Account Deletion Request",
+        message: `Account deletion requested for ${user.email} at ${new Date().toISOString()}.`,
+      });
+      alert("Your deletion request has been received. Our team will process it within 48 hours. You will now be signed out.");
+      await base44.auth.logout("/");
+    } catch (e) {
+      alert(e?.message || "Could not submit your request. Please contact support.");
+    } finally {
+      setDeleting(false);
     }
   };
 
@@ -157,6 +182,39 @@ export default function Profile() {
           {tab === "saved" && <ProfileSavedItems />}
         </div>
       </div>
+
+      {/* Account deletion */}
+      {user && (
+        <div className="mt-10 sm:mt-14 border border-red-300 bg-red-50 p-5 sm:p-6">
+          <div className="flex items-start gap-3">
+            <AlertTriangle className="w-5 h-5 text-red-600 shrink-0 mt-0.5" />
+            <div className="flex-1">
+              <h3 className="text-base font-bold text-red-700">Account Deletion</h3>
+              <p className="text-sm text-red-600 mt-1 leading-relaxed">
+                Submit a request to permanently delete your account and associated data. Our team reviews and processes deletion requests within 48 hours. This action cannot be undone.
+              </p>
+              <label className="block text-xs font-semibold uppercase tracking-wide text-red-700 mt-4 mb-1.5">
+                Type "DELETE" to confirm
+              </label>
+              <div className="flex flex-col sm:flex-row gap-3">
+                <input
+                  value={deleteText}
+                  onChange={(e) => setDeleteText(e.target.value)}
+                  placeholder="DELETE"
+                  className="flex-1 h-11 rounded-lg border border-red-300 bg-white px-3 text-sm text-red-700 placeholder:text-red-300 focus:border-red-600 outline-none"
+                />
+                <button
+                  onClick={requestDeletion}
+                  disabled={deleting}
+                  className="h-11 px-5 rounded-lg bg-red-600 text-white text-sm font-semibold disabled:opacity-50 hover:bg-red-700 transition-colors"
+                >
+                  {deleting ? "Submitting…" : "Request Deletion"}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

@@ -3,7 +3,7 @@ import { Instagram, Twitter, Facebook } from "lucide-react";
 
 export default function StoreFooter() {
   return (
-    <footer className="border-t hairline mt-24">
+    <footer className="border-t hairline mt-24 pb-safe">
       <div className="container-bleed px-5 lg:px-10 py-16 lg:py-24">
         <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-12 gap-8 lg:gap-12">
           <div className="col-span-2 lg:col-span-4">
@@ -23,9 +23,10 @@ export default function StoreFooter() {
             <h4 className="text-[11px] uppercase tracking-[0.2em] font-semibold mb-5">Shop</h4>
             <ul className="space-y-3 text-sm text-muted-foreground">
               <li><Link to="/shop" className="hover:text-foreground">All Products</Link></li>
-              <li><Link to="/shop?category=Electronics" className="hover:text-foreground">Electronics</Link></li>
-              <li><Link to="/shop?category=Fashion" className="hover:text-foreground">Fashion</Link></li>
-              <li><Link to="/shop?category=Furniture" className="hover:text-foreground">Furniture</Link></li>
+              <li><Link to="/shop?category=Apparel%20%26%20Accessories" className="hover:text-foreground">Apparel & Accessories</Link></li>
+              <li><Link to="/shop?category=Baby%20%26%20Toddler" className="hover:text-foreground">Baby & Toddler</Link></li>
+              <li><Link to="/shop?category=Office%20Supplies" className="hover:text-foreground">Office Supplies</Link></li>
+              <li><Link to="/shop?category=Sporting%20Goods" className="hover:text-foreground">Sporting Goods</Link></li>
             </ul>
           </div>
           <div className="lg:col-span-2">

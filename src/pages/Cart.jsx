@@ -195,7 +195,7 @@ export default function Cart() {
 
         {/* Summary + checkout */}
         <div className="lg:col-span-1">
-          <div className="border hairline p-6 lg:p-8 sticky top-24">
+          <div className="border hairline p-6 lg:p-8 pb-safe sticky top-24">
             <h3 className="text-[11px] uppercase tracking-[0.2em] font-semibold mb-6">Order Summary</h3>
             <div className="space-y-3 text-sm border-b hairline pb-5 mb-5">
               <div className="flex justify-between">
