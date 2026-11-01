@@ -23,7 +23,6 @@ export default function ProductDetail() {
   const [variantPreview, setVariantPreview] = useState(null);
   const [qty, setQty] = useState(1);
   const [selectedVariants, setSelectedVariants] = useState({});
-  const [showBuyBar, setShowBuyBar] = useState(false);
   const { addItem } = useCart();
   const { formatPrice } = useCurrency();
   const navigate = useNavigate();
@@ -48,12 +47,6 @@ export default function ProductDetail() {
     });
     return unsubscribe;
   }, [id]);
-
-  useEffect(() => {
-    const onScroll = () => setShowBuyBar(window.scrollY > 600);
-    window.addEventListener("scroll", onScroll);
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
 
   if (loading) {
     return <div className="container-bleed px-5 lg:px-10 py-32 text-center"><div className="w-8 h-8 border-2 border-muted border-t-foreground rounded-full animate-spin mx-auto" /></div>;
@@ -250,24 +243,6 @@ export default function ProductDetail() {
             {related.map((p, i) => <ProductCard key={p.id} product={p} index={i} />)}
           </div>
         </section>
-      )}
-
-      {/* Floating buy bar */}
-      {showBuyBar && (
-        <div className="fixed bottom-0 left-0 right-0 lg:left-16 z-40 bg-foreground text-background border-t border-white/10 animate-[fadeInUp_0.4s_ease]">
-          <div className="container-bleed px-4 sm:px-5 lg:px-10 py-3 lg:py-4 flex items-center justify-between gap-3 lg:gap-4">
-            <div className="flex items-center gap-4 min-w-0">
-              {baseImages[0] && <Image src={baseImages[0]} alt="" className="w-12 h-12 object-cover shrink-0" fittingType="fill" />}
-              <div className="min-w-0">
-                <p className="text-sm font-semibold truncate">{product.name}</p>
-                <p className="text-xs text-background/60">{formatPrice(variantPrice != null ? variantPrice : (product.sale_price || product.price))}</p>
-              </div>
-            </div>
-            <button onClick={handleAdd} disabled={product.stock <= 0} className="btn-mono bg-accent text-white hover:bg-white hover:text-foreground shrink-0 disabled:opacity-50 disabled:cursor-not-allowed">
-              <ShoppingBag className="w-4 h-4" /> Add to Cart
-            </button>
-          </div>
-        </div>
       )}
     </div>
   );
