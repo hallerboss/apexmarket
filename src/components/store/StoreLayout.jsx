@@ -1,11 +1,11 @@
 import { useState, useEffect } from "react";
 import { Link, Outlet, useLocation, useNavigate } from "react-router-dom";
-import { Search, ShoppingBag, Menu, X, Phone, Scale, MapPin, Package, User, Heart, ChevronLeft } from "lucide-react";
+import { Search, ShoppingBag, Menu, X, Phone, MapPin, Package, User, Heart, ChevronLeft } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import MobileTabBar from "@/components/store/MobileTabBar";
 import { useCart } from "@/lib/cartContext";
 import { useWishlist } from "@/lib/wishlistContext";
-import CompareBar from "@/components/store/CompareBar";
+
 import { trackPageView } from "@/lib/analytics";
 import StoreFooter from "@/components/store/StoreFooter";
 import SearchBar from "@/components/store/SearchBar";
@@ -82,9 +82,7 @@ export default function StoreLayout() {
                 <p className="text-sm font-bold text-foreground">0(800)123-456</p>
               </div>
             </div>
-            <Link to="/compare" className="hidden md:block hover:text-accent transition-colors" aria-label="Compare">
-              <Scale className="w-5 h-5" />
-            </Link>
+
             <div className="hidden sm:block">
               <CurrencySwitcher />
             </div>
@@ -203,7 +201,8 @@ export default function StoreLayout() {
         </div>
       )}
       <MobileTabBar />
-      {!location.pathname.startsWith("/product") && <CompareBar />}
+
+
     </div>
   );
 }
