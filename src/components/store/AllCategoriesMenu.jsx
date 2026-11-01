@@ -15,16 +15,6 @@ const MEGA = [
     promo: { badge: "Get up to 20% OFF", title: "Hot Sales", cta: "Shop Now", image: "https://images.unsplash.com/photo-1483985988355-763728e1935b?auto=format&fit=crop&w=400&q=80", gradient: "from-rose-500 to-orange-400" },
   },
   {
-    name: "Home & Garden",
-    columns: [
-      { title: "Bedroom", items: ["Beds, Frames & Bases", "Dressers", "Nightstands", "Kid's Beds & Headboards", "Armoires"] },
-      { title: "Living Room", items: ["Coffee Tables", "Chairs", "Tables", "Futons & Sofa Beds", "Cabinets & Chests"] },
-      { title: "Office", items: ["Office Chairs", "Desks", "Bookcases", "File Cabinets", "Breakroom Tables"] },
-      { title: "Kitchen & Dining", items: ["Dining Sets", "Kitchen Storage Cabinets", "Bakers Racks", "Dining Chairs", "Dining Room Tables"] },
-    ],
-    promo: { badge: "Up to 25% OFF", title: "Furniture Sale", cta: "Shop Now", image: "https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?auto=format&fit=crop&w=400&q=80", gradient: "from-emerald-500 to-teal-500" },
-  },
-  {
     name: "Electronics",
     columns: [
       { title: "Phones & Tablets", items: ["Smartphones", "Tablets", "Cases & Covers", "Screen Protectors", "Chargers"] },
