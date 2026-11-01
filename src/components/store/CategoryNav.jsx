@@ -9,11 +9,8 @@ import { useCategories } from "@/hooks/useCategories";
 const links = [
   { label: "Home", path: "/" },
   { label: "Shop", path: "/shop", chevron: true },
-  { label: "Vendor", path: "/shop", chevron: true },
   { label: "Blog", path: "/page/blog" },
   { label: "Track Order", path: "/track" },
-  { label: "Pages", path: "/page/about", chevron: true },
-  { label: "Elements", path: "/shop" },
 ];
 
 export default function CategoryNav() {
