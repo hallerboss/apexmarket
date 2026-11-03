@@ -149,6 +149,7 @@
   .admin-input {
     @apply w-full bg-white border border-[#e5e7eb] px-4 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:border-accent focus:outline-none transition-colors;
   }
+  .admin-main .admin-white-text { color: #ffffff !important; }
   .admin-label {
     @apply block text-[11px] font-semibold uppercase tracking-[0.15em] text-muted-foreground mb-2;
   }

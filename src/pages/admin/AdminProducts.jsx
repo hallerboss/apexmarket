@@ -557,7 +557,7 @@ export default function AdminProducts() {
         </div>
         <div className="flex flex-wrap items-center gap-3">
           <GoogleMerchantSyncButton />
-          <button onClick={startNew} className="bg-accent text-white px-5 py-2.5 text-xs font-semibold uppercase tracking-[0.2em] hover:bg-accent/90 flex items-center gap-2">
+          <button onClick={startNew} className="admin-white-text bg-accent text-white px-5 py-2.5 text-xs font-semibold uppercase tracking-[0.2em] hover:bg-accent/90 flex items-center gap-2">
             <Plus className="w-4 h-4" /> Add Product
           </button>
         </div>
