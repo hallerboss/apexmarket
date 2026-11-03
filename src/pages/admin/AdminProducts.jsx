@@ -538,7 +538,7 @@ export default function AdminProducts() {
               ))}
             </div>
 
-            <button type="submit" className="w-full bg-accent text-white py-3 text-xs font-semibold uppercase tracking-[0.2em] hover:bg-accent/90 transition-colors">
+            <button type="submit" className="admin-white-text w-full bg-accent text-white py-3 text-xs font-semibold uppercase tracking-[0.2em] hover:bg-accent/90 transition-colors">
               {editing.id ? "Save Changes" : "Create Product"}
             </button>
           </div>
@@ -575,7 +575,7 @@ export default function AdminProducts() {
         <button
           onClick={importFromUrl}
           disabled={importing || !importUrl.trim()}
-          className="bg-accent text-white px-6 py-2.5 text-xs font-semibold uppercase tracking-[0.15em] hover:bg-accent/90 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap"
+          className="admin-white-text bg-accent text-white px-6 py-2.5 text-xs font-semibold uppercase tracking-[0.15em] hover:bg-accent/90 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap"
         >
           {importing ? <><div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" /> Importing…</> : <><Link2 className="w-4 h-4" /> Import from URL</>}
         </button>
@@ -590,7 +590,7 @@ export default function AdminProducts() {
       {selected.size > 0 && (
         <div className="mb-4 flex flex-wrap items-center gap-3 border border-accent/30 bg-accent/5 p-3">
           <span className="text-sm font-semibold">{selected.size} selected</span>
-          <button onClick={() => setBulkEdit({ applyPrice: false, price: "", applyCategory: false, category: "", applyStock: false, stock: "", applyStatus: false, status: "published" })} className="bg-accent text-white px-4 py-2 text-xs font-semibold uppercase tracking-[0.15em] hover:bg-accent/90">Bulk Edit</button>
+          <button onClick={() => setBulkEdit({ applyPrice: false, price: "", applyCategory: false, category: "", applyStock: false, stock: "", applyStatus: false, status: "published" })} className="admin-white-text bg-accent text-white px-4 py-2 text-xs font-semibold uppercase tracking-[0.15em] hover:bg-accent/90">Bulk Edit</button>
           <button onClick={bulkDelete} className="border border-red-300 text-black px-4 py-2 text-xs font-semibold uppercase tracking-[0.15em] hover:bg-red-50">Delete Selected</button>
           <button onClick={clearSel} className="text-xs uppercase tracking-[0.15em] text-black/50 hover:text-black">Clear</button>
         </div>
@@ -629,7 +629,7 @@ export default function AdminProducts() {
               </select>
             </div>
           </div>
-          <button onClick={applyBulk} className="bg-accent text-white px-6 py-2.5 text-xs font-semibold uppercase tracking-[0.2em] hover:bg-accent/90">Apply to {selected.size} products</button>
+          <button onClick={applyBulk} className="admin-white-text bg-accent text-white px-6 py-2.5 text-xs font-semibold uppercase tracking-[0.2em] hover:bg-accent/90">Apply to {selected.size} products</button>
         </div>
       )}
 
