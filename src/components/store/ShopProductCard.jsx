@@ -77,11 +77,6 @@ export default function ShopProductCard({ product }) {
         )}
       </div>
 
-      <div className="mt-3">
-        <button onClick={() => addItem(product)} disabled={!inStock} className="w-full text-sm font-semibold text-[#0066ff] border border-[#0066ff] rounded-md py-2 hover:bg-[#0066ff] hover:text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
-          Add to cart
-        </button>
-      </div>
     </div>
   );
 }
