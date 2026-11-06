@@ -51,14 +51,14 @@ export default function Home() {
           {/* POPULAR DEPARTMENTS */}
           <section className="container-bleed px-5 lg:px-10 py-16 lg:py-24">
             <SectionHeader eyebrow="Curated" title="Popular Departments" link="/shop" />
-            <ProductRow products={products.slice(0, 4)} />
+            <ProductRow products={products.slice(0, 6)} />
           </section>
 
           {/* NEW ARRIVALS */}
           {newArrivals.length > 0 && (
             <section className="container-bleed px-5 lg:px-10 pt-16 lg:pt-24 pb-0">
               <SectionHeader eyebrow="Fresh" title="New Arrivals" link="/shop" />
-              <ProductRow products={newArrivals.slice(0, 4)} />
+              <ProductRow products={newArrivals.slice(0, 6)} />
             </section>
           )}
 
@@ -66,7 +66,7 @@ export default function Home() {
           {seasonalPicks.length > 0 && (
             <section className="container-bleed px-5 lg:px-10 border-t hairline pt-6 lg:pt-8 pb-16 lg:pb-24">
               <SectionHeader eyebrow="Limited Time" title="Seasonal Picks" link="/shop?deals=1" />
-              <ProductRow products={seasonalPicks.slice(0, 4)} />
+              <ProductRow products={seasonalPicks.slice(0, 6)} />
             </section>
           )}
 
@@ -74,7 +74,7 @@ export default function Home() {
           {topRated.length > 0 && (
             <section className="container-bleed px-5 lg:px-10 py-16 lg:py-24">
               <SectionHeader eyebrow="Acclaimed" title="Top Ranking" link="/shop" />
-              <ProductRow products={topRated.slice(0, 4)} />
+              <ProductRow products={topRated.slice(0, 6)} />
             </section>
           )}
 
@@ -82,7 +82,7 @@ export default function Home() {
           {bestSellers.length > 0 && (
             <section className="container-bleed px-5 lg:px-10 py-16 lg:py-24">
               <SectionHeader eyebrow="Most Wanted" title="Best Sellers" link="/shop" />
-              <ProductRow products={bestSellers.slice(0, 4)} />
+              <ProductRow products={bestSellers.slice(0, 6)} />
             </section>
           )}
 
@@ -90,14 +90,14 @@ export default function Home() {
           {featured.length > 0 && (
             <section className="container-bleed px-5 lg:px-10 py-16 lg:py-24">
               <SectionHeader eyebrow="Selected" title="Our Featured" link="/shop" />
-              <ProductRow products={featured.slice(0, 4)} />
+              <ProductRow products={featured.slice(0, 6)} />
             </section>
           )}
 
           {/* JUST FOR YOU — full grid */}
           <section className="container-bleed px-5 lg:px-10 border-t hairline pt-6 lg:pt-8 pb-16 lg:pb-24">
             <SectionHeader eyebrow="Personal" title="Just For You" />
-            <ProductRow products={products.slice(0, 8)} />
+            <ProductRow products={products.slice(0, 12)} />
             <div className="text-center mt-12">
               <Link to="/shop" className="btn-mono-outline">Load More</Link>
             </div>

@@ -34,15 +34,15 @@ export default function ProductCard({ product, index = 0, compareMode = false })
         )}
         <div className="absolute top-2 left-2 flex flex-col gap-1 z-10">
           {hasSale && (
-            <span className="bg-red-600 text-white text-[11px] font-bold px-2 py-1 rounded-sm">
+            <span className="bg-red-600 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-sm">
               -{discount}%
             </span>
           )}
           {product.is_new && (
-            <span className="bg-[#0066ff] text-white text-[11px] font-bold px-2 py-1 rounded-sm">NEW</span>
+            <span className="bg-[#0066ff] text-white text-[10px] font-bold px-1.5 py-0.5 rounded-sm">NEW</span>
           )}
           {product.top_rated && (
-            <span className="bg-purple-600 text-white text-[11px] font-bold px-2 py-1 rounded-sm">TOP RATED</span>
+            <span className="bg-purple-600 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-sm">TOP RATED</span>
           )}
         </div>
         <WishlistToggle productId={product.id} className="absolute top-3 right-3 z-10 w-8 h-8 bg-background/90 border border-[#eeeeee] hover:border-red-400" />
@@ -56,44 +56,44 @@ export default function ProductCard({ product, index = 0, compareMode = false })
         <CompareToggle productId={product.id} className="absolute top-12 right-3" />
       </Link>
 
-      <div className="p-4 flex flex-col gap-3 flex-1">
+      <div className="p-3 flex flex-col gap-2 flex-1">
         <Link to={`/product/${product.id}`}>
-          <h3 className="text-sm text-foreground font-normal leading-snug line-clamp-2 hover:text-accent transition-colors min-h-[2.5rem]">
+          <h3 className="text-xs text-foreground font-normal leading-snug line-clamp-2 hover:text-accent transition-colors min-h-[2.25rem]">
             {product.name}
           </h3>
         </Link>
 
         {product.rating > 0 && (
-          <div className="flex items-center gap-1.5">
+          <div className="flex items-center gap-1">
             <div className="flex">
               {[1, 2, 3, 4, 5].map((n) => (
                 <Star
                   key={n}
-                  className={`w-3.5 h-3.5 ${n <= Math.round(product.rating) ? "fill-[#ff9f43] text-[#ff9f43]" : "text-[#e5e5e5]"}`}
+                  className={`w-3 h-3 ${n <= Math.round(product.rating) ? "fill-[#ff9f43] text-[#ff9f43]" : "text-[#e5e5e5]"}`}
                 />
               ))}
             </div>
-            <span className="text-xs text-foreground">{product.rating.toFixed(1)}</span>
-            <span className="text-xs text-muted-foreground">({product.reviews_count || 0})</span>
+            <span className="text-[11px] text-foreground">{product.rating.toFixed(1)}</span>
+            <span className="text-[11px] text-muted-foreground">({product.reviews_count || 0})</span>
           </div>
         )}
         {product.total_sales > 0 && (
-          <p className="text-[11px] text-muted-foreground">Sales: ({product.total_sales})</p>
+          <p className="text-[10px] text-muted-foreground">Sales: ({product.total_sales})</p>
         )}
 
-        <div className="flex items-center gap-1.5 text-xs">
-          <Check className={`w-3.5 h-3.5 ${inStock ? "text-accent" : "text-muted-foreground"}`} />
+        <div className="flex items-center gap-1 text-[11px]">
+          <Check className={`w-3 h-3 ${inStock ? "text-accent" : "text-muted-foreground"}`} />
           <span className={inStock ? "text-foreground" : "text-muted-foreground"}>{inStock ? "In stock" : "Out of stock"}</span>
         </div>
 
-        <div className="flex items-baseline gap-2">
+        <div className="flex items-baseline gap-1.5">
           {hasSale ? (
             <>
-              <span className="text-lg font-medium text-foreground">{formatPrice(product.sale_price)}</span>
-              <span className="text-sm text-muted-foreground line-through">{formatPrice(product.price)}</span>
+              <span className="text-sm font-medium text-foreground">{formatPrice(product.sale_price)}</span>
+              <span className="text-xs text-muted-foreground line-through">{formatPrice(product.price)}</span>
             </>
           ) : (
-            <span className="text-lg font-medium text-foreground">{formatPrice(product.price)}</span>
+            <span className="text-sm font-medium text-foreground">{formatPrice(product.price)}</span>
           )}
         </div>
 
@@ -113,7 +113,7 @@ export default function ProductCard({ product, index = 0, compareMode = false })
         <div className="mt-auto pt-1">
           <button
             onClick={() => addItem(product)}
-            className="w-full text-sm font-medium bg-[#FFD814] text-[#0F1111] py-2.5 rounded-full hover:bg-[#f5c800] transition-colors"
+            className="w-full text-xs font-medium bg-[#FFD814] text-[#0F1111] py-2 rounded-full hover:bg-[#f5c800] transition-colors"
           >
             Add to cart
           </button>
