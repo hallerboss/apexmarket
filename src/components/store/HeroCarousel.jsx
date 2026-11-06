@@ -21,7 +21,7 @@ const slides = [
   {
     img: "https://media.base44.com/images/public/6a8447d4dfbc61d89c33872d/148dc9c7d_generated_b5b068d8.png",
     title: "New Collection · 2024",
-    sub: "Starting at $299.99. Discover this season's most-wanted pieces.",
+    sub: "Starting at $5. Discover this season's most-wanted pieces.",
     cta: "Hot Deals",
     to: "/shop?deals=1",
   },
