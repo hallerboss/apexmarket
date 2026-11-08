@@ -193,7 +193,7 @@ export default function AdminProducts() {
   const uploadImage = async (file) => {
     setUploading(true);
     try {
-      const prepared = resizeEnabled ? await resizeImageFile(file, resizeW, resizeH) : file;
+      const prepared = resizeEnabled && resizeW && resizeH ? await resizeImageFile(file, resizeW, resizeH) : file;
       const { file_url } = await base44.integrations.Core.UploadFile({ file: prepared });
       setEditing((e) => ({ ...e, images: [...new Set([...(e.images || []), file_url])] }));
     } finally {
@@ -212,7 +212,7 @@ export default function AdminProducts() {
     try {
       const urls = [];
       for (const f of files) {
-        const prepared = resizeEnabled ? await resizeImageFile(f, resizeW, resizeH) : f;
+        const prepared = resizeEnabled && resizeW && resizeH ? await resizeImageFile(f, resizeW, resizeH) : f;
         const { file_url } = await base44.integrations.Core.UploadFile({ file: prepared });
         urls.push(file_url);
       }
@@ -374,9 +374,9 @@ export default function AdminProducts() {
                   Resize on upload
                 </label>
                 <div className="flex items-center gap-2">
-                  <input type="number" min="1" value={resizeW} onChange={(e) => setResizeW(parseInt(e.target.value) || 0)} className="admin-input w-20 h-9" disabled={!resizeEnabled} placeholder="W" />
+                  <input type="number" min="1" value={resizeW || ""} onChange={(e) => setResizeW(parseInt(e.target.value) || 0)} className="admin-input w-20 h-9" disabled={!resizeEnabled} placeholder="W" />
                   <span className="text-xs text-white">×</span>
-                  <input type="number" min="1" value={resizeH} onChange={(e) => setResizeH(parseInt(e.target.value) || 0)} className="admin-input w-20 h-9" disabled={!resizeEnabled} placeholder="H" />
+                  <input type="number" min="1" value={resizeH || ""} onChange={(e) => setResizeH(parseInt(e.target.value) || 0)} className="admin-input w-20 h-9" disabled={!resizeEnabled} placeholder="H" />
                   <span className="text-xs text-white ml-1">px</span>
                 </div>
               </div>
@@ -625,10 +625,14 @@ export default function AdminProducts() {
           <div className="flex-1">
             <p className="text-[11px] uppercase tracking-[0.15em] text-black/50 mb-2">Resize & Create Product</p>
             <div className="flex flex-wrap items-center gap-2">
-              <input type="number" min="1" value={resizeW} onChange={(e) => setResizeW(parseInt(e.target.value) || 0)} className="admin-input w-20" placeholder="W" />
+              <input type="number" min="1" value={resizeW || ""} onChange={(e) => setResizeW(parseInt(e.target.value) || 0)} className="admin-input w-20" placeholder="W" />
               <span className="text-sm text-black/50">×</span>
-              <input type="number" min="1" value={resizeH} onChange={(e) => setResizeH(parseInt(e.target.value) || 0)} className="admin-input w-20" placeholder="H" />
+              <input type="number" min="1" value={resizeH || ""} onChange={(e) => setResizeH(parseInt(e.target.value) || 0)} className="admin-input w-20" placeholder="H" />
               <span className="text-xs text-black/50 ml-1">px</span>
+              <div className="flex items-center gap-1.5 ml-2">
+                <button type="button" onClick={() => { setResizeW(600); setResizeH(750); }} className="text-[10px] uppercase tracking-wide border border-[#e5e7eb] px-2 py-1 text-black/60 hover:border-black/40 hover:text-black transition-colors">600×750</button>
+                <button type="button" onClick={() => { setResizeW(1080); setResizeH(1080); }} className="text-[10px] uppercase tracking-wide border border-[#e5e7eb] px-2 py-1 text-black/60 hover:border-black/40 hover:text-black transition-colors">1080×1080</button>
+              </div>
               <label className="flex items-center gap-2 ml-3 text-xs text-black cursor-pointer">
                 <input type="checkbox" checked={resizeEnabled} onChange={(e) => setResizeEnabled(e.target.checked)} className="accent-accent w-4 h-4" />
                 Resize on upload
