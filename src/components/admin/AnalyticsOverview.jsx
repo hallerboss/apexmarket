@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
-import { BarChart3, Users, Eye, TrendingUp, Loader2, AlertCircle, Package, MousePointerClick } from "lucide-react";
+import { BarChart3, Users, Eye, TrendingUp, Loader2, AlertCircle, Package, MousePointerClick, Search } from "lucide-react";
 import TrafficChart from "@/components/admin/TrafficChart";
 
 const RANGES = [
@@ -123,6 +123,26 @@ export default function AnalyticsOverview() {
                     </div>
                   ) : (
                     <p className="text-xs text-black/40">No product views recorded yet.</p>
+                  )}
+                </div>
+
+                <div className="mt-5">
+                  <div className="flex items-center gap-2 mb-2">
+                    <Search className="w-3.5 h-3.5 text-black/40" />
+                    <p className="text-[10px] font-semibold uppercase tracking-wide text-black/50">Top Search Terms</p>
+                  </div>
+                  {ga?.topSearchTerms?.length ? (
+                    <div className="space-y-2">
+                      {ga.topSearchTerms.map((s, i) => (
+                        <div key={i} className="flex items-center gap-3">
+                          <span className="text-[11px] text-black/40 w-4">{i + 1}</span>
+                          <span className="text-sm text-black truncate flex-1">{s.term}</span>
+                          <span className="text-xs font-semibold text-black/70">{s.count}×</span>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <p className="text-xs text-black/40">No searches recorded yet — terms appear as visitors search.</p>
                   )}
                 </div>
               </>

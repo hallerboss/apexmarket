@@ -92,6 +92,18 @@ export function trackAddToCart(product, quantity = 1) {
   });
 }
 
+export function trackSearch(term) {
+  if (!term || !term.trim()) return;
+  const search_term = term.trim();
+  if (typeof window !== "undefined" && typeof window.gtag === "function") {
+    window.gtag("event", "search", { search_term });
+  }
+  base44.analytics.track({
+    eventName: "site_search",
+    properties: { term: search_term },
+  });
+}
+
 export function trackOrderPlaced(order) {
   if (!order) return;
   if (typeof window !== "undefined" && typeof window.gtag === "function") {

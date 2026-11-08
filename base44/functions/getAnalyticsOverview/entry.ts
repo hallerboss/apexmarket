@@ -106,12 +106,40 @@ export default async function(req: Request): Promise<Response> {
     }
     products.sort((a, b) => b.views - a.views);
 
+    // Top search terms (GA4 `search` event with search_term parameter)
+    let topSearchTerms: { term: string; count: number }[] = [];
+    const searchRes = await fetch(dataApi, {
+      method: 'POST',
+      headers,
+      signal: AbortSignal.timeout(10000),
+      body: JSON.stringify({
+        dateRanges: [{ startDate: start, endDate: end }],
+        metrics: [{ name: 'eventCount' }],
+        dimensions: [{ name: 'searchTerm' }],
+        dimensionFilter: {
+          filter: { fieldName: 'eventName', stringFilter: { matchType: 'EXACT', value: 'search' } },
+        },
+        orderBys: [{ metric: { metricName: 'eventCount' }, desc: true }],
+        limit: 10,
+      }),
+    });
+    if (searchRes.ok) {
+      const searchData = await searchRes.json();
+      topSearchTerms = (searchData?.rows || [])
+        .filter((r: any) => r.dimensionValues?.[0]?.value)
+        .map((r: any) => ({
+          term: r.dimensionValues[0].value,
+          count: num(r.metricValues?.[0]),
+        }));
+    }
+
     return Response.json({
       property: propertyResource,
       visitors,
       sessions,
       pageViews,
       topProducts: products.slice(0, 10),
+      topSearchTerms,
     });
   } catch (error) {
     return Response.json({ error: error.message }, { status: 500 });

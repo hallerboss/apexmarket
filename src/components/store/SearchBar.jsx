@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { Search, Camera, Loader2, X } from "lucide-react";
 import { base44 } from "@/api/base44Client";
 import { Image } from "@/components/ui/image";
+import { trackSearch } from "@/lib/analytics";
 
 export default function SearchBar({ autoFocus = false }) {
   const [q, setQ] = useState("");
@@ -63,6 +64,7 @@ export default function SearchBar({ autoFocus = false }) {
   const submit = (e) => {
     e.preventDefault();
     if (q.trim()) {
+      trackSearch(q.trim());
       setShowResults(false);
       navigate(`/shop?q=${encodeURIComponent(q)}`);
     }
@@ -86,6 +88,7 @@ export default function SearchBar({ autoFocus = false }) {
   };
 
   const pickResult = (p) => {
+    if (q.trim()) trackSearch(q.trim());
     setShowResults(false);
     setQ("");
     setResults([]);
