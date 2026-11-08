@@ -74,7 +74,7 @@ export default function FieldAIButton({ type, imageUrl, productName, productDesc
             <span className="text-[10px] font-bold uppercase tracking-wide text-accent flex items-center gap-1">
               <Sparkles className="w-3 h-3" /> AI Suggestions
             </span>
-            <button onClick={() => setOpen(false)} className="text-black/40 hover:text-black">
+            <button type="button" onClick={() => setOpen(false)} className="text-black/40 hover:text-black">
               <X className="w-3.5 h-3.5" />
             </button>
           </div>
@@ -92,6 +92,7 @@ export default function FieldAIButton({ type, imageUrl, productName, productDesc
             <div className="divide-y divide-[#eef0f2]">
               {options.map((opt, i) => (
                 <button
+                  type="button"
                   key={i}
                   onClick={() => pick(opt)}
                   className={`w-full text-left px-3 py-2.5 text-xs hover:bg-accent/5 transition-colors flex items-start gap-2 ${

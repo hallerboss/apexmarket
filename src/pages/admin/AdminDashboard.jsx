@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
-import { Package, ShoppingCart, Star, FolderTree, TrendingUp, DollarSign, Clock, AlertTriangle } from "lucide-react";
+import { Package, ShoppingCart, Star, FolderTree, TrendingUp, DollarSign, Clock, AlertTriangle, FileEdit } from "lucide-react";
 import LowStockAlerts from "@/components/admin/LowStockAlerts";
 import AnalyticsOverview from "@/components/admin/AnalyticsOverview";
 import ExportOrdersButton from "@/components/admin/ExportOrdersButton";
@@ -9,7 +9,7 @@ import SearchConsolePanel from "@/components/admin/SearchConsolePanel";
 import GoogleMerchantStatus from "@/components/admin/GoogleMerchantStatus";
 
 export default function AdminDashboard() {
-  const [stats, setStats] = useState({ products: 0, orders: 0, reviews: 0, pendingReviews: 0, categories: 0, revenue: 0, pendingOrders: 0, lowStock: 0 });
+  const [stats, setStats] = useState({ products: 0, orders: 0, reviews: 0, pendingReviews: 0, categories: 0, revenue: 0, pendingOrders: 0, lowStock: 0, drafts: 0 });
   const [recentOrders, setRecentOrders] = useState([]);
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -36,6 +36,7 @@ export default function AdminDashboard() {
         pendingOrders,
         totalStock,
         lowStock,
+        drafts: prods.filter((p) => p.status === "draft").length,
       });
       setProducts(prods);
       setRecentOrders(orders.slice(0, 5));
@@ -53,6 +54,7 @@ export default function AdminDashboard() {
     { label: "Categories", value: stats.categories, icon: FolderTree, link: "/admin/categories" },
     { label: "Total Stock", value: stats.totalStock, icon: Package, link: "/admin/products" },
     { label: "Low Stock", value: stats.lowStock, icon: AlertTriangle, link: "/admin/products" },
+    { label: "Drafts", value: stats.drafts, icon: FileEdit, link: "/admin/products?status=draft" },
   ];
 
   return (

@@ -79,7 +79,11 @@ export default function AdminProducts() {
     if (isNew) setEditing({ ...emptyProduct });
   }, [isNew]);
 
-  const filtered = products.filter((p) => p.name.toLowerCase().includes(search.toLowerCase()));
+  const statusFilter = searchParams.get("status") || "all";
+  const filtered = products.filter((p) =>
+    p.name.toLowerCase().includes(search.toLowerCase()) &&
+    (statusFilter === "all" || p.status === statusFilter)
+  );
 
   // Hierarchical categories: top-level + children grouped by parent
   // Every category, nested to any depth, listed with its full path.
@@ -109,8 +113,8 @@ export default function AdminProducts() {
     setSearchParams({ new: "1" });
   };
 
-  const save = (e) => {
-    e.preventDefault();
+  const doSave = (statusOverride) => {
+    const status = statusOverride || editing.status;
     const variant_images = (editing.variant_images || [])
       .filter((vi) => {
         const v = (editing.variants || []).find((x) => x.name === vi.variant);
@@ -125,18 +129,22 @@ export default function AdminProducts() {
       }));
     const data = {
       ...editing,
+      status,
       slug: editing.slug || editing.name.toLowerCase().replace(/\s+/g, "-"),
       price: parseFloat(editing.price) || 0,
       sale_price: parseFloat(editing.sale_price) || 0,
       stock: parseInt(editing.stock) || 0,
       variant_images,
     };
+    const goDraft = status === "draft";
     if (data.id) {
-      base44.entities.Product.update(data.id, data).then(async () => { await ensureCategory(data.category); load(); setEditing(null); });
+      base44.entities.Product.update(data.id, data).then(async () => { await ensureCategory(data.category); load(); setEditing(null); setSearchParams(goDraft ? { status: "draft" } : {}); });
     } else {
-      base44.entities.Product.create(data).then(async () => { await ensureCategory(data.category); load(); setEditing(null); setSearchParams({}); });
+      base44.entities.Product.create(data).then(async () => { await ensureCategory(data.category); load(); setEditing(null); setSearchParams(goDraft ? { status: "draft" } : {}); });
     }
   };
+  const save = (e) => { e.preventDefault(); doSave(); };
+  const saveAsDraft = () => doSave("draft");
 
   // A new product that brings a category the store doesn't have yet creates it,
   // so it shows up in the storefront menu automatically.
@@ -541,6 +549,9 @@ export default function AdminProducts() {
             <button type="submit" className="admin-white-text w-full bg-accent text-white py-3 text-xs font-semibold uppercase tracking-[0.2em] hover:bg-accent/90 transition-colors">
               {editing.id ? "Save Changes" : "Create Product"}
             </button>
+            <button type="button" onClick={saveAsDraft} className="w-full border border-foreground/30 text-foreground py-3 text-xs font-semibold uppercase tracking-[0.2em] hover:bg-foreground hover:text-white transition-colors">
+              Save as Draft
+            </button>
           </div>
         </form>
         {showAgent && <ProductAgentChat onClose={() => setShowAgent(false)} onInsert={insertFromAI} />}
@@ -584,6 +595,21 @@ export default function AdminProducts() {
       <div className="relative mb-6">
         <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-black/40" />
         <input placeholder="Search products…" value={search} onChange={(e) => setSearch(e.target.value)} className="admin-input pl-11" />
+      </div>
+
+      <div className="flex gap-2 mb-6">
+        {[{ k: "all", label: "All" }, { k: "published", label: "Published" }, { k: "draft", label: "Drafts" }].map((f) => (
+          <button
+            key={f.k}
+            type="button"
+            onClick={() => setSearchParams(f.k === "all" ? {} : { status: f.k })}
+            className={`px-4 py-2 text-xs font-semibold uppercase tracking-[0.15em] border transition-colors ${
+              statusFilter === f.k ? "bg-foreground text-background border-foreground" : "bg-white text-black border-[#e5e7eb] hover:border-black/30"
+            }`}
+          >
+            {f.label}
+          </button>
+        ))}
       </div>
 
       {/* Bulk action bar */}
