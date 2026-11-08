@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useRef } from "react";
 import { useSearchParams } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
 import { useCategories } from "@/hooks/useCategories";
@@ -8,6 +8,7 @@ import RichTextEditor from "@/components/admin/RichTextEditor";
 import ProductAgentChat from "@/components/admin/ProductAgentChat";
 import FieldAIButton from "@/components/admin/FieldAIButton";
 import GoogleMerchantSyncButton from "@/components/admin/GoogleMerchantSyncButton";
+import { resizeImageFile } from "@/lib/imageResize";
 
 const COUNTRIES = ["United States", "United Kingdom", "Canada", "Australia", "Germany", "France", "Spain", "Italy", "Netherlands", "Pakistan", "India", "UAE", "Saudi Arabia", "China", "Japan", "Brazil", "Mexico", "South Africa"];
 const COURIERS = ["Cainiao", "DHL Express", "FedEx", "UPS", "USPS", "Royal Mail", "Aramex", "TCS", "DPD", "Local Courier"];
@@ -59,6 +60,11 @@ export default function AdminProducts() {
   const [showAgent, setShowAgent] = useState(false);
   const [importUrl, setImportUrl] = useState("");
   const [importing, setImporting] = useState(false);
+  const [resizeW, setResizeW] = useState(600);
+  const [resizeH, setResizeH] = useState(750);
+  const [resizeEnabled, setResizeEnabled] = useState(true);
+  const [createUploading, setCreateUploading] = useState(false);
+  const createFileRef = useRef(null);
 
   const isNew = searchParams.get("new") === "1";
 
@@ -186,9 +192,36 @@ export default function AdminProducts() {
 
   const uploadImage = async (file) => {
     setUploading(true);
-    const { file_url } = await base44.integrations.Core.UploadFile({ file });
-    setEditing((e) => ({ ...e, images: [...new Set([...(e.images || []), file_url])] }));
-    setUploading(false);
+    try {
+      const prepared = resizeEnabled ? await resizeImageFile(file, resizeW, resizeH) : file;
+      const { file_url } = await base44.integrations.Core.UploadFile({ file: prepared });
+      setEditing((e) => ({ ...e, images: [...new Set([...(e.images || []), file_url])] }));
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  // Upload one or more images (resized to the target px), then open a new
+  // product pre-filled with them — a one-step way to create a product from
+  // a batch of studio shots.
+  const uploadAndCreate = async (e) => {
+    const files = Array.from(e.target.files || []);
+    e.target.value = "";
+    if (!files.length) return;
+    setCreateUploading(true);
+    try {
+      const urls = [];
+      for (const f of files) {
+        const prepared = resizeEnabled ? await resizeImageFile(f, resizeW, resizeH) : f;
+        const { file_url } = await base44.integrations.Core.UploadFile({ file: prepared });
+        urls.push(file_url);
+      }
+      setEditing({ ...emptyProduct, images: urls });
+    } catch (err) {
+      alert(err?.message || "Image upload failed");
+    } finally {
+      setCreateUploading(false);
+    }
   };
   const removeImage = (idx) => setEditing((e) => ({ ...e, images: e.images.filter((_, i) => i !== idx) }));
 
@@ -335,6 +368,18 @@ export default function AdminProducts() {
                 </button>
               </div>
               <p className="text-[10px] text-white mt-2">Recommended image size: 600 × 750 px (4:5). Upload high-quality studio images, then use AI to auto-generate descriptions, features & SEO.</p>
+              <div className="flex flex-wrap items-center gap-3 mt-3">
+                <label className="flex items-center gap-2 text-xs text-white cursor-pointer">
+                  <input type="checkbox" checked={resizeEnabled} onChange={(e) => setResizeEnabled(e.target.checked)} className="accent-accent w-4 h-4" />
+                  Resize on upload
+                </label>
+                <div className="flex items-center gap-2">
+                  <input type="number" min="1" value={resizeW} onChange={(e) => setResizeW(parseInt(e.target.value) || 0)} className="admin-input w-20 h-9" disabled={!resizeEnabled} placeholder="W" />
+                  <span className="text-xs text-white">×</span>
+                  <input type="number" min="1" value={resizeH} onChange={(e) => setResizeH(parseInt(e.target.value) || 0)} className="admin-input w-20 h-9" disabled={!resizeEnabled} placeholder="H" />
+                  <span className="text-xs text-white ml-1">px</span>
+                </div>
+              </div>
             </div>
 
             <div>
@@ -571,6 +616,34 @@ export default function AdminProducts() {
           <button onClick={startNew} className="admin-white-text bg-accent text-white px-5 py-2.5 text-xs font-semibold uppercase tracking-[0.2em] hover:bg-accent/90 flex items-center gap-2">
             <Plus className="w-4 h-4" /> Add Product
           </button>
+        </div>
+      </div>
+
+      {/* Resize & Create — pick a px size, upload images, open a new product */}
+      <div className="mb-6 border border-[#e5e7eb] bg-white p-4">
+        <div className="flex flex-col sm:flex-row sm:items-center gap-4">
+          <div className="flex-1">
+            <p className="text-[11px] uppercase tracking-[0.15em] text-black/50 mb-2">Resize & Create Product</p>
+            <div className="flex flex-wrap items-center gap-2">
+              <input type="number" min="1" value={resizeW} onChange={(e) => setResizeW(parseInt(e.target.value) || 0)} className="admin-input w-20" placeholder="W" />
+              <span className="text-sm text-black/50">×</span>
+              <input type="number" min="1" value={resizeH} onChange={(e) => setResizeH(parseInt(e.target.value) || 0)} className="admin-input w-20" placeholder="H" />
+              <span className="text-xs text-black/50 ml-1">px</span>
+              <label className="flex items-center gap-2 ml-3 text-xs text-black cursor-pointer">
+                <input type="checkbox" checked={resizeEnabled} onChange={(e) => setResizeEnabled(e.target.checked)} className="accent-accent w-4 h-4" />
+                Resize on upload
+              </label>
+            </div>
+          </div>
+          <button
+            onClick={() => createFileRef.current?.click()}
+            disabled={createUploading}
+            className="admin-white-text bg-accent text-white px-6 py-2.5 text-xs font-semibold uppercase tracking-[0.15em] hover:bg-accent/90 flex items-center gap-2 disabled:opacity-50 whitespace-nowrap"
+          >
+            {createUploading ? <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" /> : <Upload className="w-4 h-4" />}
+            Upload & Create Product
+          </button>
+          <input ref={createFileRef} type="file" accept="image/*" multiple className="hidden" onChange={uploadAndCreate} />
         </div>
       </div>
 
