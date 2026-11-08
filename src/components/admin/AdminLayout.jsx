@@ -3,7 +3,6 @@ import {
   LayoutDashboard, Package, FolderTree, Star, FileText, ShoppingCart,
   Image as ImageIcon, Settings, ArrowLeft, Film, CreditCard, Newspaper, LayoutTemplate, Truck,
 } from "lucide-react";
-import AdminDesignAgent from "@/components/admin/AdminDesignAgent";
 
 const navItems = [
   { label: "Dashboard", path: "/admin", icon: LayoutDashboard },
@@ -67,7 +66,6 @@ export default function AdminLayout() {
       <main className="admin-main flex-1 p-5 lg:p-8 overflow-x-hidden">
         <Outlet />
       </main>
-      <AdminDesignAgent />
     </div>
   );
 }
