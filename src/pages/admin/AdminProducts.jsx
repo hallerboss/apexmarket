@@ -604,7 +604,7 @@ export default function AdminProducts() {
             type="button"
             onClick={() => setSearchParams(f.k === "all" ? {} : { status: f.k })}
             className={`px-4 py-2 text-xs font-semibold uppercase tracking-[0.15em] border transition-colors ${
-              statusFilter === f.k ? "bg-foreground text-background border-foreground" : "bg-white text-black border-[#e5e7eb] hover:border-black/30"
+              statusFilter === f.k ? "bg-white text-accent border-accent" : "bg-white text-black border-[#e5e7eb] hover:border-black/30"
             }`}
           >
             {f.label}
