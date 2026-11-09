@@ -154,10 +154,20 @@
      Catches solid bg-foreground/bg-black buttons and hover:bg-foreground hover fills;
      excludes alpha overlays (bg-black/70) used on image X badges. */
   .admin-main button[class*="bg-foreground"],
-  .admin-main button[class*="bg-black"]:not([class*="bg-black/"]) {
+  .admin-main button[class*="bg-black"]:not([class*="bg-black/"]),
+  .admin-main button[class*="bg-[#1a1a1a]"],
+  .admin-main button[class*="bg-[#0a0a0a]"],
+  .admin-main button[class*="bg-[#050505]"],
+  .admin-main button[class*="bg-white/5"],
+  .admin-main button[class*="bg-white/10"],
+  .admin-main button[class*="bg-white/20"] {
     background-color: #ffffff !important;
     color: #1a1a1a !important;
     border: 1px solid #1a1a1a !important;
+  }
+  .admin-main button[class*="hover:bg-foreground"],
+  .admin-main button[class*="hover:bg-black"]:not([class*="hover:bg-black/"]) {
+    background-color: #ffffff !important;
   }
   .admin-label {
     @apply block text-[11px] font-semibold uppercase tracking-[0.15em] text-muted-foreground mb-2;

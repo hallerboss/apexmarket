@@ -13,6 +13,14 @@ const TEMPLATES = {
     subject: "Your order has been delivered",
     line: "Your order has been delivered. We hope you enjoy your purchase!",
   },
+  processing: {
+    subject: "Your order is being processed",
+    line: "Your order is now being processed and will be shipped soon.",
+  },
+  cancelled: {
+    subject: "Your order has been cancelled",
+    line: "Your order has been cancelled. If you have any questions, please contact our support team.",
+  },
 };
 
 export default async function (req) {

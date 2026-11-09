@@ -18,8 +18,19 @@ export default function AdminOrders() {
   };
   useEffect(() => { load(); }, []);
 
-  const updateStatus = (id, status) => {
+  const STATUS_TEMPLATES = { processing: "processing", shipped: "shipped", delivered: "delivered", cancelled: "cancelled" };
+  const updateStatus = (id, status, order) => {
     base44.entities.Order.update(id, { status }).then(load);
+    const tpl = STATUS_TEMPLATES[status];
+    if (tpl && order?.customer_email) {
+      base44.functions.invoke("sendOrderNotification", {
+        template: tpl,
+        email: order.customer_email,
+        order_number: order.order_number,
+        customer_name: order.customer_name,
+        tracking_number: order.tracking_number,
+      }).catch((e) => console.warn("Auto status email failed:", e?.message));
+    }
   };
 
   const remove = (id) => {
@@ -98,7 +109,7 @@ export default function AdminOrders() {
         </div>
         <div>
           <label className="admin-label">Order Status</label>
-          <select value={viewing.status} onChange={(e) => { updateStatus(viewing.id, e.target.value); setViewing({ ...viewing, status: e.target.value }); }} className="admin-input w-auto">
+          <select value={viewing.status} onChange={(e) => { updateStatus(viewing.id, e.target.value, viewing); setViewing({ ...viewing, status: e.target.value }); }} className="admin-input w-auto">
             {statuses.map((s) => <option key={s} value={s}>{s}</option>)}
           </select>
         </div>
@@ -182,7 +193,7 @@ export default function AdminOrders() {
                   <td className="px-5 py-4 text-sm text-white/60">{o.items?.length || 0}</td>
                   <td className="px-5 py-4 text-sm font-bold text-white">${(o.total || 0).toFixed(2)}</td>
                   <td className="px-5 py-4">
-                    <select value={o.status} onChange={(e) => updateStatus(o.id, e.target.value)} className="bg-white/5 border border-white/10 px-2 py-1 text-xs text-white outline-none">
+                    <select value={o.status} onChange={(e) => updateStatus(o.id, e.target.value, o)} className="bg-white/5 border border-white/10 px-2 py-1 text-xs text-white outline-none">
                       {statuses.map((s) => <option key={s} value={s} className="bg-[#0a0a0a]">{s}</option>)}
                     </select>
                   </td>
