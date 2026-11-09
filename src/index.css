@@ -60,6 +60,7 @@
   }
   html, body {
     overscroll-behavior-y: none;
+    overflow-x: clip;
   }
   body {
     @apply bg-background text-foreground font-body antialiased;

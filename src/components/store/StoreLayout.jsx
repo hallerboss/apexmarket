@@ -53,7 +53,7 @@ export default function StoreLayout() {
   }, [location.pathname, location.search]);
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background overflow-x-clip">
       <GoogleAnalyticsLoader />
       <header className="sticky top-0 z-30 bg-white border-b border-[#eeeeee] pt-safe">
         {/* top row */}
@@ -119,7 +119,7 @@ export default function StoreLayout() {
 
       </header>
 
-      <main className="pb-14 md:pb-0">
+      <main className="pb-14 md:pb-0 overflow-x-clip">
         <AnimatePresence mode="wait">
           <motion.div
             key={location.pathname}
