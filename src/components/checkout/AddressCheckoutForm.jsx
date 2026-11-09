@@ -87,7 +87,7 @@ export default function AddressCheckoutForm({ onSubmit, placing }) {
       </div>
 
       {/* First / Last name */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-4">
         <div>
           <label className={labelCls}>
             First name<span className="text-red-600">*</span>
@@ -148,7 +148,7 @@ export default function AddressCheckoutForm({ onSubmit, placing }) {
       <input placeholder="Apt, unit, building, floor, room, etc. (optional)" value={form.apt} onChange={(e) => set("apt", e.target.value)} className={`${inputCls} mb-4`} />
 
       {/* State + city */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-5">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-5">
         <div>
           <label className={labelCls}>
             State/Province<span className="text-red-600">*</span>

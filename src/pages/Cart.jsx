@@ -137,8 +137,8 @@ export default function Cart() {
   }
 
   return (
-    <div className="container-bleed px-5 lg:px-10 py-8 lg:py-20">
-      <h1 className="display-text text-4xl sm:text-5xl lg:text-6xl mb-8 lg:mb-12">Your Cart</h1>
+    <div className="container-bleed px-4 sm:px-5 lg:px-10 py-8 lg:py-20 max-w-full overflow-x-clip">
+      <h1 className="display-text text-3xl sm:text-4xl lg:text-5xl mb-6 lg:mb-12">Your Cart</h1>
       <div className="grid lg:grid-cols-3 gap-6 lg:gap-16">
         {/* Items */}
         <div className="lg:col-span-2 space-y-5">
@@ -195,7 +195,7 @@ export default function Cart() {
 
         {/* Summary + checkout */}
         <div className="lg:col-span-1">
-          <div className="border hairline p-5 lg:p-8 pb-safe lg:sticky lg:top-24">
+          <div className="border hairline p-4 sm:p-5 lg:p-8 pb-safe lg:sticky lg:top-24">
             <h3 className="text-[11px] uppercase tracking-[0.2em] font-semibold mb-6">Order Summary</h3>
             <div className="space-y-3 text-sm border-b hairline pb-5 mb-5">
               <div className="flex justify-between">
