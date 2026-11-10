@@ -22,13 +22,7 @@ export default async function(req) {
       params.append(`line_items[${i}][price_data][unit_amount]`, String(Math.round(item.price * 100)));
       params.append(`line_items[${i}][price_data][product_data][name]`, item.name);
     });
-    if (shipping && shipping > 0) {
-      const idx = items.length;
-      params.append(`line_items[${idx}][quantity]`, "1");
-      params.append(`line_items[${idx}][price_data][currency]`, "usd");
-      params.append(`line_items[${idx}][price_data][unit_amount]`, String(Math.round(shipping * 100)));
-      params.append(`line_items[${idx}][price_data][product_data][name]`, "Shipping");
-    }
+    // Free shipping on all orders — no shipping line item is added to the Stripe session.
     params.append("metadata[base44_app_id]", secrets.get("BASE44_APP_ID"));
     if (order_id) params.append("metadata[order_id]", order_id);
 

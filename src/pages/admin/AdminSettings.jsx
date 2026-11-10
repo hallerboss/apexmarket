@@ -8,7 +8,7 @@ export default function AdminSettings() {
     store_email: "",
     store_phone: "+1 (555) 028-2024",
     currency: "USD",
-    free_shipping_threshold: "50",
+    free_shipping_threshold: "0",
     tax_rate: "8",
   });
   const [saved, setSaved] = useState(false);
@@ -117,7 +117,7 @@ export default function AdminSettings() {
         </div>
         <div className="grid md:grid-cols-3 gap-4">
           <div><label className="admin-label">Currency</label><select value={settings.currency} onChange={(e) => setSettings({ ...settings, currency: e.target.value })} className="admin-input"><option>USD</option><option>EUR</option><option>GBP</option><option>PKR</option></select></div>
-          <div><label className="admin-label">Free Shipping Over ($)</label><input value={settings.free_shipping_threshold} onChange={(e) => setSettings({ ...settings, free_shipping_threshold: e.target.value })} className="admin-input" /></div>
+          <div><label className="admin-label">Free Shipping Over ($)</label><input value="0 — Free on all orders" readOnly className="admin-input bg-[#f5f5f5] cursor-not-allowed" /><p className="text-[10px] text-black/40 mt-1">Shipping is free on every order.</p></div>
           <div><label className="admin-label">Tax Rate (%)</label><input value={settings.tax_rate} onChange={(e) => setSettings({ ...settings, tax_rate: e.target.value })} className="admin-input" /></div>
         </div>
         <button type="submit" className="bg-accent text-white px-6 py-3 text-xs font-semibold uppercase tracking-[0.2em] flex items-center gap-2">

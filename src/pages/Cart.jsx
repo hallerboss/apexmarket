@@ -18,7 +18,7 @@ export default function Cart() {
   const [products, setProducts] = useState({});
   const [recs, setRecs] = useState([]);
 
-  const shipping = subtotal > 50 ? 0 : 9.99;
+  const shipping = 0; // Free shipping on all orders
   const total = subtotal + shipping;
 
   const itemsKey = items.map((i) => i.product_id).join(",");

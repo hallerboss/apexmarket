@@ -12,7 +12,7 @@ const FAQ_DATA = [
       },
       {
         q: "Do you offer free shipping?",
-        a: "Yes! We offer free standard shipping on all orders over $50 within the United States. Orders under $50 ship for a flat rate of $9.99. International shipping costs are calculated at checkout based on destination and weight.",
+        a: "Yes! We offer free standard shipping on all orders, with no minimum spend, within the United States and internationally.",
       },
       {
         q: "Which countries do you ship to?",
