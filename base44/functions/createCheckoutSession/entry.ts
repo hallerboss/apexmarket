@@ -10,7 +10,7 @@ export default async function(req) {
     if (!success_url || !cancel_url) {
       return Response.json({ error: "success_url and cancel_url are required" }, { status: 400 });
     }
-    const secretKey = secrets.get("STRIPE_SECRET_KEY");
+    const secretKey = secrets.get("STRIPE_SECRET_KEY_2") || secrets.get("STRIPE_SECRET_KEY");
     const params = new URLSearchParams();
     params.append("mode", "payment");
     params.append("success_url", success_url);
