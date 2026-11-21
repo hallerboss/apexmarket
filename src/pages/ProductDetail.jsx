@@ -116,7 +116,7 @@ export default function ProductDetail() {
 
         {/* Info module */}
         <div className="lg:py-4">
-          <h1 className="font-normal text-sm sm:text-base text-foreground mb-4 leading-snug">{product.name}</h1>
+          <h1 className="font-normal text-sm sm:text-base text-black mb-4 leading-snug">{product.name}</h1>
           {product.rating > 0 && (
             <div className="flex items-center gap-2 mb-6">
               <div className="flex">
@@ -132,14 +132,14 @@ export default function ProductDetail() {
           )}
           <div className="flex items-baseline gap-3 mb-6">
             {variantPrice != null ? (
-              <span className="text-3xl font-bold">{formatPrice(variantPrice)}</span>
+              <span className="text-base sm:text-lg font-normal text-black">{formatPrice(variantPrice)}</span>
             ) : hasSale ? (
               <>
-                <span className="text-3xl font-bold text-accent">{formatPrice(product.sale_price)}</span>
-                <span className="text-lg text-muted-foreground line-through">{formatPrice(product.price)}</span>
+                <span className="text-base sm:text-lg font-normal text-black">{formatPrice(product.sale_price)}</span>
+                <span className="text-sm text-muted-foreground line-through">{formatPrice(product.price)}</span>
               </>
             ) : (
-              <span className="text-3xl font-bold">{formatPrice(product.price)}</span>
+              <span className="text-base sm:text-lg font-normal text-black">{formatPrice(product.price)}</span>
             )}
           </div>
 
