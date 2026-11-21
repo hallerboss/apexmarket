@@ -116,7 +116,7 @@ export default function ProductDetail() {
 
         {/* Info module */}
         <div className="lg:py-4">
-          <h1 className="font-normal text-lg sm:text-xl text-foreground mb-4">{product.name}</h1>
+          <h1 className="font-normal text-sm sm:text-base text-foreground mb-4 leading-snug">{product.name}</h1>
           {product.rating > 0 && (
             <div className="flex items-center gap-2 mb-6">
               <div className="flex">
