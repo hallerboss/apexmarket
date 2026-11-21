@@ -275,7 +275,7 @@ export default function Shop() {
         {/* Page header */}
         <div className="border-b border-[#eee]">
           <div className="container-bleed px-5 lg:px-10 py-6 sm:py-8 lg:py-12">
-            <h1 className="display-text text-2xl sm:text-3xl lg:text-5xl text-[#333]">{activeCategory || "All Products"}</h1>
+            <h1 className="display-text font-normal text-2xl sm:text-3xl lg:text-5xl text-[#333]">{activeCategory || "All Products"}</h1>
             <p className="text-sm text-[#666] mt-2">{filtered.length} products in the collection.</p>
           </div>
         </div>
