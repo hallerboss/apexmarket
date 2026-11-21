@@ -132,14 +132,14 @@ export default function ProductDetail() {
           )}
           <div className="flex items-baseline gap-2 mb-6">
             {variantPrice != null ? (
-              <span className="text-base sm:text-lg font-bold text-black">{formatPrice(variantPrice)}</span>
+              <span className="text-[22px] sm:text-[24px] font-bold text-black">{formatPrice(variantPrice)}</span>
             ) : hasSale ? (
               <>
-                <span className="text-base sm:text-lg font-bold text-black">{formatPrice(product.sale_price)}</span>
+                <span className="text-[22px] sm:text-[24px] font-bold text-black">{formatPrice(product.sale_price)}</span>
                 <span className="text-xs text-muted-foreground line-through">{formatPrice(product.price)}</span>
               </>
             ) : (
-              <span className="text-base sm:text-lg font-bold text-black">{formatPrice(product.price)}</span>
+              <span className="text-[22px] sm:text-[24px] font-bold text-black">{formatPrice(product.price)}</span>
             )}
           </div>
 

@@ -79,11 +79,11 @@ export default function QuickViewModal({ product, onClose }) {
           <div className="flex items-baseline gap-3 mb-4">
             {hasSale ? (
               <>
-                <span className="text-base sm:text-lg font-bold text-accent">{formatPrice(product.sale_price)}</span>
+                <span className="text-[22px] sm:text-[24px] font-bold text-accent">{formatPrice(product.sale_price)}</span>
                 <span className="text-sm text-muted-foreground line-through">{formatPrice(product.price)}</span>
               </>
             ) : (
-              <span className="text-base sm:text-lg font-bold">{formatPrice(product.price)}</span>
+              <span className="text-[22px] sm:text-[24px] font-bold">{formatPrice(product.price)}</span>
             )}
           </div>
           {product.short_description && (
