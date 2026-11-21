@@ -69,11 +69,11 @@ export default function ShopProductCard({ product }) {
       <div className="flex items-baseline gap-2 mt-2">
         {hasSale ? (
           <>
-            <span className="text-base font-bold text-[#333]">{formatPrice(product.sale_price)}</span>
+            <span className="text-base sm:text-lg font-bold text-[#333]">{formatPrice(product.sale_price)}</span>
             <span className="text-sm text-[#999] line-through">{formatPrice(product.price)}</span>
           </>
         ) : (
-          <span className="text-base font-bold text-[#333]">{formatPrice(product.price)}</span>
+          <span className="text-base sm:text-lg font-bold text-[#333]">{formatPrice(product.price)}</span>
         )}
       </div>
 

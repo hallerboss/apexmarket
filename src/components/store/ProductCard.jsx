@@ -89,11 +89,11 @@ export default function ProductCard({ product, index = 0, compareMode = false })
         <div className="flex items-baseline gap-1.5">
           {hasSale ? (
             <>
-              <span className="text-sm font-medium text-foreground">{formatPrice(product.sale_price)}</span>
+              <span className="text-base sm:text-lg font-bold text-foreground">{formatPrice(product.sale_price)}</span>
               <span className="text-xs text-muted-foreground line-through">{formatPrice(product.price)}</span>
             </>
           ) : (
-            <span className="text-sm font-medium text-foreground">{formatPrice(product.price)}</span>
+            <span className="text-base sm:text-lg font-bold text-foreground">{formatPrice(product.price)}</span>
           )}
         </div>
 
