@@ -156,7 +156,7 @@ export default function ProductDetail() {
             )}
           </div>
 
-          {product.short_description && <div className="serif-text text-sm sm:text-base text-muted-foreground leading-relaxed mb-8 max-w-prose whitespace-pre-line break-words [&_ul]:list-disc [&_ul]:pl-5 [&_ol]:list-decimal [&_ol]:pl-5" dangerouslySetInnerHTML={{ __html: cleanHtml(product.short_description) }} />}
+          {product.short_description && <div className="font-['Roboto',sans-serif] text-sm sm:text-base text-muted-foreground leading-relaxed mb-8 max-w-prose whitespace-pre-line break-words [&_ul]:list-disc [&_ul]:pl-5 [&_ol]:list-decimal [&_ol]:pl-5" dangerouslySetInnerHTML={{ __html: cleanHtml(product.short_description) }} />}
 
           {/* Variants */}
           <ProductVariantSelector
@@ -223,7 +223,7 @@ export default function ProductDetail() {
           {product.description && (
             <div className="border-t hairline pt-8">
               <h3 className="text-[11px] uppercase tracking-[0.2em] font-semibold mb-4">Description</h3>
-              <div className="serif-text text-muted-foreground leading-relaxed max-w-prose whitespace-pre-line break-words [&_ul]:list-disc [&_ul]:pl-5 [&_ol]:list-decimal [&_ol]:pl-5" dangerouslySetInnerHTML={{ __html: cleanHtml(product.description) }} />
+              <div className="font-['Roboto',sans-serif] text-sm sm:text-base text-muted-foreground leading-relaxed max-w-prose whitespace-pre-line break-words [&_ul]:list-disc [&_ul]:pl-5 [&_ol]:list-decimal [&_ol]:pl-5" dangerouslySetInnerHTML={{ __html: cleanHtml(product.description) }} />
             </div>
           )}
 
