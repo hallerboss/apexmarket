@@ -130,16 +130,16 @@ export default function ProductDetail() {
           {product.total_sales > 0 && (
             <p className="text-sm text-muted-foreground mb-6">Sales: ({product.total_sales})</p>
           )}
-          <div className="flex items-baseline gap-3 mb-6">
+          <div className="flex items-baseline gap-2 mb-6">
             {variantPrice != null ? (
-              <span className="text-base sm:text-lg font-normal text-black">{formatPrice(variantPrice)}</span>
+              <span className="text-sm sm:text-base font-normal text-black">{formatPrice(variantPrice)}</span>
             ) : hasSale ? (
               <>
-                <span className="text-base sm:text-lg font-normal text-black">{formatPrice(product.sale_price)}</span>
-                <span className="text-sm text-muted-foreground line-through">{formatPrice(product.price)}</span>
+                <span className="text-sm sm:text-base font-normal text-black">{formatPrice(product.sale_price)}</span>
+                <span className="text-xs text-muted-foreground line-through">{formatPrice(product.price)}</span>
               </>
             ) : (
-              <span className="text-base sm:text-lg font-normal text-black">{formatPrice(product.price)}</span>
+              <span className="text-sm sm:text-base font-normal text-black">{formatPrice(product.price)}</span>
             )}
           </div>
 
@@ -156,7 +156,7 @@ export default function ProductDetail() {
             )}
           </div>
 
-          {product.short_description && <div className="serif-text text-base sm:text-lg text-muted-foreground leading-relaxed mb-8 max-w-prose whitespace-pre-line break-words [&_ul]:list-disc [&_ul]:pl-5 [&_ol]:list-decimal [&_ol]:pl-5" dangerouslySetInnerHTML={{ __html: cleanHtml(product.short_description) }} />}
+          {product.short_description && <div className="serif-text text-sm sm:text-base text-muted-foreground leading-relaxed mb-8 max-w-prose whitespace-pre-line break-words [&_ul]:list-disc [&_ul]:pl-5 [&_ol]:list-decimal [&_ol]:pl-5" dangerouslySetInnerHTML={{ __html: cleanHtml(product.short_description) }} />}
 
           {/* Variants */}
           <ProductVariantSelector
