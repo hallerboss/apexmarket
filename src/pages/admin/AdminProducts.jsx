@@ -3,7 +3,7 @@ import { useSearchParams } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
 import { useCategories } from "@/hooks/useCategories";
 import { buildCategoryTree } from "@/lib/categoryTree";
-import { Image as ImageIcon, Upload, X, Plus, Pencil, Trash2, Search, Sparkles, Link2 } from "lucide-react";
+import { Image as ImageIcon, Upload, X, Plus, Pencil, Trash2, Search, Sparkles, Link2, CheckCircle2 } from "lucide-react";
 import RichTextEditor from "@/components/admin/RichTextEditor";
 import ProductAgentChat from "@/components/admin/ProductAgentChat";
 import FieldAIButton from "@/components/admin/FieldAIButton";
@@ -151,6 +151,7 @@ export default function AdminProducts() {
   };
   const save = (e) => { e.preventDefault(); doSave(); };
   const saveAsDraft = () => doSave("draft");
+  const publishNow = () => doSave("published");
 
   // A new product that brings a category the store doesn't have yet creates it,
   // so it shows up in the storefront menu automatically.
@@ -593,6 +594,9 @@ export default function AdminProducts() {
 
             <button type="submit" className="admin-white-text w-full bg-accent text-white py-3 text-xs font-semibold uppercase tracking-[0.2em] hover:bg-accent/90 transition-colors">
               {editing.id ? "Save Changes" : "Create Product"}
+            </button>
+            <button type="button" onClick={publishNow} className="w-full bg-green-600 text-white py-3 text-xs font-semibold uppercase tracking-[0.2em] hover:bg-green-700 transition-colors flex items-center justify-center gap-2">
+              <CheckCircle2 className="w-4 h-4" /> {editing.id ? "Publish Now" : "Publish Live"}
             </button>
             <button type="button" onClick={saveAsDraft} className="w-full border border-foreground/30 text-foreground py-3 text-xs font-semibold uppercase tracking-[0.2em] hover:bg-foreground hover:text-white transition-colors">
               Save as Draft
